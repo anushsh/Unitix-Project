@@ -19,6 +19,7 @@
     "ejs": "^2.7.4",
     "express": "^3.21.2",
     "express-session": "*",
+    "mongoose": "*",
     "nodemon": "^2.0.2"
   }
 }
