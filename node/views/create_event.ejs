@@ -9,6 +9,42 @@
     <% include header.html %>
     <div class="container has-text-centered">
         <h2 class="subtitle">Create Event Page</h2>
+        <script type="text/javascript">
+            function checkEvent() {
+                var name = $("#eventName").val()
+                //TODO: validation checks?
+                //alert("Please fill out all the fields.");
+                
+                //TODO: call some function that checks the event is unique and any other requirements
+                //if (form submission is valid input) {
+                $.post("/create_event", {
+                    name: name
+                }, function (data, status) {
+                    if (status == "success" && data) {
+                        // $.get("/home"); -> doesn't work bc we won't actually change webpages
+                        //TODO: figure out what this should actually redirect to
+                        window.location.replace("/home");
+                    } else {
+                        alert("There was an error.")
+                    }
+                })
+            }
+        </script>
+        
+    </div>
+
+    <div class="container">
+        <div class="field">
+            <label class="label">Event Name</label>
+            <div class="control has-icons-left">
+                <input class="input" type="text" placeholder="Event Name" id="eventName">
+            </div>
+        </div>
+        
+        <p class="help is-danger" id="incorrect_warning"></p>
+        <div class="control">
+            <button class="button is-link" onclick="checkEvent()">Create Event</button>
+        </div>
     </div>
 </body>
 

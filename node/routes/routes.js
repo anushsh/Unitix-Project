@@ -1,6 +1,10 @@
 var getSplash = function (req, res) {
 
     // TODO: Implement for real
+    res.render('splash.ejs')
+}
+
+var getHome = function (req, res) {
     res.render('home.ejs')
 }
 
@@ -18,5 +22,6 @@ var addEventTag = function (req, res) {
 
 module.exports = {
     get_splash: getSplash,
-    create_event: createEvent
+    create_event: createEvent,
+    get_home: getHome
 }
