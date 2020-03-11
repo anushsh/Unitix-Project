@@ -1,11 +1,17 @@
 var getSplash = function (req, res) {
 
     // TODO: Implement for real
-    res.render('splash.ejs')
+    res.render('home.ejs')
 }
 
 var createEvent = function (req, res) {
     // TODO: Implement for real
+    res.render('create_event.ejs')
+}
+
+// TODO: need to talk to Michael about how adding tags will work
+var addEventTag = function (req, res) {
+    //TODO: Implement for real
     res.render('create_event.ejs')
 }
 
