@@ -3,7 +3,7 @@
 ## Overview
 
 Project Name: Unitix
-Group Members (alphabetical order): Michael Hackett, Yash Killa, Kara Li, Ansuh Shah, Noah Sylvester
+Group Members (alphabetical order): Michael Hackett, Yash Killa, Kara Li, Anush Shah, Noah Sylvester
 
 ## Models
 
