@@ -39,12 +39,13 @@ var clearAllEvents = function (req, res) {
 
 // handle post request for event creation
 var createEvent = function (req, res) {
+    console.log(req.body.name + ", " + req.body.group)
     var newEvent = new Event({
         event_id: "EVENT_ID_FORMATTING_TO_DO", // TODO: format this for unique id
-        name: req.query.name,
-        group: req.query.group,
+        name: req.body.name,
+        group: req.body.group,
         shows: [],
-        event_type: req.query.type
+        event_type: req.body.type
     })
 
     newEvent.save((err) => {
