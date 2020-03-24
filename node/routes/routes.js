@@ -8,10 +8,12 @@ var getHome = function (req, res) {
     res.render('home.ejs')
 }
 
-var createEvent = function (req, res) {
+var getCreateEvent = function (req, res) {
     // TODO: Implement for real
     res.render('create_event.ejs')
 }
+
+// handle post request for event creation
 
 // TODO: need to talk to Michael about how adding tags will work
 var addEventTag = function (req, res) {
@@ -22,6 +24,6 @@ var addEventTag = function (req, res) {
 
 module.exports = {
     get_splash: getSplash,
-    create_event: createEvent,
+    get_create_event: getCreateEvent,
     get_home: getHome
 }

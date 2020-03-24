@@ -17,10 +17,13 @@ app.use(session({
 }));
 
 // route definitions
+
+// splash and home
 app.get('/', routes.get_splash);
 app.get('/home', routes.get_home)
+
 // event creation
-app.get('/create_event', routes.create_event);
+app.get('/create_event', routes.get_create_event);
 
 // run server - we use the http server we made so that express doesn't make a new one and ignore socket.io
 http.listen(port);
