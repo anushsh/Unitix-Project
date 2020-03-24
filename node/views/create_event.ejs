@@ -18,7 +18,9 @@
                 //TODO: call some function that checks the event is unique and any other requirements
                 //if (form submission is valid input) {
                 $.post("/create_event", {
-                    name: name
+                    name: $("#eventName").val(),
+                    type: $("#eventType").val(),
+                    group: $("#eventGroup").val()
                 }, function (data, status) {
                     if (status == "success" && data) {
                         // $.get("/home"); -> doesn't work bc we won't actually change webpages
@@ -38,6 +40,20 @@
             <label class="label">Event Name</label>
             <div class="control has-icons-left">
                 <input class="input" type="text" placeholder="Event Name" id="eventName">
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">Event Type</label>
+            <div class="control has-icons-left">
+                <input class="input" type="text" placeholder="Event Type" id="eventType">
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">Group Name</label>
+            <div class="control has-icons-left">
+                <input class="input" type="text" placeholder="Group Name" id="eventGroup">
             </div>
         </div>
         
