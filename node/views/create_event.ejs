@@ -8,60 +8,137 @@
 <body>
     <% include header.html %>
     <div class="container has-text-centered">
-        <h2 class="subtitle">Create Event Page</h2>
+        <h2 class="subtitle">Create Your Event</h2>
         <script type="text/javascript">
             function checkEvent() {
+
+                // check for empty fields
                 var name = $("#eventName").val()
-                //TODO: validation checks?
-                //alert("Please fill out all the fields.");
-                
-                //TODO: call some function that checks the event is unique and any other requirements
-                //if (form submission is valid input) {
+                var type = $("#eventType").val()
+                var group = $("#eventGroup").val()
+                var showCount = $("#showCount").val()
+                var shows = []
+
+
+
+                if (validInput(name, type, group, showCount)) {
+                    makeShows(name, type, group, showCount) // TODO
+                    //postEvent(name, type, group, shows);
+                } else {
+                    clearFields()
+                    invalidateFields()
+                    alert("Please fill all fields with legal values")
+                }
+
+            }
+
+
+            function validInput(name, type, group, showCount) {
+                return name != "" && type != "" && group != "" && showCount != "" && showCount > 0
+            }
+
+            function makeShows(name, type, group, showCount) {
+                //$("#.modal").addClass("is-active")
+                alert("We'll code this later, but your shows are being made in this step.")
+            }
+
+            function postEvent(name, type, group, shows) {
                 $.post("/create_event", {
-                    name: $("#eventName").val(),
-                    type: $("#eventType").val(),
-                    group: $("#eventGroup").val()
+                    name: name,
+                    type: type,
+                    group: group,
+                    shows: shows
                 }, function (data, status) {
                     if (status == "success" && data) {
-                        // $.get("/home"); -> doesn't work bc we won't actually change webpages
-                        //TODO: figure out what this should actually redirect to
                         window.location.replace("/home");
                     } else {
                         alert("There was an error.")
+                        clearFields()
                     }
                 })
             }
+
+            function clearFields() {
+                $("#eventName").val("")
+                $('#eventName').addClass('is-info');
+                $("#eventType").val("")
+                $('#eventType').addClass('is-info');
+                $("#eventGroup").val("")
+                $('#eventGroup').addClass('is-info');
+                $("#showCount").val("")
+                $('#showCount').addClass('is-info');
+            }
+
+            function invalidateFields() {
+                $('#eventGroup').removeClass('is-info');
+                $('#eventGroup').addClass('is-danger');
+                $('#eventName').removeClass('is-info');
+                $('#eventName').addClass('is-danger');
+                $('#eventType').removeClass('is-info');
+                $('#eventType').addClass('is-danger');
+                $('#showCount').removeClass('is-info');
+                $('#showCount').addClass('is-danger');
+            }
+
+
+            $(document).ready(function () {
+                clearFields();
+                $("#.modal").addClass("is-active")
+            })
         </script>
-        
+
     </div>
 
     <div class="container">
-        <div class="field">
-            <label class="label">Event Name</label>
-            <div class="control has-icons-left">
-                <input class="input" type="text" placeholder="Event Name" id="eventName">
+        <div class="box">
+            <div class="field">
+                <label class="label">Group Name</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="text" placeholder="Group Name" id="eventGroup">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Event Name</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="text" placeholder="Event Name" id="eventName">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Event Type</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="text" placeholder="Event Type" id="eventType">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Number of Shows</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="text" placeholder="#" id="showCount">
+                </div>
+            </div>
+
+            <p class="help is-danger" id="incorrect_warning"></p>
+            <div class="control">
+                <button class="button is-link" onclick="checkEvent()">Create Event</button>
+            </div>
+
+            <div class="control">
+                <button class="button is-link" onclick="clearFields()">Clear Fields</button>
             </div>
         </div>
 
-        <div class="field">
-            <label class="label">Event Type</label>
-            <div class="control has-icons-left">
-                <input class="input" type="text" placeholder="Event Type" id="eventType">
-            </div>
-        </div>
 
-        <div class="field">
-            <label class="label">Group Name</label>
-            <div class="control has-icons-left">
-                <input class="input" type="text" placeholder="Group Name" id="eventGroup">
+        <div class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-content">
+                <p>hi</p>
             </div>
-        </div>
-        
-        <p class="help is-danger" id="incorrect_warning"></p>
-        <div class="control">
-            <button class="button is-link" onclick="checkEvent()">Create Event</button>
+            <button class="modal-close is-large" aria-label="close"></button>
         </div>
     </div>
+
 </body>
 
 </html>
