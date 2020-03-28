@@ -1,7 +1,7 @@
 // initialization from mongoosejs documentation
 
 var mongoose = require('mongoose')
-mongoose.connect('mongodb://localhost:27017/myDb', { useNewUrlParser: true })
+mongoose.connect('mongodb+srv://UNITIX_GLOBAL:UnitixCis350@cluster0-q0aj1.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true })
 var db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
 db.once('open', function () {
