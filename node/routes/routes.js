@@ -73,5 +73,6 @@ module.exports = {
     create_event: createEvent,
     list_events: listEvents,
     clear_all_events: clearAllEvents,
-    get_home: getHome
+    get_home: getHome,
+    get_login: getLogin
 }

@@ -1,31 +1,32 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <% include head_imports.html %>
 </head>
 
-  <script type="text/javascript" src="/routes/routes.js"></script>
+<script type="text/javascript" src="/routes/routes.js"></script>
+
 <body>
-  <% include header.html %>
-  <div class="pl-3 pt-3">
-  <h4>Enter new username: </h4>
-  <form action="/createaccount" method="post">
-    <input type="text" name="Inputholder">
-  </p>
-   <h4>Enter password: </h4>
-    <input type="password" name="password">
-    </p>
-    <h4>Enter email: </h4>
-    <input type="text" name="email">
-    </p>
+    <% include header.html %>
+    <form action="/createaccount" method="post">
+        <h4>Enter new username: </h4>
+        <input type="text" name="Inputholder">
+        </p>
+        <h4>Enter password: </h4>
+        <input type="password" name="password">
+        </p>
+        <h4>Enter email: </h4>
+        <input type="text" name="email">
+        </p>
         <button type="submit" value="Login" class="btn btn-primary">Submit</button>
+        </p>
+        <a href="/" class="btn btn-primary">
+            <span class="glyphicon glyphicon-home"></span> Go Back
+        </a>
+    </form>
     </p>
-    <a href="/" class="btn btn-primary">
-      <span class="glyphicon glyphicon-home"></span> Go Back
-    </a>
-  </form>
-  </p>
-  </div>
+    </div>
 </body>
 </p>
 
