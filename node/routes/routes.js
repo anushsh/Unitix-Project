@@ -19,9 +19,13 @@ var addEventTag = function (req, res) {
     res.render('create_event.ejs')
 }
 
+var getLogin = (req, res) => {
+    res.render('login.ejs');
+}
 
 module.exports = {
     get_splash: getSplash,
     create_event: createEvent,
-    get_home: getHome
+    get_home: getHome,
+    get_login: getLogin
 }

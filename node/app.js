@@ -19,6 +19,8 @@ app.use(session({
 // route definitions
 app.get('/', routes.get_splash);
 app.get('/home', routes.get_home)
+//auth routes
+app.get('/login', routes.get_login);
 // event creation
 app.get('/create_event', routes.create_event);
 
