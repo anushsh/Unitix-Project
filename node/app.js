@@ -27,6 +27,10 @@ app.post('/create_event', routes.create_event);
 app.get('/clear_all_events', routes.clear_all_events);
 app.get('/list_events', routes.list_events);
 
+//user(customer) management
+app.post('/create_user', routes.create_user);
+app.get('/find_user', routes.find_user);
+
 // run server - we use the http server we made so that express doesn't make a new one and ignore socket.io
 http.listen(port);
 console.log(`Unitix server running on ${port}!`);

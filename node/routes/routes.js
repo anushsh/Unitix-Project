@@ -67,6 +67,49 @@ var getLogin = (req, res) => {
     res.render('login.ejs');
 }
 
+var createUser = function (req, res) {
+    console.log(req.body.email + ", " + req.body.password)
+
+    var newUser = new User({
+        email: req.body.email,
+        password: req.body.password,
+        first_name : req.body.first_name,
+        last_name: req.body.last_name,
+        phone: req.body.phone,
+        following: [],
+        past_tickets: [],
+        curr_tickets: []
+
+    })
+    newUser.save((err) => {
+        if (err) {
+            res.json({ 'status': err })
+        } else {
+            res.json({ 'status': 'success' })
+        }
+    })
+}
+
+
+//find the user and then using json returned check if passwords match
+var findUser = function (req, res) {
+    console.log(req.query.email + ", " + req.query.password)
+    var searchEmail = req.query.email;
+
+    User.findOne({email: searchEmail}, (err, user) => {
+        if (err) {
+            res.json({ 'status': err })
+        } else if (!user) {
+            res.json({ 'status': 'user not found' })
+        } else {
+            res.json({
+                'status': 'user found',
+                'events': user
+            })
+        }
+    })
+}
+
 module.exports = {
     get_splash: getSplash,
     get_create_event: getCreateEvent,
@@ -74,5 +117,7 @@ module.exports = {
     list_events: listEvents,
     clear_all_events: clearAllEvents,
     get_home: getHome,
-    get_login: getLogin
+    get_login: getLogin,
+    create_user: createUser,
+    find_user: findUser
 }
