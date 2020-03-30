@@ -1,6 +1,8 @@
 var Event = require('../models/event.js')
 var Show = require('../models/show.js')
 
+var async = require('async')
+
 var getSplash = function (req, res) {
     res.render('splash.ejs')
 }
@@ -34,18 +36,52 @@ var listEvents = function (req, res) {
 var clearAllEvents = function (req, res) {
     callback = function () { console.log("done") }
     Event.remove({}, callback)
+    Show.remove({}, callback)
     res.json("finished")
 }
 
-// handle post request for event creation
+
+var createShows = function (req, res) {
+    showSchemaIDs = []
+
+    // create and save each show asynchronously. once mongo finishes saving the show, move on to the next one. won't send back id list until all are processed.
+    async.forEach(req.body.shows, function (show, done) {
+        var newShow = new Show({
+            name: show.name,
+            capacity: show.capacity,
+            price: show.price,
+            location: show.location,
+            description: show.description,
+            start_date: show.date,
+            end_date: show.date, // right now i'm assuming only one date, if add end date later we need to reconfigure how we store times (prob just array)
+            start_time: show.start_time,
+            end_time: show.end_time
+        })
+
+        newShow.save((err, showSaved) => {
+            if (err) {
+                res.json({ 'status': err })
+            } else {
+                console.log("show id: " + showSaved._id)
+                showSchemaIDs.push(showSaved._id)
+                done()
+            }
+        })
+    }, function () {
+        // send back list of ids
+        res.send(showSchemaIDs, 200)
+    })
+
+
+}
+
+// handle post request for event creation. not async bc only one thing occurs and we return from its callback.
 var createEvent = function (req, res) {
-    console.log(req.body.name + ", " + req.body.group)
     var newEvent = new Event({
-        event_id: "EVENT_ID_FORMATTING_TO_DO", // TODO: format this for unique id
         name: req.body.name,
         group: req.body.group,
-        shows: [],
-        event_type: req.body.type
+        shows: req.body.shows,
+        tags: req.body.tags
     })
 
     newEvent.save((err) => {
@@ -73,7 +109,7 @@ var createUser = function (req, res) {
     var newUser = new User({
         email: req.body.email,
         password: req.body.password,
-        first_name : req.body.first_name,
+        first_name: req.body.first_name,
         last_name: req.body.last_name,
         phone: req.body.phone,
         following: [],
@@ -96,7 +132,7 @@ var findUser = function (req, res) {
     console.log(req.query.email + ", " + req.query.password)
     var searchEmail = req.query.email;
 
-    User.findOne({email: searchEmail}, (err, user) => {
+    User.findOne({ email: searchEmail }, (err, user) => {
         if (err) {
             res.json({ 'status': err })
         } else if (!user) {
@@ -113,6 +149,7 @@ var findUser = function (req, res) {
 module.exports = {
     get_splash: getSplash,
     get_create_event: getCreateEvent,
+    create_shows: createShows,
     create_event: createEvent,
     list_events: listEvents,
     clear_all_events: clearAllEvents,

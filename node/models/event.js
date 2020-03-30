@@ -16,11 +16,10 @@ db.once('open', function () {
 var Schema = mongoose.Schema
 
 var eventSchema = new Schema({
-  event_id: String,
   name: String,
   group: String,
-  shows: [String], //can't have other MongoDB schemas as fields, so we are going to use the string id
-  event_type: String
+  shows: [String], // these are uuids of Show objs
+  tags: [String]
 })
 
 module.exports = mongoose.model('Event', eventSchema)

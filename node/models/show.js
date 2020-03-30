@@ -11,17 +11,16 @@ db.once('open', function () {
 var Schema = mongoose.Schema
 
 var showSchema = new Schema({
-  show_id: String,
   name: String,
   start_date: Date,
   end_date: Date,
-  start_time: Date,
-  end_time: Date,
+  start_time: String,
+  end_time: String,
   capacity: Number,
   tickets_sold: Number,
   location: String,
   description: String,
-  price: Number
+  price: Schema.Types.Decimal128 // allows for non-integer prices
 })
 
 module.exports = mongoose.model('Show', showSchema)
