@@ -27,6 +27,7 @@ app.post('/create_shows', routes.create_shows)
 app.post('/create_event', routes.create_event)
 app.get('/clear_all_events', routes.clear_all_events)
 app.get('/list_events', routes.list_events)
+app.get('/list_shows', routes.list_shows)
 
 //user(customer) management
 app.post('/create_user', routes.create_user)

@@ -32,6 +32,22 @@ var listEvents = function (req, res) {
     })
 }
 
+// use to test db saving
+var listShows = function (req, res) {
+    Show.find((err, allShows) => {
+        if (err) {
+            res.json({ 'status': err })
+        } else if (allShows.length == 0) {
+            res.json({ 'status': 'no events' })
+        } else {
+            res.json({
+                'status': 'success',
+                'shows': allShows
+            })
+        }
+    })
+}
+
 // route will wipe Event DB
 var clearAllEvents = function (req, res) {
     callback = function () { console.log("done") }
@@ -152,6 +168,7 @@ module.exports = {
     create_shows: createShows,
     create_event: createEvent,
     list_events: listEvents,
+    list_shows: listShows,
     clear_all_events: clearAllEvents,
     get_home: getHome,
     get_login: getLogin,

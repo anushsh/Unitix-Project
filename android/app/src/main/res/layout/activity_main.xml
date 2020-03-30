@@ -60,6 +60,13 @@
             android:onClick="onRegisterButtonClick"
             android:text="register" />
 
+        <Button
+            android:id="@+id/eventslistbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onEventsListButtonClick"
+            android:text="Events List (temporary)" />
+
     </LinearLayout>
 
 
