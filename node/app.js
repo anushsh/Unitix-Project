@@ -29,6 +29,9 @@ app.get('/clear_all_events', routes.clear_all_events)
 app.get('/list_events', routes.list_events)
 app.get('/list_shows', routes.list_shows)
 
+// mobile actions
+app.post('/purchase_ticket', routes.purchase_ticket);
+
 //user(customer) management
 app.post('/create_user', routes.create_user)
 app.get('/find_user', routes.find_user)

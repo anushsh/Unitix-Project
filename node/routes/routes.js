@@ -1,5 +1,6 @@
 var Event = require('../models/event.js')
 var Show = require('../models/show.js')
+var Ticket = require('../models/ticket.js')
 
 var async = require('async')
 
@@ -65,6 +66,7 @@ var createShows = function (req, res) {
         var newShow = new Show({
             name: show.name,
             capacity: show.capacity,
+            tickets_sold: 0, // shows start with zero tickets sold
             price: show.price,
             location: show.location,
             description: show.description,
@@ -142,6 +144,62 @@ var createUser = function (req, res) {
     })
 }
 
+var purchaseTicket = function(req, res) {
+    var showID = req.query.showID;
+    var queryEmail = req.query.email;
+
+    // first get user by given email
+    User.findOne({email: queryEmail}, (err, user) => {
+        if (err) {
+            res.json({"status": err})
+        } else if (!user) {
+            res.json({ 'status': 'user not found' })
+        } else {
+            // if user is found, get the show
+            Show.findById(showID, (err, show) => {
+                if (err || !show) {
+                    res.json({"status": (err ? err : "show not found")});
+                } else {
+                    // if the show is found, make sure there are tickets available
+                    if (!show.tickets_sold) {
+                        var tickets_sold = 0;
+                    }
+                    if (show.tickets_sold < show.capacity) {
+                        // if there are tickets available, create a new ticket
+                        var newTicket = new Ticket({
+                            showID: show.id,
+                            redeemed: false
+                        });
+
+                        newTicket.save((err, ticket) => {
+                            if (err) {
+                                res.json({"status":err});
+                            } else {
+                                // add ticket to user's tickets
+                                var tickets = user.curr_tickets;
+                                tickets.push(ticket.id);
+                                user.update({curr_tickets: tickets}, (err) => {
+                                    if (!err) {
+                                        // update tickets sold for show
+                                        show.update({tickets_sold: tickets_sold + 1}, (err) => {
+                                            res.json({"status":"success"});
+                                        });
+                                    }
+                                })
+                            }
+                        })
+
+                        
+                    } else {
+                        // if no tickets, return sold out
+                        res.json({"status": "sold out"});
+                    }
+                }
+            })
+        }
+    }) 
+}
+
 
 //find the user and then using json returned check if passwords match
 var findUser = function (req, res) {
@@ -173,5 +231,6 @@ module.exports = {
     get_home: getHome,
     get_login: getLogin,
     create_user: createUser,
-    find_user: findUser
+    find_user: findUser,
+    purchase_ticket: purchaseTicket
 }
