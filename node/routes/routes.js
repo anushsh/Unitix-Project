@@ -167,7 +167,7 @@ var purchaseTicket = function(req, res) {
                     if (show.tickets_sold < show.capacity) {
                         // if there are tickets available, create a new ticket
                         var newTicket = new Ticket({
-                            showID: show.id,
+                            showID: show._id,
                             redeemed: false
                         });
 
@@ -177,7 +177,7 @@ var purchaseTicket = function(req, res) {
                             } else {
                                 // add ticket to user's tickets
                                 var tickets = user.curr_tickets;
-                                tickets.push(ticket.id);
+                                tickets.push(ticket._id);
                                 user.update({curr_tickets: tickets}, (err) => {
                                     if (!err) {
                                         // update tickets sold for show
