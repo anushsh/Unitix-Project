@@ -7,18 +7,21 @@
     tools:context=".DashboardActivity">
 
 
+
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
+        android:textSize="36dp"
+        android:textColor="@android:color/holo_purple"
         android:text="Events Feed" />
     <!--        TODO: replace text with @String resource-->
 
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="45dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         tools:layout_editor_absoluteX="36dp">

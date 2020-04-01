@@ -14,9 +14,9 @@ import java.util.List;
 public class Event {
 
     // instance variables TODO: (revise?)
-    String name;
-    List<Show> shows;
-    boolean isValid;
+    public String name;
+    public List<Show> shows;
+    public boolean isValid;
 
 
     public Event(JSONObject jo) {
