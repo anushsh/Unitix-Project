@@ -58,10 +58,10 @@ public class DataSource {
                     new GetAllEventsTask();
             task.execute("http://10.0.2.2:" + port + "/list_events_with_shows");
             events = task.get();
-            Log.e("NOAH","got events with length:" + events.length);
-            Log.e("NOAH","event 1:" + events[0].toString());
+//            Log.e("NOAH","got events with length:" + events.length);
+//            Log.e("NOAH","event 1:" + events[0].toString());
         } catch (Exception e) {
-            Log.e("NOAH","had exception: " + e);
+//            Log.e("NOAH","had exception: " + e);
             // pass
         }
         return events;
@@ -69,7 +69,7 @@ public class DataSource {
 
     private class GetAllEventsTask extends AsyncTask<String, Integer, Event[]> {
         protected Event[] doInBackground(String... urlStrings) {
-            Log.e("NOAH", "in method");
+//            Log.e("NOAH", "in method");
             try {
 //                Log.e("NOAH", "in try");
                 URL url = new URL(urlStrings[0]);

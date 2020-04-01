@@ -26,9 +26,16 @@ public class DashboardActivity extends AppCompatActivity {
     void addEventsToPage(Event[] events) {
         LinearLayout feed = findViewById(R.id.event_feed);
         for (int i = 0; i < events.length; i++) {
-            TextView text = new TextView(getApplicationContext());
-            text.setText(events[i].toString());
-            feed.addView(text);
+            LinearLayout eventView = new LinearLayout(getApplicationContext());
+            TextView eventText = new TextView(getApplicationContext());
+            eventText.setText(events[i].toString());
+            eventView.addView(eventText);
+            for (int j = 0; j < events[i].shows.size(); j++) {
+                TextView showText = new TextView(getApplicationContext());
+                showText.setText(events[i].shows.get(j).toString());
+                eventView.addView(showText);
+            }
+            feed.addView(eventView);
         }
     }
 

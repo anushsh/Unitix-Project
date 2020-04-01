@@ -21,18 +21,10 @@ public class Show {
     String location;
     boolean isValid;
 
-//    public Show(Event event, String name, int capacity, int ticketsSold, String startTime,
-//                String endTime, String description, String location) {
-//        this.event = event;
-//        this.name = name;
-//        this.capacity = capacity;
-//        this.ticketsSold = ticketsSold;
-//        this.startTime = startTime;
-//        this.endTime = endTime;
-//        this.description = description;
-//        this.location = location;
-//        this.price = price;
-//    }
+    public String toString() {
+        return name + " " + startTime + " " + endTime + " ticketsRemaining: " +
+                (capacity - ticketsSold);
+    }
 
     public Show(Event event, JSONObject jo) {
         try {

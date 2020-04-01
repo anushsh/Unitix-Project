@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Event {
 
-    // instance variables (TODO: revise)
+    // instance variables TODO: (revise?)
     String name;
     List<Show> shows;
     boolean isValid;
