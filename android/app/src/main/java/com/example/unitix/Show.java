@@ -1,6 +1,7 @@
 package com.example.unitix;
 
 import android.util.Log;
+import android.widget.Button;
 
 import org.json.JSONObject;
 
@@ -19,12 +20,15 @@ public class Show {
     String endTime;
     String description;
     String location;
+    String id;
     boolean isValid;
 
     public String toString() {
         return name + " " + startTime + " " + endTime + " ticketsRemaining: " +
                 (capacity - ticketsSold);
     }
+
+    // TODO: handle ticket purchasing
 
     public Show(Event event, JSONObject jo) {
         try {
@@ -37,6 +41,7 @@ public class Show {
             this.endTime = (String) jo.get("end_date");
             this.description = (String) jo.get("description");
             this.location = (String) jo.get("location");
+            this.id = jo.getString("_id");
             this.isValid = true;
             // TODO: figure out price
 //            this.price = (Double) jo.get("location");
