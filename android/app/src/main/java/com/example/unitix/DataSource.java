@@ -56,9 +56,12 @@ public class DataSource {
         try {
             AsyncTask<String, Integer, Event[]> task =
                     new GetAllEventsTask();
-            task.execute("http://10.0.2.2:" + port + "/list_shows");
+            task.execute("http://10.0.2.2:" + port + "/list_events_with_shows");
             events = task.get();
+            Log.e("NOAH","got events with length:" + events.length);
+            Log.e("NOAH","event 1:" + events[0].toString());
         } catch (Exception e) {
+            Log.e("NOAH","had exception: " + e);
             // pass
         }
         return events;
@@ -66,7 +69,7 @@ public class DataSource {
 
     private class GetAllEventsTask extends AsyncTask<String, Integer, Event[]> {
         protected Event[] doInBackground(String... urlStrings) {
-//            Log.e("NOAH", "in method");
+            Log.e("NOAH", "in method");
             try {
 //                Log.e("NOAH", "in try");
                 URL url = new URL(urlStrings[0]);
@@ -90,11 +93,18 @@ public class DataSource {
 
                     }
 //                    Log.e("NOAH", "total: " + total);
-                    JSONObject object = (JSONObject) new JSONTokener(total).nextValue();
-                    Log.e("NOAH",object.get("shows").toString());
-
                     conn.disconnect();
                     in.close();
+
+                    JSONObject object = (JSONObject) new JSONTokener(total).nextValue();
+                    if (object.getString("status").equals("success")) {
+                        Log.e("NOAH", object.toString());
+                        return Event.createEventList(object.getJSONArray("events"));
+                    } else {
+                        return new Event[0];
+                    }
+
+
                 }
 
             } catch (Exception e) {
@@ -112,7 +122,7 @@ public class DataSource {
 
 //        protected void onPostExecute(Event[] result) {
 //            // TODO:
-//            Log.e("NOAH","" + result);
+//            Log.e("NOAH","again:?" + result);
 //        }
     }
 

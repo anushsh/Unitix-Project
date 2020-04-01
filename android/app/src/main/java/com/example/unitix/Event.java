@@ -1,8 +1,11 @@
 package com.example.unitix;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Will be used to represent events that can be displayed
@@ -12,28 +15,44 @@ public class Event {
 
     // instance variables (TODO: revise)
     String name;
-    String group;
-    String description;
-    Date date;
-    int ticketsRemaining;
-    Show[] shows;
+    List<Show> shows;
+    boolean isValid;
 
 
     public Event(JSONObject jo) {
-        // TODO:
+        this.shows = new ArrayList<Show>();
+        try {
+            this.name = jo.getString("name");
+            JSONArray shows = jo.getJSONArray("shows");
+            for (int i = 0; i < shows.length(); i++){
+                Show show = new Show(this, shows.getJSONObject(i));
+                if (show.isValid) {
+                    this.shows.add(show);
+                }
+            }
+            isValid = true;
+        } catch (Exception e) {
+            isValid = false;
+        }
     }
 
-    public Event(String name, String group, String description, Date date, int ticketsRemaining) {
-        this.name = name;
-        this.group = group;
-        this.description = description;
-        this.date = date;
-        this.ticketsRemaining = ticketsRemaining;
+    public String toString() {
+        return "name: " + name + " number of shows: " + shows.size();
     }
 
-    public boolean buyTicket() {
-        // TODO: returns true if successfully bought ticket ?
-        // TODO: needs to pass ticket to user...
-        return false;
+    public static Event[] createEventList(JSONArray jsonArray) {
+        List<Event> list = new ArrayList<Event>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                Event e = new Event(jsonArray.getJSONObject(i));
+                if (e.isValid) {
+                    // only add if no errors
+                    list.add(e);
+                }
+            } catch (Exception e) {
+                // pass
+            }
+        }
+        return list.toArray(new Event[0]); // convert list to array
     }
 }

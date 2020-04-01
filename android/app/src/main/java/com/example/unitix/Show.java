@@ -1,5 +1,7 @@
 package com.example.unitix;
 
+import android.util.Log;
+
 import org.json.JSONObject;
 
 /**
@@ -17,6 +19,7 @@ public class Show {
     String endTime;
     String description;
     String location;
+    boolean isValid;
 
 //    public Show(Event event, String name, int capacity, int ticketsSold, String startTime,
 //                String endTime, String description, String location) {
@@ -37,15 +40,18 @@ public class Show {
             this.event = event;
             this.name = (String) jo.get("name");
             this.capacity = (Integer) jo.get("capacity");
-            this.ticketsSold = (Integer) jo.get("ticketsSold");
+            this.ticketsSold = jo.optInt("ticketsSold", 0);
             this.startTime = (String) jo.get("start_date");
             this.endTime = (String) jo.get("end_date");
             this.description = (String) jo.get("description");
             this.location = (String) jo.get("location");
-            this.price = (Double) jo.get("location");
+            this.isValid = true;
+            // TODO: figure out price
+//            this.price = (Double) jo.get("location");
 
         } catch (Exception e) {
-            //
+            Log.e("NOAH","exception in show" + e);
+            this.isValid = false;
         }
     }
 
