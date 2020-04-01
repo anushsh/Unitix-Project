@@ -28,6 +28,8 @@ app.post('/create_event', routes.create_event)
 app.get('/clear_all_events', routes.clear_all_events)
 app.get('/list_events', routes.list_events)
 app.get('/list_shows', routes.list_shows)
+app.get('/list_events_with_shows', routes.list_events_with_shows)
+
 
 // mobile actions
 app.post('/purchase_ticket', routes.purchase_ticket);

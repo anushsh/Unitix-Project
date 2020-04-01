@@ -51,14 +51,20 @@ public class DataSource {
     }
 
     // for testing purposes
-    public void getAllEvents() {
-        new DownloadFilesTask().execute("http://10.0.2.2:" + port + "/list_shows");
-        // TODO: get events from task
-        // TODO: display them
-
+    public Event[] getAllEvents() {
+        Event[] events = new Event[0];
+        try {
+            AsyncTask<String, Integer, Event[]> task =
+                    new GetAllEventsTask();
+            task.execute("http://10.0.2.2:" + port + "/list_shows");
+            events = task.get();
+        } catch (Exception e) {
+            // pass
+        }
+        return events;
     }
 
-    private class DownloadFilesTask extends AsyncTask<String, Integer, Event[]> {
+    private class GetAllEventsTask extends AsyncTask<String, Integer, Event[]> {
         protected Event[] doInBackground(String... urlStrings) {
 //            Log.e("NOAH", "in method");
             try {
@@ -104,10 +110,10 @@ public class DataSource {
 //            setProgressPercent(progress[0]);
 //        }
 
-        protected void onPostExecute(Event[] result) {
-            // TODO:
-            Log.e("NOAH","" + result);
-        }
+//        protected void onPostExecute(Event[] result) {
+//            // TODO:
+//            Log.e("NOAH","" + result);
+//        }
     }
 
 

@@ -21,7 +21,7 @@
         </activity>
 
         <activity android:name="RegisterActivity" />
-        <activity android:name="EventsListActivity" />
+        <activity android:name=".DashboardActivity" />
     </application>
 
 </manifest>

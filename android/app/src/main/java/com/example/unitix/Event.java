@@ -1,5 +1,7 @@
 package com.example.unitix;
 
+import org.json.JSONObject;
+
 import java.util.Date;
 
 /**
@@ -14,6 +16,12 @@ public class Event {
     String description;
     Date date;
     int ticketsRemaining;
+    Show[] shows;
+
+
+    public Event(JSONObject jo) {
+        // TODO:
+    }
 
     public Event(String name, String group, String description, Date date, int ticketsRemaining) {
         this.name = name;
