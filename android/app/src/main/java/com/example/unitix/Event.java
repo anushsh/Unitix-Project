@@ -13,12 +13,19 @@ import java.util.List;
  */
 public class Event {
 
-    // instance variables TODO: (revise?)
+    // instance variables TODO: (change to private?)
     public String name;
     public String id;
     public List<Show> shows;
     public boolean isValid;
 
+
+    public String getDescription() {
+        if (shows.size() > 0) {
+            return shows.get(0).description;
+        }
+        return "";
+    }
 
     public Event(JSONObject jo) {
         this.shows = new ArrayList<Show>();

@@ -7,16 +7,27 @@
     tools:context=".EventActivity">
 
     <LinearLayout
+        android:id="@+id/event_info"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <TextView
             android:id="@+id/event_name"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:textSize="36dp"
-            android:textColor="@android:color/holo_purple"
+            android:textColor="@color/colorAccent"
             android:text="Event View" />
+
+        <TextView
+            android:id="@+id/event_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Description"
+            android:textColor="@color/colorAccent"
+            android:textSize="25dp" />
 
     </LinearLayout>
 

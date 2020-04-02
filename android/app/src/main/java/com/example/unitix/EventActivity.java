@@ -4,9 +4,13 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.w3c.dom.Text;
 
 public class EventActivity extends AppCompatActivity {
 
@@ -34,6 +38,10 @@ public class EventActivity extends AppCompatActivity {
 
 
     void handleValidEvent() {
+        TextView description = findViewById(R.id.event_description);
+        description.setText(event.getDescription() + "\n\nTicket purchasing coming soon \n-Noah");
+        Log.e("NOAH","setting description " + event.getDescription());
+
         // TODO: add description
         // TODO: display each show with purchase link (port code from other page?)
     }

@@ -28,7 +28,7 @@ public class DashboardActivity extends AppCompatActivity {
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 
-        Log.e("NOAH", "here?");
+//        Log.e("NOAH", "here?");
 
     }
 
@@ -37,7 +37,7 @@ public class DashboardActivity extends AppCompatActivity {
             return ds.getAllEvents();
         }
         protected void onPostExecute(Event[] events) {
-            Log.e("NOAH","dashboard received events, got" + events.length);
+//            Log.e("NOAH","dashboard received events, got" + events.length);
             addEventsToPage(events);
         }
 
@@ -49,7 +49,7 @@ public class DashboardActivity extends AppCompatActivity {
         for (int i = 0; i < events.length; i++) {
             Event event = events[i];
 
-            Log.e("NOAH","event " + i + " out of " + events.length);
+//            Log.e("NOAH","event " + i + " out of " + events.length);
             LinearLayout eventView = new LinearLayout(getApplicationContext());
             eventView.setOrientation(LinearLayout.VERTICAL);
 
@@ -62,7 +62,7 @@ public class DashboardActivity extends AppCompatActivity {
             allShowsView.setOrientation(LinearLayout.VERTICAL);
 
             for (int j = 0; j < event.shows.size(); j++) {
-                Log.e("NOAH","show " + j);
+//                Log.e("NOAH","show " + j);
                 Show show = event.shows.get(j);
                 LinearLayout showView = new LinearLayout(getApplicationContext());
                 showView.setOrientation(LinearLayout.VERTICAL);
