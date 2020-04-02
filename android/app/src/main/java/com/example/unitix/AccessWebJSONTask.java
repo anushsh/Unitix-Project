@@ -1,5 +1,6 @@
 package com.example.unitix;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.net.*;
 import java.util.Iterator;
@@ -13,12 +14,6 @@ import org.json.*;
 
 public class AccessWebJSONTask extends AsyncTask<URL, String, JSONObject> {
 
-
-    String type = "GET";
-
-    public void setRequestType(String type) {
-        this.type = type;
-    }
 
     // reads all contents from scanner
     public static String exhaust(Scanner in) {
@@ -36,7 +31,7 @@ public class AccessWebJSONTask extends AsyncTask<URL, String, JSONObject> {
         try {
             URL url = urls[0];
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod(type);
+            conn.setRequestMethod("GET");
             conn.connect();
 
             Scanner in = new Scanner(url.openStream());

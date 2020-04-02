@@ -58,14 +58,14 @@ public class DataSource {
 
 
     // reads all contents from scanner
-    public static String exhaust(Scanner in) {
-        String total = "";
-        while (in.hasNext()) {
-            String line = in.nextLine();
-            total += line;
-        }
-        return total;
-    }
+//    public static String exhaust(Scanner in) {
+//        String total = "";
+//        while (in.hasNext()) {
+//            String line = in.nextLine();
+//            total += line;
+//        }
+//        return total;
+//    }
 
     public Event getEventByID(String eventID) {
         try {
@@ -109,7 +109,6 @@ public class DataSource {
             URL url = new URL(urlString);
             AccessWebJSONTask task =
                     new AccessWebJSONTask();
-            task.setRequestType("POST");
             task.execute(url);
 
             return true;
