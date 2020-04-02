@@ -14,7 +14,7 @@ public class DataSource {
 
     public DataSource() {
         // use Node Express defaults
-        host = "localhost";
+        host = "http://10.0.2.2";
         port = 3000;
     }
 
@@ -22,7 +22,7 @@ public class DataSource {
     public JSONObject getUser(String email) {
         try {
             //need to figure out URL
-            String urlString = "http://10.0.2.2:3000/api?email=" + email;
+            String urlString = host + ":" + port + "/api?email=" + email;
             URL url = new URL(urlString);
             AccessWebTask task = new AccessWebTask();
             task.execute(url);
@@ -54,10 +54,13 @@ public class DataSource {
     public Event[] getAllEvents() {
         Event[] events = new Event[0];
         try {
-            AsyncTask<String, Integer, Event[]> task =
-                    new GetAllEventsTask();
-            task.execute("http://10.0.2.2:" + port + "/list_events_with_shows");
-            events = task.get();
+            URL url = new URL(host + ":" + port + "/list_events_with_shows");
+            AsyncTask<URL, String, JSONObject> task =
+                    new AccessWebJSONTask();
+            task.execute(url);
+            JSONObject jo = task.get();
+
+            events = Event.createEventList(jo.getJSONArray("events"));
         } catch (Exception e) {
             Log.e("NOAH","exception: " + e);
             // pass
@@ -66,54 +69,33 @@ public class DataSource {
         return events;
     }
 
-    private class GetAllEventsTask extends AsyncTask<String, Integer, Event[]> {
-        protected Event[] doInBackground(String... urlStrings) {
-            try {
-                URL url = new URL(urlStrings[0]);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
 
-                conn.connect();
-                int responsecode = conn.getResponseCode();
-                if (responsecode != 200) {
-                    Log.e("NOAH", "unexpected status code:" + responsecode);
-                } else {
-                    Scanner in = new Scanner(url.openStream());
-                    String total = "";
-                    while (in.hasNext()) {
-                        String line = in.nextLine();
-                        total += line;
-                    }
-                    conn.disconnect();
-                    in.close();
-
-                    JSONObject object = (JSONObject) new JSONTokener(total).nextValue();
-                    if (object.getString("status").equals("success")) {
-                        return Event.createEventList(object.getJSONArray("events"));
-                    } else {
-                        return new Event[0];
-                    }
-
-
-                }
-
-            } catch (Exception e) {
-                Log.e("NOAH", "exception: " + e);
-                // TODO: handle differently?
-                return new Event[0];
-
-            }
-            return new Event[0];
+    // reads all contents from scanner
+    public static String exhaust(Scanner in) {
+        String total = "";
+        while (in.hasNext()) {
+            String line = in.nextLine();
+            total += line;
         }
+        return total;
+    }
 
-//        protected void onProgressUpdate(Integer... progress) {
-//            setProgressPercent(progress[0]);
-//        }
+    public Event getEventByID(String eventID) {
+        try {
+            // TODO: make url based on variables !
+            String urlString = host + ":" + port + "/find_event_with_shows?eventID=" + eventID;
 
-//        protected void onPostExecute(Event[] result) {
-//            // TODO:
-//            Log.e("NOAH","again:?" + result);
-//        }
+            URL url = new URL(urlString);
+            AsyncTask<URL, String, JSONObject> task =
+                    new AccessWebJSONTask();
+            task.execute(url);
+            JSONObject jo = task.get();
+            return new Event(jo.getJSONObject("event"));
+
+        } catch (Exception e) {
+            Log.e("NOAH","getEventByID exception " + e);
+            return null;
+        }
     }
 
 
@@ -123,7 +105,7 @@ public class DataSource {
             //haven't changed this - need to for create user
             //need to figure out URL
 
-            String urlString = "http://10.0.2.2:3000/api?email=" + email;
+            String urlString = host + ":" + port + "/api?email=" + email;
             urlString += "&password=" + password;
             urlString += "&first_name=" + firstName;
             urlString += "&last_name=" + lastName;

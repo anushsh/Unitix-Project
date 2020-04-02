@@ -29,6 +29,8 @@ app.get('/clear_all_events', routes.clear_all_events)
 app.get('/list_events', routes.list_events)
 app.get('/list_shows', routes.list_shows)
 app.get('/list_events_with_shows', routes.list_events_with_shows)
+app.get('/find_event_with_shows', routes.find_event_with_shows)
+
 
 
 // mobile actions

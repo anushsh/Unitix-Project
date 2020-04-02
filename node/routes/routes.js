@@ -237,6 +237,31 @@ var purchaseTicket = function(req, res) {
     }) 
 }
 
+var findEventWithShows = function(req, res) {
+    var eventID = req.query.eventID;
+    Event.findById(eventID, (err, event) => {
+        if (err || !event) {
+            res.json({"status":"failure"});
+        }
+        event = event.toJSON();
+        var shows = []; // to fill with actual show objects
+        async.forEach(event.shows, (showID, done) => {
+            Show.findById(showID, (err, show) => {
+                if (!err && show) {
+                    shows.push(show.toJSON());
+                }
+                done();
+            })
+        }, () => {
+            event.shows = shows;
+            res.json({
+                "status":"success",
+                "event":event
+            });
+        });
+    });
+}
+
 
 //find the user and then using json returned check if passwords match
 var findUser = function (req, res) {
@@ -270,5 +295,6 @@ module.exports = {
     get_login: getLogin,
     create_user: createUser,
     find_user: findUser,
-    purchase_ticket: purchaseTicket
+    purchase_ticket: purchaseTicket, 
+    find_event_with_shows: findEventWithShows
 }

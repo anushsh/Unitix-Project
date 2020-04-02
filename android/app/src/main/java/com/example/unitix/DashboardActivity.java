@@ -72,11 +72,8 @@ public class DashboardActivity extends AppCompatActivity {
                 Button purchaseButton = new Button(getApplicationContext());
                 purchaseButton.setText("Purchase ticket");
                 showView.addView(purchaseButton);
-                // add show to button
+                // add show to button so can have it when clicked
                 purchaseButton.setTag(show);
-//                purchaseButton.setTag(0, event.name);
-//                purchaseButton.setTag(1, event.id);
-//                purchaseButton.setTag(2, show.id);
 
                 purchaseButton.setOnClickListener(new View.OnClickListener() {
 
