@@ -110,8 +110,8 @@ var createShows = function (req, res) {
             description: show.description,
             start_date: show.date,
             end_date: show.date, // right now i'm assuming only one date, if add end date later we need to reconfigure how we store times (prob just array)
-            start_time: show.start_time,
-            end_time: show.end_time
+            start_time: show.startTime,
+            end_time: show.endTime
         })
 
         newShow.save((err, showSaved) => {
