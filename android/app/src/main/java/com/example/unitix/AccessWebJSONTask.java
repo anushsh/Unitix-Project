@@ -13,6 +13,13 @@ import org.json.*;
 
 public class AccessWebJSONTask extends AsyncTask<URL, String, JSONObject> {
 
+
+    String type = "GET";
+
+    public void setRequestType(String type) {
+        this.type = type;
+    }
+
     // reads all contents from scanner
     public static String exhaust(Scanner in) {
         String total = "";
@@ -29,7 +36,7 @@ public class AccessWebJSONTask extends AsyncTask<URL, String, JSONObject> {
         try {
             URL url = urls[0];
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod(type);
             conn.connect();
 
             Scanner in = new Scanner(url.openStream());

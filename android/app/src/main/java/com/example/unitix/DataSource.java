@@ -107,8 +107,9 @@ public class DataSource {
             }
 
             URL url = new URL(urlString);
-            AsyncTask<URL, String, JSONObject> task =
+            AccessWebJSONTask task =
                     new AccessWebJSONTask();
+            task.setRequestType("POST");
             task.execute(url);
 
             return true;
