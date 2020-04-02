@@ -39,8 +39,15 @@ public class EventActivity extends AppCompatActivity {
 
     void handleValidEvent() {
         TextView description = findViewById(R.id.event_description);
-        description.setText(event.getDescription() + "\n\nTicket purchasing coming soon \n-Noah");
-        Log.e("NOAH","setting description " + event.getDescription());
+        String descriptionText = event.getDescription() + "\n\n";
+        for (int i = 0; i < event.shows.size(); i++) {
+            Show show = event.shows.get(i);
+            descriptionText += "Show " + (i+1) + ": " + show.getPrettyStartDate() + "\n" +
+                    show.getPrettyTimeRange() + "\n";
+        }
+
+        description.setText(descriptionText);
+        Log.e("NOAH","start time " + event.shows.get(0).startTime);
 
         // TODO: add description
         // TODO: display each show with purchase link (port code from other page?)
