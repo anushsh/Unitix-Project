@@ -37,17 +37,17 @@ public class RegisterActivity extends AppCompatActivity {
         String lastNameText = last_name.getText().toString();
         String phoneText = phone.getText().toString();
 
-        JSONObject jo = ds.getUser(emailText);
+        User u = ds.getUser(emailText);
 
-        if (jo != null) {
+        if (u != null) {
             //account exists - please login
             finish();
         }
 
-        if (emailText.length() != 0 && passwordText.length() != 0) {
+        if (emailText.length() > 0 && passwordText.length() > 0) {
             ds.createUser(emailText, passwordText, firstNameText, lastNameText, phoneText);
         }
 
-        //else stay on the page and send an error message
+        //else toast to enter the details and stay on the page and send an error message
     }
 }

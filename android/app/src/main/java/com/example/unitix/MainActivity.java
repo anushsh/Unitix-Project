@@ -32,14 +32,18 @@ public class MainActivity extends AppCompatActivity {
         String emailText = email.getText().toString();
         String passwordText = password.getText().toString();
 
-        String currPassword = ds.getUserPassword(emailText);
+        if (emailText.length() > 0 && passwordText.length() > 0) {
+            User u = ds.getUser(emailText);
+            String currPassword = u.password;
 
-        if (currPassword.equals(passwordText) && currPassword.length() != 0) {
-            //login
+            if (currPassword.equals(passwordText)) {
+                Intent i = new Intent(this, DashboardActivity.class);
+                startActivityForResult(i, 1);
+            }
         }
-        //find user in mongodb
-        //if not found || password does not match, empty fields
-        //else start/launch new activity - show dashboard with user logged in
+
+        //show toast that info is incorrect is user exists
+        //if user doesn't exist, ask them to register
 
     }
 
@@ -47,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         Intent i = new Intent(this, RegisterActivity.class);
 
-        i.putExtra("message", "hi");
+        //i.putExtra("message", "hi");
 
         startActivityForResult(i, 1);
     }

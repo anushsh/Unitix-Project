@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import org.json.*;
 import android.util.Log;
 
+
 public class DataSource {
 
     private String host;
@@ -19,34 +20,20 @@ public class DataSource {
     }
 
 
-    public JSONObject getUser(String email) {
+    public User getUser(String email) {
+
         try {
-            //need to figure out URL
-            String urlString = host + ":" + port + "/api?email=" + email;
+            String urlString = host + ":" + port + "/find_user?email=" + email;
             URL url = new URL(urlString);
-            AccessWebTask task = new AccessWebTask();
+            AsyncTask<URL, String, JSONObject> task =
+                    new AccessWebJSONTask();
             task.execute(url);
-            String msg = task.get();
-            JSONObject jo = new JSONObject(msg);
-            return jo;
+            JSONObject jo = task.get();
+            return new User(jo.getJSONObject("user"));
 
         } catch (Exception e) {
+            Log.e("Yash","getUser exception " + e);
             return null;
-        }
-    }
-
-
-    public String getUserPassword(String email) {
-        JSONObject jo = getUser(email);
-
-        if (jo == null) {
-            return "";
-        }
-        try {
-            String passwordUser = jo.getString("password");
-            return passwordUser;
-        } catch (Exception e) {
-            return "";
         }
     }
 
@@ -105,18 +92,25 @@ public class DataSource {
             //haven't changed this - need to for create user
             //need to figure out URL
 
-            String urlString = host + ":" + port + "/api?email=" + email;
+            String urlString = host + ":" + port + "/create_user?email=" + email;
             urlString += "&password=" + password;
-            urlString += "&first_name=" + firstName;
-            urlString += "&last_name=" + lastName;
-            urlString += "&phone=" + phone;
+
+            if (firstName != null && firstName.length() > 0) {
+                urlString += "&first_name=" + firstName;
+            }
+            if (lastName != null && lastName.length() > 0) {
+                urlString += "&last_name=" + lastName;
+            }
+
+            if (phone != null && phone.length() > 0) {
+                urlString += "&phone=" + phone;
+            }
 
             URL url = new URL(urlString);
-            AccessWebTask task = new AccessWebTask();
-
+            AsyncTask<URL, String, JSONObject> task =
+                    new AccessWebJSONTask();
             task.execute(url);
-            String msg = task.get();
-            JSONObject jo = new JSONObject(msg);
+
             return true;
 
         } catch (Exception e) {

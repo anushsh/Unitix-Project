@@ -1,6 +1,7 @@
 var Event = require('../models/event.js')
 var Show = require('../models/show.js')
 var Ticket = require('../models/ticket.js')
+var User = require('../models/user.js')
 
 var async = require('async')
 
@@ -158,28 +159,6 @@ var getLogin = (req, res) => {
     res.render('login.ejs');
 }
 
-var createUser = function (req, res) {
-    console.log(req.body.email + ", " + req.body.password)
-
-    var newUser = new User({
-        email: req.body.email,
-        password: req.body.password,
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        phone: req.body.phone,
-        following: [],
-        past_tickets: [],
-        curr_tickets: []
-
-    })
-    newUser.save((err) => {
-        if (err) {
-            res.json({ 'status': err })
-        } else {
-            res.json({ 'status': 'success' })
-        }
-    })
-}
 
 var purchaseTicket = function(req, res) {
     var showID = req.query.showID;
@@ -262,7 +241,28 @@ var findEventWithShows = function(req, res) {
     });
 }
 
+var createUser = function (req, res) {
+    console.log(req.body.email + ", " + req.body.password)
 
+    var newUser = new User({
+        email: req.body.email,
+        password: req.body.password,
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        phone: req.body.phone,
+        following: [],
+        past_tickets: [],
+        curr_tickets: []
+
+    })
+    newUser.save((err) => {
+        if (err) {
+            res.json({ 'status': err })
+        } else {
+            res.json({ 'status': 'success' })
+        }
+    })
+}
 //find the user and then using json returned check if passwords match
 var findUser = function (req, res) {
     console.log(req.query.email + ", " + req.query.password)
@@ -276,7 +276,7 @@ var findUser = function (req, res) {
         } else {
             res.json({
                 'status': 'user found',
-                'events': user
+                'user': user
             })
         }
     })
