@@ -15,6 +15,7 @@ public class Event {
 
     // instance variables TODO: (revise?)
     public String name;
+    public String id;
     public List<Show> shows;
     public boolean isValid;
 
@@ -23,6 +24,7 @@ public class Event {
         this.shows = new ArrayList<Show>();
         try {
             this.name = jo.getString("name");
+            this.id = jo.getString("_id");
             JSONArray shows = jo.getJSONArray("shows");
             for (int i = 0; i < shows.length(); i++){
                 Show show = new Show(this, shows.getJSONObject(i));

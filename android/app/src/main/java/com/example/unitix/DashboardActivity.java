@@ -1,5 +1,6 @@
 package com.example.unitix;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -71,11 +72,27 @@ public class DashboardActivity extends AppCompatActivity {
                 Button purchaseButton = new Button(getApplicationContext());
                 purchaseButton.setText("Purchase ticket");
                 showView.addView(purchaseButton);
+                // add show to button
+                purchaseButton.setTag(show);
+//                purchaseButton.setTag(0, event.name);
+//                purchaseButton.setTag(1, event.id);
+//                purchaseButton.setTag(2, show.id);
+
                 purchaseButton.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
                         // TODO: handle ticket purchasing!
+                        Show show = (Show) v.getTag();
+                        String eventName = show.event.name;
+                        String eventID = show.event.id;
+                        String showID = show.id;
+                        Intent i = new Intent(DashboardActivity.this, EventActivity.class);
+                        i.putExtra("eventName", eventName);
+                        i.putExtra("showID", showID);
+                        i.putExtra("eventID", eventID);
+                        startActivityForResult(i, 1);
+
                     }
                 });
                 allShowsView.addView(showView);
