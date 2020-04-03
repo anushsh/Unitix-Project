@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,12 +44,13 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (u != null) {
             //account exists - please login
+            Log.d("Yash","User exits ");
             finish();
-        }
-
-        if (emailText.length() > 0 && passwordText.length() > 0) {
+        } else if (emailText.length() > 0 && passwordText.length() > 0) {
             ds.createUser(emailText, passwordText, firstNameText, lastNameText, phoneText);
         }
+
+        //else rewrite password
 
         //else toast to enter the details and stay on the page and send an error message
     }

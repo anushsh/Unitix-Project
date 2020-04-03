@@ -9,7 +9,8 @@ import java.util.Scanner;
 import org.json.*;
 
 
-public class AccessWebJSONTask extends AsyncTask<URL, String, JSONObject> {
+public class
+AccessWebJSONTask extends AsyncTask<URL, String, JSONObject> {
 
 
     // reads all contents from scanner
