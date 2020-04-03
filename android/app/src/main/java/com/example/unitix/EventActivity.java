@@ -16,6 +16,7 @@ public class EventActivity extends AppCompatActivity {
 
     DataSource ds;
     Event event;
+    User user = User.getNoah(); // TODO: change to actually receive session user
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +26,8 @@ public class EventActivity extends AppCompatActivity {
         String name = intent.getStringExtra("eventName");
         String eventID = intent.getStringExtra("eventID");
         String showID = intent.getStringExtra("showID");
+        // TODO: get session user
+
         TextView eventName = (TextView) findViewById(R.id.event_name);
         eventName.setText(name);
 
@@ -40,10 +43,22 @@ public class EventActivity extends AppCompatActivity {
     void handleValidEvent() {
         TextView description = findViewById(R.id.event_description);
         String descriptionText = event.getDescription() + "\n\n";
+        LinearLayout showList = findViewById(R.id.show_list);
         for (int i = 0; i < event.shows.size(); i++) {
-            Show show = event.shows.get(i);
-            descriptionText += "Show " + (i+1) + ": " + show.getPrettyStartDate() + "\n" +
-                    show.getPrettyTimeRange() + "\n";
+            final Show show = event.shows.get(i);
+            TextView showView = new TextView(getApplicationContext());
+            showView.setText("Show " + (i+1) + ": " + show.getPrettyStartDate() + "\n" +
+                    show.getPrettyTimeRange() + "\n" +
+                    "Click here to purchase tickets");
+            showView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String showID = show.id;
+                    String email = user.email;
+                    ds.purchaseTicket(email, showID);
+                }
+            });
+            showList.addView(showView);
         }
 
         description.setText(descriptionText);

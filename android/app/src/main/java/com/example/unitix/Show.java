@@ -97,5 +97,11 @@ public class Show {
         }
     }
 
+    public boolean isSoldOut() {
+        return ticketsSold < capacity;
+    }
+
+
+
 
 }

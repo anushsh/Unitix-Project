@@ -38,12 +38,12 @@ public class DashboardActivity extends AppCompatActivity {
         }
         protected void onPostExecute(Event[] events) {
 //            Log.e("NOAH","dashboard received events, got" + events.length);
-//            addEventsToPage(events);
+            addEventsToPage(events);
         }
 
     }
 
-    void addEvent3sToPage(Event[] events) {
+    void addEventsToPage(Event[] events) {
         LinearLayout feed = findViewById(R.id.event_feed);
 
         for (int i = 0; i < events.length; i++) {

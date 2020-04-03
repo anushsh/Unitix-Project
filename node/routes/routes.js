@@ -161,8 +161,8 @@ var getLogin = (req, res) => {
 
 
 var purchaseTicket = function(req, res) {
-    var showID = req.query.showID;
-    var queryEmail = req.query.email;
+    var showID = req.body.showID;
+    var queryEmail = req.body.email;
 
     // first get user by given email
     User.findOne({email: queryEmail}, (err, user) => {
@@ -183,7 +183,7 @@ var purchaseTicket = function(req, res) {
                     if (show.tickets_sold < show.capacity) {
                         // if there are tickets available, create a new ticket
                         var newTicket = new Ticket({
-                            showID: show._id,
+                            show: show._id,
                             redeemed: false
                         });
 

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginLeft="20dp"
     tools:context=".EventActivity">
 
     <LinearLayout
@@ -17,7 +18,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:textSize="36dp"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorPrimary"
             android:text="Event View" />
 
         <TextView
@@ -26,8 +27,15 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Description"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorPrimary"
             android:textSize="25dp" />
+
+        <LinearLayout
+            android:id="@+id/show_list"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </LinearLayout>
 
     </LinearLayout>
 

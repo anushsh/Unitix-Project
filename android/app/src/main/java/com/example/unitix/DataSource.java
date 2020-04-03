@@ -86,6 +86,23 @@ public class DataSource {
     }
 
 
+    public boolean purchaseTicket(String email, String showID) {
+        try {
+            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
+            JSONObject jo = new JSONObject();
+            jo.put("email", email);
+            jo.put("showID", showID);
+            String url = host + ":" + port + "/purchase_ticket";
+            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(url, jo);
+            task.execute(req);
+            JSONObject res = task.get();
+            Log.e("NOAH","res is " + res);
+        } catch (Exception e) {
+            Log.e("NOAH","failed to purchase");
+        }
+        return false;
+    }
+
 
     public boolean createUser(String email, String password, String firstName, String lastName, String phone) {
         try {
