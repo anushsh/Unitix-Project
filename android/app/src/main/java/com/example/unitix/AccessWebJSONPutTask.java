@@ -13,9 +13,10 @@ import java.util.Scanner;
 import org.json.*;
 
 
-public class AccessWebJSONPutTask extends AsyncTask<AccessWebJSONPutTask.Req, String, String> {
+public class AccessWebJSONPutTask extends AsyncTask<AccessWebJSONPutTask.Req, String, JSONObject> {
 
 
+    // we can move this to a separate class if this is too annoying
     // stores info (url and json) for request
     public static class Req {
         String urlString;
@@ -26,7 +27,7 @@ public class AccessWebJSONPutTask extends AsyncTask<AccessWebJSONPutTask.Req, St
         }
     }
 
-    protected String doInBackground(Req[] reqs) {
+    protected JSONObject doInBackground(Req[] reqs) {
 
         try {
 
@@ -59,9 +60,12 @@ public class AccessWebJSONPutTask extends AsyncTask<AccessWebJSONPutTask.Req, St
                     response.append(responseLine.trim());
                 }
 
-            return "response.toString()";
+                // return response as JSONObject for ease of access
+            JSONObject out = new JSONObject(response.toString());
+            return out;
+
         } catch (Exception e) {
-            return "false";
+            return null;
         }
     }
 

@@ -113,12 +113,7 @@ public class DataSource {
             jsonParam.put("last_name", lastName);
             jsonParam.put("phone", phone);
             String urlString = "http://10.0.2.2:3000/create_user";
-//            String[] userInfo = new String[5];
-//            userInfo[0] = email;
-//            userInfo[1] = password;
-//            userInfo[2] = firstName;
-//            userInfo[3] = lastName;
-//            userInfo[4] = phone;
+
             AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(urlString, jsonParam);
 
             AccessWebJSONPutTask task = new AccessWebJSONPutTask();
