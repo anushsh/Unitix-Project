@@ -92,28 +92,34 @@ public class DataSource {
             //haven't changed this - need to for create user
             //need to figure out URL
 
-            String urlString = host + ":" + port + "/create_user?email=" + email;
-            urlString += "&password=" + password;
+//            String urlString = host + ":" + port + "/create_user?email=" + email;
+//            urlString += "&password=" + password;
+//
+//            if (firstName != null && firstName.length() > 0) {
+//                urlString += "&first_name=" + firstName;
+//            }
+//            if (lastName != null && lastName.length() > 0) {
+//                urlString += "&last_name=" + lastName;
+//            }
+//
+//            if (phone != null && phone.length() > 0) {
+//                urlString += "&phone=" + phone;
+//            }
 
-            if (firstName != null && firstName.length() > 0) {
-                urlString += "&first_name=" + firstName;
-            }
-            if (lastName != null && lastName.length() > 0) {
-                urlString += "&last_name=" + lastName;
-            }
+            String[] userInfo = new String[5];
+            userInfo[0] = email;
+            userInfo[1] = password;
+            userInfo[2] = firstName;
+            userInfo[3] = lastName;
+            userInfo[4] = phone;
 
-            if (phone != null && phone.length() > 0) {
-                urlString += "&phone=" + phone;
-            }
-
-            URL url = new URL(urlString);
-            AccessWebJSONTask task =
-                    new AccessWebJSONTask();
-            task.execute(url);
+            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
+            task.execute(userInfo);
 
             return true;
 
         } catch (Exception e) {
+            Log.e("Yash","createUser exception " + e);
             return false;
         }
     }

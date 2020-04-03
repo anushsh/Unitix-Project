@@ -8,9 +8,6 @@ import java.util.Scanner;
 
 import org.json.*;
 
-//import org.json.simple.JSONArray;
-//import org.json.simple.JSONObject;
-//import org.json.simple.parser.JSONParser;
 
 public class AccessWebJSONTask extends AsyncTask<URL, String, JSONObject> {
 

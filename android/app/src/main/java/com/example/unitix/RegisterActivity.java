@@ -2,6 +2,7 @@ package com.example.unitix;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -27,6 +28,7 @@ public class RegisterActivity extends AppCompatActivity {
         phone = (EditText) findViewById(R.id.phone);
         create_account = (Button) findViewById(R.id.create_account_btn);
         ds = new DataSource();
+
     }
 
     public void onCreateAccountButtonClick(View v) {
@@ -50,4 +52,13 @@ public class RegisterActivity extends AppCompatActivity {
 
         //else toast to enter the details and stay on the page and send an error message
     }
+
+//    private class createUserTask extends AsyncTask<String, String, boolean> {
+//        protected boolean doInBackground(String... message) {
+//            return true;
+//        }
+//
+//        }
+//
+//    }
 }
