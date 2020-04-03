@@ -13,38 +13,32 @@ import java.util.Scanner;
 import org.json.*;
 
 
-public class AccessWebJSONPutTask extends AsyncTask<String, String, String> {
+public class AccessWebJSONPutTask extends AsyncTask<AccessWebJSONPutTask.Req, String, String> {
 
 
-    // reads all contents from scanner
-    public static String exhaust(Scanner in) {
-        String total = "";
-        while (in.hasNext()) {
-            String line = in.nextLine();
-            total += line;
+    // stores info (url and json) for request
+    public static class Req {
+        String urlString;
+        JSONObject parameters;
+        public Req(String urlString, JSONObject parameters) {
+            this.urlString = urlString;
+            this.parameters = parameters;
         }
-        return total;
     }
 
-
-    protected String doInBackground(String[] message) {
+    protected String doInBackground(Req[] reqs) {
 
         try {
 
-            URL url = new URL("http://10.0.2.2:3000/create_user");
+            Req req = reqs[0];
+            URL url = new URL(req.urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
             conn.setRequestProperty("Accept", "application/json");
             conn.setDoOutput(true);
 
-            JSONObject jsonParam = new JSONObject();
-            jsonParam.put("email", message[0]);
-            jsonParam.put("password", message[1]);
-            jsonParam.put("first_name", message[2]);
-            jsonParam.put("last_name", message[3]);
-            jsonParam.put("phone", message[4]);
-
+            JSONObject jsonParam = req.parameters;
 
             String jsonInputString = jsonParam.toString();
 
@@ -54,7 +48,7 @@ public class AccessWebJSONPutTask extends AsyncTask<String, String, String> {
                 os.write(input, 0, input.length);
             }
 
-            
+
             int code = conn.getResponseCode();
             System.out.println(code);
 
