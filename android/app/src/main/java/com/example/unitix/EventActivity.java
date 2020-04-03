@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -55,7 +56,11 @@ public class EventActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     String showID = show.id;
                     String email = user.email;
-                    ds.purchaseTicket(email, showID);
+                    if (ds.purchaseTicket(email, showID)) {
+                        showPurchaseSuccessToast();
+                    } else {
+                        showPurchaseFailureToast();
+                    }
                 }
             });
             showList.addView(showView);
@@ -66,6 +71,14 @@ public class EventActivity extends AppCompatActivity {
 
         // TODO: add description
         // TODO: display each show with purchase link (port code from other page?)
+    }
+
+    void showPurchaseSuccessToast() {
+        Toast.makeText(getApplicationContext(), "ticket purchased!",Toast.LENGTH_LONG).show();
+    }
+
+    void showPurchaseFailureToast() {
+        Toast.makeText(getApplicationContext(), "an error has occured...",Toast.LENGTH_LONG).show();
     }
 
     void handleNullEvent() {

@@ -85,7 +85,6 @@ public class DataSource {
         }
     }
 
-
     public boolean purchaseTicket(String email, String showID) {
         try {
             AccessWebJSONPutTask task = new AccessWebJSONPutTask();
@@ -97,6 +96,9 @@ public class DataSource {
             task.execute(req);
             JSONObject res = task.get();
             Log.e("NOAH","res is " + res);
+            if (res.getString("status").equals("success")) {
+                return true;
+            }
         } catch (Exception e) {
             Log.e("NOAH","failed to purchase");
         }

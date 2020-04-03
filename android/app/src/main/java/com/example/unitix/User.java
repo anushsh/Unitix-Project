@@ -50,7 +50,7 @@ public class User {
     }
 
     // this is for testing...
-    public static User getNoah() {
+    public static User getNoahEmpty() {
         try {
             JSONObject jo = new JSONObject();
             jo.put("email", "noahsylv@gmail.com");
@@ -64,5 +64,10 @@ public class User {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    // used for testing
+    public static User getNoah() {
+        return new DataSource().getUser("noahsylv@gmail.com");
     }
 }
