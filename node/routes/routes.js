@@ -242,7 +242,7 @@ var findEventWithShows = function(req, res) {
 }
 
 var createUser = function (req, res) {
-    console.log(req.body.email + ", " + req.body.password)
+    console.log("creating user "  + req.body.email);
 
     var newUser = new User({
         email: req.body.email,

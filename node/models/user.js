@@ -17,9 +17,9 @@ var userSchema = new Schema({
     first_name : String,
     last_name: String,
     phone: String,
-    // following: [String],
-    // past_tickets: [Event],
-    // curr_tickets: [Event]
+    following: [String],
+    past_tickets: [String], // string of ids
+    curr_tickets: [String]  // string of ids
 });
 
 module.exports = mongoose.model('User', userSchema);

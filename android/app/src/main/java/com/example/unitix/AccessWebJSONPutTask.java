@@ -31,14 +31,12 @@ public class AccessWebJSONPutTask extends AsyncTask<String, String, String> {
 
         try {
 
-
             URL url = new URL("http://10.0.2.2:3000/create_user");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json; utf-8");
+            conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
             conn.setRequestProperty("Accept", "application/json");
             conn.setDoOutput(true);
-            conn.connect();
 
             JSONObject jsonParam = new JSONObject();
             jsonParam.put("email", message[0]);
@@ -48,23 +46,15 @@ public class AccessWebJSONPutTask extends AsyncTask<String, String, String> {
             jsonParam.put("phone", message[4]);
 
 
-//            DataOutputStream os = new DataOutputStream(conn.getOutputStream());
-//            os.writeBytes(URLEncoder.encode(jsonParam.toString(), "UTF-8"));
-//
-//            os.flush();
-//            os.close();
-//
-//
-//            Log.i("STATUS", String.valueOf(conn.getResponseCode()));
-//            Log.i("MSG" , conn.getResponseMessage());
-//
             String jsonInputString = jsonParam.toString();
-            OutputStream os = conn.getOutputStream();
+
+            // use try-with to ensure os is closed
+            try (OutputStream os = conn.getOutputStream()) {
                 byte[] input = jsonInputString.getBytes("utf-8");
                 os.write(input, 0, input.length);
+            }
 
-
-
+            
             int code = conn.getResponseCode();
             System.out.println(code);
 
