@@ -26,8 +26,14 @@ public class Show {
     boolean isValid;
 
     public String toString() {
-        return name + " " + getPrettyStartTime() + " " + getPrettyEndTime() + " ticketsRemaining: " +
-                (capacity - ticketsSold);
+        return new StringBuilder()
+                .append(name)
+                .append(" ")
+                .append(getPrettyStartTime())
+                .append(getPrettyEndTime())
+                .append(" ticketsRemaining: ")
+                .append(capacity - ticketsSold)
+                .toString();
     }
 
     public String getPrettyStartDate() {
@@ -98,7 +104,7 @@ public class Show {
     }
 
     public boolean isSoldOut() {
-        return ticketsSold < capacity;
+        return ticketsSold >= capacity;
     }
 
 
