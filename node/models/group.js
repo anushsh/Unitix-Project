@@ -6,16 +6,19 @@ db.once('open', function () {
   // we're connected!
 });
 
+
 var Group = require('./group.js');
 
 var Schema = mongoose.Schema
+
+const { ObjectId } = Schema.Types;
 
 var groupSchema = new Schema ({
     email: String,
     password: String,
     displayName: String,
-    currentEvents: [String], //String for now, change to Ticket model once that's created
-    pastEvents: [String], // Same deal here 
+    currentEvents: [ObjectId], //Event model ID
+    pastEvents: [ObjectId], // Event ID
     groupType: String,
     bio: String,
     followers: Number

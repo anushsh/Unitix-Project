@@ -16,7 +16,12 @@ var getHome = function (req, res) {
 }
 
 var getProfile = (req, res) => {
-    res.render('profile.ejs')
+    console.log("SESSION");
+    console.log(req.session);
+    if (req.session.user) {
+        res.render('profile.ejs')
+    }
+    res.redirect('/');
 }
 
 var getCreateEvent = function (req, res) {
@@ -164,6 +169,9 @@ var addEventTag = function (req, res) {
 //Login functions
 
 var getLogin = (req, res) => {
+    if (req.session.user) {
+        res.redirect("/");
+    }
     res.render('login.ejs', {message: ""});
 }
 
@@ -194,13 +202,13 @@ var createGroup = (req, res) => {
     console.log(req.body);
     const { body } = req.body;
     var newUser = new Group({
-        displayName: req.body.firstName,
+        displayName: req.body.groupName,
         email: req.body.email,
         password: req.body.password,
         currentEvents: [],
         pastEvents: [],
-        groupType: "",
-        bio: "",
+        groupType: req.body.groupType,
+        bio: req.body.groupBio,
         followers: 0
     })
     Group.findOne({email: req.body.email}, (err, user) => {
@@ -226,8 +234,23 @@ var createGroup = (req, res) => {
 
 }
 
+var updateGroup = (req, res) => {
+    console.log("REQ");
+    console.log(req.body);
+    console.log(req.session.user);
+    Group.findOneAndUpdate({email: req.session.user}, (err, user) => {
+        if (err) {
+            res.json({'status': err})
+        } else {
+            res.json(user);
+        }
+    })
+}
+
 var getLogout = function(req, res) {
-    req.session.destroy();
+    if (req.session.user){
+        req.session.destroy();
+    }
     res.redirect('/');
 };
 
@@ -406,5 +429,6 @@ module.exports = {
     create_user: createUser,
     find_user: findUser,
     purchase_ticket: purchaseTicket,
-    find_event_with_shows: findEventWithShows
+    find_event_with_shows: findEventWithShows,
+    update_group: updateGroup
 }

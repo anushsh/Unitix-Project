@@ -26,6 +26,7 @@ app.get('/register', routes.get_register);
 app.post('/creategroup', routes.create_group);
 app.post('/checkLogin', routes.check_login);
 app.get('/logout', routes.get_logout);
+app.post('/updategroup', routes.update_group);
 // event creation
 app.get('/create_event', routes.get_create_event)
 app.post('/create_shows', routes.create_shows)
