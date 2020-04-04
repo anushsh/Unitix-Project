@@ -3,48 +3,115 @@
 
 <head>
     <% include head_imports.html %>
-    <link href="//node_modules/bulma-calendar/dist/css/bulma-calendar.min.css" rel="stylesheet">
-    <script src="//node_modules/bulma-calendar/dist/js/bulma-calendar.min.js"></script>
 
     <script type="text/javascript">
+        var shows = []
+        var currShowNum = 1
+
         function checkEvent() {
 
             // check for empty fields
             var name = $("#eventName").val()
-            var type = $("#eventType").val()
+            var tags = $("#eventTags").val()
             var group = $("#eventGroup").val()
             var showCount = $("#showCount").val()
-            var shows = []
 
-            if (validInput(name, type, group, showCount)) {
-                listenForShows()
+            var nameValid = validateAndSetReactionaryColors("eventName", name != "")
+            var tagsValid = validateAndSetReactionaryColors("eventTags", tags != "")
+            var groupValid = validateAndSetReactionaryColors("eventGroup", group != "")
+            var showCountValid = validateAndSetReactionaryColors("showCount", showCount != "" && showCount > 0)
+
+            if (nameValid && tagsValid && groupValid && showCountValid) {
+                addShowHTML()
+            }
+        }
+
+        function validateAndSetReactionaryColors(id, valid) {
+            if (!valid) {
+                // make red outline
+                $('#' + id).removeClass('is-success');
+                $('#' + id).addClass('is-danger');
+
+                // error message becomes visible
+                $('#' + id + "Invalid").removeClass('is-hidden')
+                $('#' + id + "Invalid").addClass('is-active')
             } else {
-                clearFields()
-                invalidateFields()
-                alert("Please fill all fields with legal values")
+                // make green outline
+                $('#' + id).removeClass('is-danger');
+                $('#' + id).addClass('is-success');
+
+                // error message goes away
+                $('#' + id + "Invalid").addClass('is-hidden')
+                $('#' + id + "Invalid").removeClass('is-active')
+            }
+            return valid;
+        }
+
+        function addShowHTML() {
+            if (currShowNum == 1) {
+                $("#singleShowDetails").removeClass("is-hidden")
+                $("#singleShowDetails").addClass("is-active")
+                $("#nextShowButton").removeClass("is-hidden")
+                $("#nextShowButton").addClass("is-active")
+
+                $("#showName").val($("#eventName").val())
+            }
+            if (currShowNum == $("#showCount").val()) {
+                $("#createEventButton").removeClass("is-hidden")
+                $("#createEventButton").addClass("is-active")
+
+                $("#nextShowButton").removeClass("is-active")
+                $("#nextShowButton").addClass("is-hidden")
             }
 
+            $("#startDate").val('')
+            $("#startTime").val('')
+            $("#endTime").val('')
+
+            $("#showHeaderInfo").html("Details for show " + currShowNum++)
         }
 
-        function validInput(name, type, group, showCount) {
-            return name != "" && type != "" && group != "" && showCount != "" && showCount > 0
+        // currently doesn't check for non-empty values.
+        function storeShowInfo() {
+            shows.push({
+                name: $("#showName").val(),
+                capacity: $("#showCapacity").val(),
+                price: $("#ticketPrice").val(),
+                location: $("#showLocation").val(),
+                description: $("#description").val(),
+                date: $("#startDate").val(),
+                startTime: $("#startTime").val(),
+                endTime: $("#endTime").val()
+            })
+            console.log(shows)
+            addShowHTML()
         }
 
-        function listenForShows() {
-            // add the html for the shows first
-            $("#showBox").removeClass("is-hidden")
-            $("#showBox").addClass("is-active")
+        function checkShows() {
+            // first, add last show info
+            storeShowInfo()
+
+            // next, make show objects and give to event creation
+            $.post("/create_shows", {
+                shows: shows
+            }, function (showIDs, status) {
+                if (status == "success") {
+                    postEvent($("#eventName").val(), $("#eventTags").val().split(","), $("#groupName").val(), showIDs)
+                }
+                else alert("Internal server error." + status)
+            })
         }
 
-        function postEvent(name, type, group, shows) {
+        function postEvent(name, tags, group, shows) {
+            console.log("in post event... with shows " + shows)
             $.post("/create_event", {
                 name: name,
-                type: type,
+                tags: tags,
                 group: group,
                 shows: shows
             }, function (data, status) {
                 if (status == "success" && data) {
-                    window.location.replace("/home");
+                    propogateEventID(data.eventID)
                 } else {
                     alert("There was an error.")
                     clearFields()
@@ -52,61 +119,49 @@
             })
         }
 
+        function propogateEventID(eventID) {
+            console.log("input to propogateEventID is " + JSON.stringify(eventID))
+            $.get("/get_event", {
+                eventID: eventID
+            }, function (data, status) {
+                if (status = "success" && data.showIDs) {
+                    data.showIDs.forEach(showID => {
+                        console.log("showID: " + showID)
+                        console.log("eventID: " + eventID)
+                        $.post("/add_event_id_to_show", {
+                            "eventID": eventID,
+                            "showID": showID
+                        }, (data, success) => { })
+                    })
+                }
+                window.location.replace("/home")
+            })
+        }
+
         function clearFields() {
             $("#eventName").val("")
             $('#eventName').addClass('is-info');
-            $("#eventType").val("")
-            $('#eventType').addClass('is-info');
+            $("#eventTags").val("")
+            $('#eventTags').addClass('is-info');
             $("#eventGroup").val("")
             $('#eventGroup').addClass('is-info');
             $("#showCount").val("")
             $('#showCount').addClass('is-info');
 
-            // wipe show box
-            $("#showBox").removeClass('is-active')
-            $("#showBox").addClass('is-hidden')
-        }
+            $("#showName").val("")
+            $("#showLocation").val("")
+            $("#showCapacity").val("")
+            $("#ticketPrice").val("")
+            $("#description").val("")
+            $("#startDate").val("")
+            $("#startTime").val("")
+            $("#endTime").val("")
 
-        function invalidateFields() {
-            $('#eventGroup').removeClass('is-info');
-            $('#eventGroup').addClass('is-danger');
-            $('#eventName').removeClass('is-info');
-            $('#eventName').addClass('is-danger');
-            $('#eventType').removeClass('is-info');
-            $('#eventType').addClass('is-danger');
-            $('#showCount').removeClass('is-info');
-            $('#showCount').addClass('is-danger');
         }
-
 
         $(document).ready(function () {
             clearFields()
-            listenForShows()
-            addCalendars()
         })
-
-        function addCalendars() {
-            var bulmaCalendar = BulmaCalendar.attach();
-            // Initialize all input of type date
-            var calendars = bulmaCalendar.attach('[type="date"]', options);
-
-            // Loop on each calendar initialized
-            for (var i = 0; i < calendars.length; i++) {
-                // Add listener to date:selected event
-                calendars[i].on('select', date => {
-                    console.log(date);
-                });
-            }
-
-            // To access to bulmaCalendar instance of an element
-            var element = document.querySelector('#my-element');
-            if (element) {
-                // bulmaCalendar instance is available as element.bulmaCalendar
-                element.bulmaCalendar.on('select', function (datepicker) {
-                    console.log(datepicker.data.value());
-                });
-            }
-        }
     </script>
 </head>
 
@@ -118,64 +173,122 @@
 
     <div class="container">
         <div class="box">
-            <div class="field">
-                <label class="label">Group Name</label>
-                <div class="control has-icons-left">
-                    <input class="input" type="text" placeholder="Group Name" id="eventGroup">
+            <div class="columns">
+                <div class="column">
+                    <h3>Event Details</h3>
+                    <div class="field">
+                        <label class="label">Group Name</label>
+                        <div class="control has-icons-left">
+                            <p class="help is-danger is-hidden" id="eventGroupInvalid">Please input your own group name
+                                as a non-empty field</p>
+                            <input class="input" type="text" placeholder="Group Name" id="eventGroup">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Event Name</label>
+                        <div class="control has-icons-left">
+                            <p class="help is-danger is-hidden" id="eventNameInvalid">Please input a non-empty value</p>
+                            <input class="input" type="text" placeholder="Event Name" id="eventName">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Tags (enter as comma separated values)</label>
+                        <div class="control has-icons-left">
+                            <p class="help is-danger is-hidden" id="eventTagsInvalid">Please input a non-empty value</p>
+                            <input class="input" type="text" placeholder="Event Tags" id="eventTags">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Number of Shows</label>
+                        <div class="control has-icons-left">
+                            <p class="help is-danger is-hidden" id="showCountInvalid">Please input a positive integer
+                            </p>
+                            <input class="input" type="text" placeholder="#" id="showCount">
+                        </div>
+                    </div>
+
+                    <p class="help is-danger" id="incorrect_warning"></p>
+                    <div class="control">
+                        <button class="button is-link" onclick="checkEvent()">Add Individual Shows</button>
+                    </div>
+
+                    <div class="control">
+                        <button class="button is-link" onclick="clearFields()">Clear Fields</button>
+                    </div>
+                </div>
+                <div class="column" id="showDetails">
+                    <div id="singleShowDetails" class="is-hidden">
+                        <h3 id="showHeaderInfo"></h3>
+                        <div class="field">
+                            <label class="label">Show Name (if same as event, leave empty)</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="text" placeholder="Show Name" id="showName">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Show Capacity</label>
+                            <div class="control has-icons-left">
+                                <p class="help is-danger is-hidden" id="showCapacityInvalid">Please input a positive
+                                    integer</p>
+                                <input class="input" type="text" placeholder="#" id="showCapacity">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Ticket Price</label>
+                            <div class="control has-icons-left">
+                                <p class="help is-danger is-hidden" id="ticketPriceInvalid">Please input a positive
+                                    value of the form x.yz</p>
+                                <input class="input" type="text" placeholder="$x.yz" id="ticketPrice">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Location</label>
+                            <div class="control has-icons-left">
+                                <p class="help is-danger is-hidden" id="showLocationInvalid">Please input a non-empty
+                                    value</p>
+                                <input class="input" type="text" placeholder="Location" id="showLocation">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Description (optional)</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="text" placeholder="Description" id="description">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Date</label>
+                            <div class="control has-icons-left">
+                                <input type="date" id="startDate">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Start Time</label>
+                            <div class="control has-icons-left">
+                                <input type="time" id="startTime">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">End Time</label>
+                            <div class="control has-icons-left">
+                                <input type="time" id="endTime">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control">
+                        <button class="button is-link is-hidden" id="nextShowButton" onclick="storeShowInfo()">Next
+                            Show...</button>
+                    </div>
+                    <div class="control">
+                        <button class="button is-link is-hidden" id="createEventButton" onclick="checkShows()">Create
+                            Event!</button>
+                    </div>
                 </div>
             </div>
-
-            <div class="field">
-                <label class="label">Event Name</label>
-                <div class="control has-icons-left">
-                    <input class="input" type="text" placeholder="Event Name" id="eventName">
-                </div>
-            </div>
-
-            <div class="field">
-                <label class="label">Event Type</label>
-                <div class="control has-icons-left">
-                    <input class="input" type="text" placeholder="Event Type" id="eventType">
-                </div>
-            </div>
-
-            <div class="field">
-                <label class="label">Number of Shows</label>
-                <div class="control has-icons-left">
-                    <input class="input" type="text" placeholder="#" id="showCount">
-                </div>
-            </div>
-
-            <p class="help is-danger" id="incorrect_warning"></p>
-            <div class="control">
-                <button class="button is-link" onclick="checkEvent()">Create Event</button>
-            </div>
-
-            <div class="control">
-                <button class="button is-link" onclick="clearFields()">Clear Fields</button>
-            </div>
-        </div>
-
-        <div class="box" id="showBox">
-
-            Show Details
-
-            <div class="field">
-                <label class="label">Start Date</label>
-                <div class="control has-icons-left">
-                    <input type="date" id="startDate">
-                </div>
-
-                <label class="label">End Date</label>
-                <div class="control has-icons-left">
-                    <input type="date" id="endDate">
-                </div>
-            </div>
-
-
         </div>
     </div>
-
 </body>
 
 </html>
