@@ -46,14 +46,9 @@ public class EventActivity extends AppCompatActivity {
 
     void findShow() {
         try {
-            String showID = this.event.shows.get(0).id;
-            for (Show show : event.shows) {
-                if (show.id.equals(showID)) {
-                    this.show = show;
-                }
-            }
+            this.show = this.event.shows.get(0);
         } catch (Exception e) {
-            // TODO: event with no shows
+            // event with no shows
             finish();
         }
     }
@@ -62,37 +57,36 @@ public class EventActivity extends AppCompatActivity {
 
         findShow();
 
-        if (this.show != null) {
 
-            TextView description = findViewById(R.id.event_description);
-            String descriptionText = this.show.getDescription() + "\n\n";
-            LinearLayout showList = findViewById(R.id.show_list);
-            for (int i = 0; i < event.shows.size(); i++) {
-                final Show show = event.shows.get(i);
-                TextView showView = new TextView(getApplicationContext());
-                showView.setText(new StringBuilder()
-                        .append("Show ").append(i + 1).append(": ").append(show.getPrettyStartDate())
-                        .append("\n").append(show.getPrettyTimeRange()).append("\n")
-                        .append("Click here to purchase tickets").toString()
-                );
-                showView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String showID = show.id;
-                        String email = user.email;
-                        if (ds.purchaseTicket(email, showID)) {
-                            showPurchaseSuccessToast();
-                        } else {
-                            showPurchaseFailureToast();
-                        }
+        TextView description = findViewById(R.id.event_description);
+        String descriptionText = this.show.getDescription() + "\n\n";
+        LinearLayout showList = findViewById(R.id.show_list);
+        for (int i = 0; i < event.shows.size(); i++) {
+            final Show show = event.shows.get(i);
+            TextView showView = new TextView(getApplicationContext());
+            showView.setText(new StringBuilder()
+                    .append("Show ").append(i + 1).append(": ").append(show.getPrettyStartDate())
+                    .append("\n").append(show.getPrettyTimeRange()).append("\n")
+                    .append("Click here to purchase tickets").toString()
+            );
+            showView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String showID = show.id;
+                    String email = user.email;
+                    if (ds.purchaseTicket(email, showID)) {
+                        showPurchaseSuccessToast();
+                    } else {
+                        showPurchaseFailureToast();
                     }
-                });
-                showList.addView(showView);
-            }
-
-            description.setText(descriptionText);
-            Log.e("NOAH", "start time " + event.shows.get(0).startTime);
+                }
+            });
+            showList.addView(showView);
         }
+
+        description.setText(descriptionText);
+        Log.e("NOAH", "start time " + event.shows.get(0).startTime);
+
 
         // TODO: add description
         // TODO: display each show with purchase link (port code from other page?)
