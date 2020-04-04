@@ -19,8 +19,13 @@ app.use(session({
 // route definitions
 app.get('/', routes.get_splash);
 app.get('/home', routes.get_home)
-//auth routes
+app.get('/profile', routes.get_profile)
+//login routes
 app.get('/login', routes.get_login);
+app.get('/register', routes.get_register);
+app.post('/creategroup', routes.create_group);
+app.post('/checkLogin', routes.check_login);
+app.get('/logout', routes.get_logout);
 // event creation
 app.get('/create_event', routes.get_create_event);
 app.post('/create_event', routes.create_event);

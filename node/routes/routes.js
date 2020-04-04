@@ -1,5 +1,7 @@
 var Event = require('../models/event.js')
 var Show = require('../models/show.js')
+var User = require('../models/user.js');
+var Group = require('../models/group.js');
 
 var getSplash = function (req, res) {
     res.render('splash.ejs')
@@ -7,6 +9,10 @@ var getSplash = function (req, res) {
 
 var getHome = function (req, res) {
     res.render('home.ejs')
+}
+
+var getProfile = (req, res) => {
+    res.render('profile.ejs')
 }
 
 var getCreateEvent = function (req, res) {
@@ -63,9 +69,75 @@ var addEventTag = function (req, res) {
     res.render('create_event.ejs')
 }
 
+//Login functions
+
 var getLogin = (req, res) => {
-    res.render('login.ejs');
+    res.render('login.ejs', {message: ""});
 }
+
+var getRegister = (req, res) => {
+    res.render('register.ejs', {message: ""});
+}
+
+//Checking login details
+var checkLogin = (req, res) => {
+    Group.findOne({email: req.body.email, password: req.body.password}, (err, user) => {
+        if (err) {
+            console.log(err);
+            res.json({'status': err})
+        } else {
+            if (!user) {
+                res.render('login.ejs', {message: "Invalid email credentials! Try again!"});
+            } else {
+                req.session.user = req.body.email;
+                res.redirect('/home');
+            }
+        }
+    })
+
+}
+
+var createGroup = (req, res) => {
+    console.log("BODY");
+    console.log(req.body);
+    const { body } = req.body;
+    var newUser = new Group({
+        displayName: req.body.firstName,
+        email: req.body.email,
+        password: req.body.password,
+        currentEvents: [],
+        pastEvents: [],
+        groupType: "",
+        bio: "",
+        followers: 0
+    })
+    Group.findOne({email: req.body.email}, (err, user) => {
+        if (err) {
+            console.log(err);
+            res.json({'status': err})
+        } else {
+            if (!user){
+                console.log("No user exists!");
+                newUser.save((err) => {
+                    if (err) {
+                        res.json({'status': err})
+                    } else {
+                        res.redirect('/home');
+                    }
+                })
+            } else {
+                console.log('Group already exists!');
+                res.render('register.ejs', {message: 'Group already exists!'});
+            }
+        }
+    })
+
+}
+
+var getLogout = function(req, res) {
+    req.session.destroy();
+    res.redirect('/');
+};
 
 module.exports = {
     get_splash: getSplash,
@@ -74,5 +146,10 @@ module.exports = {
     list_events: listEvents,
     clear_all_events: clearAllEvents,
     get_home: getHome,
-    get_login: getLogin
+    get_login: getLogin,
+    create_group: createGroup,
+    get_register: getRegister,
+    check_login: checkLogin,
+    get_logout: getLogout,
+    get_profile: getProfile
 }

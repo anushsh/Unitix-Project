@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include head_imports.html %>
+</head>
+
+<body>
+    <% include header.html %>
+    <form action="/creategroup" method="post">
+        <div class="row">
+            <div class="column">
+                <h4>First name: </h4>
+                <input type="text" name="firstName" required>
+            </div>
+            <div class="column">
+                <h4>Last name: </h4>
+                <input type="text" name="lastName" required>
+            </div>
+            <div class="column">
+                <h4>Email: </h4>
+                <input type="email" name="email" required>
+            </div>
+            <div class="column">
+                <button style="margin-top: 2rem;" type="submit" value="Login" class="btn btn-primary">Save
+                    Changes</button>
+            </div>
+        </div>
+    </form>
+</body>
+
+</html>
