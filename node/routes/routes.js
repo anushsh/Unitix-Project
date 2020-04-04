@@ -42,7 +42,7 @@ var listEventsWithShows = function (req, res) {
             res.json({ 'status': 'no events' })
         }
         events = [];
-        async.forEach(allEvents, 
+        async.forEach(allEvents,
             (event, done1) => {
                 event = event.toJSON();
                 var shows = []; // will contain actual shows
@@ -55,7 +55,7 @@ var listEventsWithShows = function (req, res) {
                             console.log(err);
                         }
                         done2();
-                    }); 
+                    });
                 }, () => {
                     event.shows = shows; // replace ID's with actual shows
                     events.push(event);
@@ -67,7 +67,7 @@ var listEventsWithShows = function (req, res) {
                     'events': events
                 })
             })
-        
+
     });
 }
 
@@ -140,11 +140,11 @@ var createEvent = function (req, res) {
         tags: req.body.tags
     })
 
-    newEvent.save((err) => {
+    newEvent.save((err, eventSaved) => {
         if (err) {
             res.json({ 'status': err })
         } else {
-            res.json({ 'status': 'success' })
+            res.json({ 'status': 'success', 'eventID': eventSaved._id })
         }
     })
 }
@@ -160,21 +160,21 @@ var getLogin = (req, res) => {
 }
 
 
-var purchaseTicket = function(req, res) {
+var purchaseTicket = function (req, res) {
     var showID = req.body.showID;
     var queryEmail = req.body.email;
 
     // first get user by given email
-    User.findOne({email: queryEmail}, (err, user) => {
+    User.findOne({ email: queryEmail }, (err, user) => {
         if (err) {
-            res.json({"status": err})
+            res.json({ "status": err })
         } else if (!user) {
             res.json({ 'status': 'user not found' })
         } else {
             // if user is found, get the show
             Show.findById(showID, (err, show) => {
                 if (err || !show) {
-                    res.json({"status": (err ? err : "show not found")});
+                    res.json({ "status": (err ? err : "show not found") });
                 } else {
                     // if the show is found, make sure there are tickets available
                     if (!show.tickets_sold) {
@@ -189,38 +189,38 @@ var purchaseTicket = function(req, res) {
 
                         newTicket.save((err, ticket) => {
                             if (err) {
-                                res.json({"status":err});
+                                res.json({ "status": err });
                             } else {
                                 // add ticket to user's tickets
                                 var tickets = user.curr_tickets;
                                 tickets.push(ticket._id);
-                                user.update({curr_tickets: tickets}, (err) => {
+                                user.update({ curr_tickets: tickets }, (err) => {
                                     if (!err) {
                                         // update tickets sold for show
-                                        show.update({tickets_sold: tickets_sold + 1}, (err) => {
-                                            res.json({"status":"success"});
+                                        show.update({ tickets_sold: tickets_sold + 1 }, (err) => {
+                                            res.json({ "status": "success" });
                                         });
                                     }
                                 })
                             }
                         })
 
-                        
+
                     } else {
                         // if no tickets, return sold out
-                        res.json({"status": "sold out"});
+                        res.json({ "status": "sold out" });
                     }
                 }
             })
         }
-    }) 
+    })
 }
 
-var findEventWithShows = function(req, res) {
+var findEventWithShows = function (req, res) {
     var eventID = req.query.eventID;
     Event.findById(eventID, (err, event) => {
         if (err || !event) {
-            res.json({"status":"failure"});
+            res.json({ "status": "failure" });
         }
         event = event.toJSON();
         var shows = []; // to fill with actual show objects
@@ -234,15 +234,47 @@ var findEventWithShows = function(req, res) {
         }, () => {
             event.shows = shows;
             res.json({
-                "status":"success",
-                "event":event
+                "status": "success",
+                "event": event._id
             });
         });
     });
 }
 
+var getEvent = function (req, res) {
+    var eventID = req.query.eventID
+    Event.findById(eventID, (err, event) => {
+        if (err || !event) {
+            res.json({ "status": "failure" })
+        } else {
+            event = event.toJSON()
+            res.json({
+                "status": "success",
+                "showIDs": event.shows
+            })
+        }
+    })
+}
+
+var addEventIdToShow = function (req, res) {
+    var eventID = req.body.eventID
+    var showID = req.body.showID
+    console.log("showID: " + showID)
+    console.log("eventID: " + eventID)
+    Show.findById(showID, (err, show) => {
+        if (err || !show) {
+            res.json({ "status": "failure" })
+        } else {
+            console.log(show)
+            show.update({ event: eventID }, (err) => {
+                res.json({ "status": "success" });
+            });
+        }
+    })
+}
+
 var createUser = function (req, res) {
-    console.log("creating user "  + req.body.email);
+    console.log("creating user " + req.body.email);
 
     var newUser = new User({
         email: req.body.email,
@@ -287,6 +319,8 @@ module.exports = {
     get_create_event: getCreateEvent,
     create_shows: createShows,
     create_event: createEvent,
+    get_event: getEvent,
+    add_event_id_to_show: addEventIdToShow,
     list_events: listEvents,
     list_shows: listShows,
     list_events_with_shows: listEventsWithShows,
@@ -295,6 +329,6 @@ module.exports = {
     get_login: getLogin,
     create_user: createUser,
     find_user: findUser,
-    purchase_ticket: purchaseTicket, 
+    purchase_ticket: purchaseTicket,
     find_event_with_shows: findEventWithShows
 }

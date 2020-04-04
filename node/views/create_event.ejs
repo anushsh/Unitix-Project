@@ -111,11 +111,30 @@
                 shows: shows
             }, function (data, status) {
                 if (status == "success" && data) {
-                    window.location.replace("/home");
+                    propogateEventID(data.eventID)
                 } else {
                     alert("There was an error.")
                     clearFields()
                 }
+            })
+        }
+
+        function propogateEventID(eventID) {
+            console.log("input to propogateEventID is " + JSON.stringify(eventID))
+            $.get("/get_event", {
+                eventID: eventID
+            }, function (data, status) {
+                if (status = "success" && data.showIDs) {
+                    data.showIDs.forEach(showID => {
+                        console.log("showID: " + showID)
+                        console.log("eventID: " + eventID)
+                        $.post("/add_event_id_to_show", {
+                            "eventID": eventID,
+                            "showID": showID
+                        }, (data, success) => { })
+                    })
+                }
+                window.location.replace("/home")
             })
         }
 
@@ -185,7 +204,8 @@
                     <div class="field">
                         <label class="label">Number of Shows</label>
                         <div class="control has-icons-left">
-                            <p class="help is-danger is-hidden" id="showCountInvalid">Please input a positive integer</p>
+                            <p class="help is-danger is-hidden" id="showCountInvalid">Please input a positive integer
+                            </p>
                             <input class="input" type="text" placeholder="#" id="showCount">
                         </div>
                     </div>
@@ -211,21 +231,24 @@
                         <div class="field">
                             <label class="label">Show Capacity</label>
                             <div class="control has-icons-left">
-                                <p class="help is-danger is-hidden" id="showCapacityInvalid">Please input a positive integer</p>
+                                <p class="help is-danger is-hidden" id="showCapacityInvalid">Please input a positive
+                                    integer</p>
                                 <input class="input" type="text" placeholder="#" id="showCapacity">
                             </div>
                         </div>
                         <div class="field">
                             <label class="label">Ticket Price</label>
                             <div class="control has-icons-left">
-                                <p class="help is-danger is-hidden" id="ticketPriceInvalid">Please input a positive value of the form x.yz</p>
+                                <p class="help is-danger is-hidden" id="ticketPriceInvalid">Please input a positive
+                                    value of the form x.yz</p>
                                 <input class="input" type="text" placeholder="$x.yz" id="ticketPrice">
                             </div>
                         </div>
                         <div class="field">
                             <label class="label">Location</label>
                             <div class="control has-icons-left">
-                                <p class="help is-danger is-hidden" id="showLocationInvalid">Please input a non-empty value</p>
+                                <p class="help is-danger is-hidden" id="showLocationInvalid">Please input a non-empty
+                                    value</p>
                                 <input class="input" type="text" placeholder="Location" id="showLocation">
                             </div>
                         </div>
@@ -255,7 +278,8 @@
                         </div>
                     </div>
                     <div class="control">
-                        <button class="button is-link is-hidden" id="nextShowButton" onclick="storeShowInfo()">Next Show...</button>
+                        <button class="button is-link is-hidden" id="nextShowButton" onclick="storeShowInfo()">Next
+                            Show...</button>
                     </div>
                     <div class="control">
                         <button class="button is-link is-hidden" id="createEventButton" onclick="checkShows()">Create

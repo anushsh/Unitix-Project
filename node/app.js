@@ -30,7 +30,8 @@ app.get('/list_events', routes.list_events)
 app.get('/list_shows', routes.list_shows)
 app.get('/list_events_with_shows', routes.list_events_with_shows)
 app.get('/find_event_with_shows', routes.find_event_with_shows)
-
+app.get('/get_event', routes.get_event)
+app.post('/add_event_id_to_show', routes.add_event_id_to_show);
 
 
 // mobile actions
