@@ -18,12 +18,16 @@ public class DashboardActivity extends AppCompatActivity {
 
     // track session user
     User user;
+    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+        Intent intent = getIntent();
+        email = intent.getStringExtra("EMAIL");
         this.ds = new DataSource();
+
 
         // execute in background to keep main thread smooth
         AsyncTask<Integer,Integer,Event[]> task = new HandleEventsTask();
@@ -97,5 +101,14 @@ public class DashboardActivity extends AppCompatActivity {
             eventView.addView(allShowsView);
             feed.addView(eventView);
         }
+    }
+
+    public void onProfileButtonClick(View v) {
+
+        Intent i = new Intent(this, ProfileActivity.class);
+
+        i.putExtra("EMAIL", email);
+
+        startActivityForResult(i, 1);
     }
 }

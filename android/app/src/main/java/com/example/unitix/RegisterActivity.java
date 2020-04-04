@@ -2,6 +2,7 @@ package com.example.unitix;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,23 +45,21 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (u != null) {
             //account exists - please login
-            Log.d("Yash","User exits ");
+            Log.d("Yash","User exists");
             finish();
         } else if (emailText.length() > 0 && passwordText.length() > 0) {
             ds.createUser(emailText, passwordText, firstNameText, lastNameText, phoneText);
+            Intent i = new Intent(this, DashboardActivity.class);
+            // pass along current user email
+            i.putExtra("EMAIL", emailText);
+            startActivityForResult(i, 1);
+        } else {
+            //else rewrite password
+
+            //else toast to enter the details and stay on the page and send an error message
         }
 
-        //else rewrite password
 
-        //else toast to enter the details and stay on the page and send an error message
     }
 
-//    private class createUserTask extends AsyncTask<String, String, boolean> {
-//        protected boolean doInBackground(String... message) {
-//            return true;
-//        }
-//
-//        }
-//
-//    }
 }
