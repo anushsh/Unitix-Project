@@ -55,6 +55,9 @@ public class DashboardActivity extends AppCompatActivity {
         LinearLayout feed = findViewById(R.id.event_feed);
 
         for (Event event : events) {
+            if (event.shows.size() == 0) {
+                continue;
+            }
             LinearLayout eventView = new LinearLayout(getApplicationContext());
             eventView.setOrientation(LinearLayout.VERTICAL);
 
