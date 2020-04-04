@@ -1,5 +1,6 @@
 package com.example.unitix;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -12,14 +13,20 @@ public class ProfileActivity extends AppCompatActivity {
 
     DataSource ds = new DataSource();
     User user = ds.getUser(User.getNoah().email); // TODO: use session user
-
+    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        Intent intent = getIntent();
+        email = intent.getStringExtra("EMAIL");
         // TODO: determine who user is
         // TODO: this should probably happen asynchronously...
+        TextView emailProfile = (TextView) findViewById(R.id.profile_email);
+
+        emailProfile.setText(("  Email   " + String.valueOf(email)));
+
         showUser();
         showTickets();
     }
