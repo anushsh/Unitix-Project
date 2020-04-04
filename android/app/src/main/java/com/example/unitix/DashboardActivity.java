@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.List;
+
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -55,7 +57,8 @@ public class DashboardActivity extends AppCompatActivity {
         LinearLayout feed = findViewById(R.id.event_feed);
 
         for (Event event : events) {
-            if (event.shows.size() == 0) {
+            List<Show> shows = event.shows;
+            if (shows.size() == 0) {
                 continue;
             }
             LinearLayout eventView = new LinearLayout(getApplicationContext());
@@ -65,6 +68,20 @@ public class DashboardActivity extends AppCompatActivity {
             TextView eventText = new TextView(getApplicationContext());
             eventText.setText(event.toString());
             eventView.addView(eventText);
+
+            LinearLayout allShowsView = new LinearLayout(getApplicationContext());
+            allShowsView.setOrientation(LinearLayout.VERTICAL);
+
+            for (int i = 0; i < shows.size(); i++) {
+                Show show = shows.get(i);
+                LinearLayout showView = new LinearLayout(getApplicationContext());
+                showView.setOrientation(LinearLayout.VERTICAL);
+                TextView showText = new TextView(getApplicationContext());
+                showText.setText("Show " + (i + 1) + ": " + show);
+                showView.addView(showText);
+                allShowsView.addView(showView);
+            }
+            eventView.addView(allShowsView);
 
             Button viewDetailsButton = new Button(getApplicationContext());
             viewDetailsButton.setText("View Details");
@@ -86,18 +103,7 @@ public class DashboardActivity extends AppCompatActivity {
                 }
             });
 
-            LinearLayout allShowsView = new LinearLayout(getApplicationContext());
-            allShowsView.setOrientation(LinearLayout.VERTICAL);
 
-            for (Show show : event.shows) {
-                LinearLayout showView = new LinearLayout(getApplicationContext());
-                showView.setOrientation(LinearLayout.VERTICAL);
-                TextView showText = new TextView(getApplicationContext());
-                showText.setText(show.toString());
-                showView.addView(showText);
-                allShowsView.addView(showView);
-            }
-            eventView.addView(allShowsView);
             feed.addView(eventView);
         }
     }

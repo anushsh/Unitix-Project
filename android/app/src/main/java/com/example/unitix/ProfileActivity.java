@@ -12,7 +12,7 @@ import org.w3c.dom.Text;
 public class ProfileActivity extends AppCompatActivity {
 
     DataSource ds = new DataSource();
-    User user = ds.getUser(User.getNoah().email); // TODO: use session user
+    User user;
     private String email;
 
     @Override
@@ -20,7 +20,7 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         Intent intent = getIntent();
-        this.user = this.ds.getUser(getIntent().getStringExtra("EMAIL"));
+        this.user = this.ds.getUser(intent.getStringExtra("EMAIL"));
         // TODO: determine who user is
         // TODO: this should probably happen asynchronously...
         TextView emailProfile = (TextView) findViewById(R.id.profile_email);
