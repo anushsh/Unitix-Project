@@ -20,7 +20,8 @@ var userSchema = new Schema({
     phone: String,
     following: [String],
     past_tickets: [String], // string of ids
-    curr_tickets: [String]  // string of ids
+    curr_tickets: [String],  // string of ids
+    saved_tickets: [String] 
 });
 
 module.exports = mongoose.model('User', userSchema);

@@ -16,16 +16,25 @@ public class DashboardActivity extends AppCompatActivity {
 
     protected DataSource ds;
 
+    // track session user
+    User user;
+    private String email;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        ds = new DataSource();
+        Intent intent = getIntent();
+        email = intent.getStringExtra("EMAIL");
+        this.ds = new DataSource();
+
 
         // execute in background to keep main thread smooth
         AsyncTask<Integer,Integer,Event[]> task = new HandleEventsTask();
         // allow for parallel execution
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+
 
 
 //        Log.e("NOAH", "here?");
@@ -37,19 +46,18 @@ public class DashboardActivity extends AppCompatActivity {
             return ds.getAllEvents();
         }
         protected void onPostExecute(Event[] events) {
-//            Log.e("NOAH","dashboard received events, got" + events.length);
+            Log.e("NOAH","dashboard received events, got" + events.length);
             addEventsToPage(events);
         }
-
     }
 
     void addEventsToPage(Event[] events) {
         LinearLayout feed = findViewById(R.id.event_feed);
 
-        for (int i = 0; i < events.length; i++) {
-            Event event = events[i];
-
-//            Log.e("NOAH","event " + i + " out of " + events.length);
+        for (Event event : events) {
+            if (event.shows.size() == 0) {
+                continue;
+            }
             LinearLayout eventView = new LinearLayout(getApplicationContext());
             eventView.setOrientation(LinearLayout.VERTICAL);
 
@@ -58,47 +66,48 @@ public class DashboardActivity extends AppCompatActivity {
             eventText.setText(event.toString());
             eventView.addView(eventText);
 
+            Button viewDetailsButton = new Button(getApplicationContext());
+            viewDetailsButton.setText("View Details");
+            viewDetailsButton.setTag(event);
+            eventView.addView(viewDetailsButton);
+            viewDetailsButton.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    Event event = (Event) v.getTag();
+                    String eventName = event.name;
+                    String eventID = event.id;
+                    Intent i = new Intent(DashboardActivity.this, EventActivity.class);
+                    i.putExtra("eventName", eventName);
+                    i.putExtra("eventID", eventID);
+                    i.putExtra("EMAIL", getIntent().getStringExtra("EMAIL"));
+                    startActivityForResult(i, 1);
+
+                }
+            });
+
             LinearLayout allShowsView = new LinearLayout(getApplicationContext());
             allShowsView.setOrientation(LinearLayout.VERTICAL);
 
-            for (int j = 0; j < event.shows.size(); j++) {
-//                Log.e("NOAH","show " + j);
-                Show show = event.shows.get(j);
+            for (Show show : event.shows) {
                 LinearLayout showView = new LinearLayout(getApplicationContext());
                 showView.setOrientation(LinearLayout.VERTICAL);
                 TextView showText = new TextView(getApplicationContext());
                 showText.setText(show.toString());
                 showView.addView(showText);
-                Button purchaseButton = new Button(getApplicationContext());
-                purchaseButton.setText("View Details");
-                showView.addView(purchaseButton);
-                // add show to button so can have it when clicked
-                purchaseButton.setTag(show);
-
-                purchaseButton.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        // TODO: handle ticket purchasing!
-                        Show show = (Show) v.getTag();
-                        String eventName = show.event.name;
-                        String eventID = show.event.id;
-                        String showID = show.id;
-                        Intent i = new Intent(DashboardActivity.this, EventActivity.class);
-                        i.putExtra("eventName", eventName);
-                        i.putExtra("showID", showID);
-                        i.putExtra("eventID", eventID);
-                        startActivityForResult(i, 1);
-
-                    }
-                });
                 allShowsView.addView(showView);
-
             }
             eventView.addView(allShowsView);
             feed.addView(eventView);
         }
     }
 
+    public void onProfileButtonClick(View v) {
 
+        Intent i = new Intent(this, ProfileActivity.class);
+
+        i.putExtra("EMAIL", email);
+
+        startActivityForResult(i, 1);
+    }
 }

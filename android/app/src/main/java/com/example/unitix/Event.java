@@ -28,7 +28,7 @@ public class Event {
     }
 
     public Event(JSONObject jo) {
-        this.shows = new ArrayList<Show>();
+        this.shows = new ArrayList();
         try {
             this.name = jo.getString("name");
             this.id = jo.getString("_id");

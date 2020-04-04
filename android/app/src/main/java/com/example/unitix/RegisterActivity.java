@@ -2,12 +2,14 @@ package com.example.unitix;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -44,23 +46,25 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (u != null) {
             //account exists - please login
-            Log.d("Yash","User exits ");
+            Toast.makeText(getApplicationContext(), "User exists, please login instead", Toast.LENGTH_LONG).show();
+            Log.d("Yash","User exists");
             finish();
         } else if (emailText.length() > 0 && passwordText.length() > 0) {
             ds.createUser(emailText, passwordText, firstNameText, lastNameText, phoneText);
+            Toast.makeText(getApplicationContext(), "Account created", Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(this, DashboardActivity.class);
+            // pass along current user email
+            i.putExtra("EMAIL", emailText);
+            startActivityForResult(i, 1);
+
+        } else {
+            Toast.makeText(getApplicationContext(), "Please enter a username and a password", Toast.LENGTH_LONG).show();
+
+
+            //else toast to enter the details and stay on the page and send an error message
         }
 
-        //else rewrite password
 
-        //else toast to enter the details and stay on the page and send an error message
     }
 
-//    private class createUserTask extends AsyncTask<String, String, boolean> {
-//        protected boolean doInBackground(String... message) {
-//            return true;
-//        }
-//
-//        }
-//
-//    }
 }

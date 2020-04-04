@@ -11,28 +11,32 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.w3c.dom.Text;
-
 public class EventActivity extends AppCompatActivity {
 
     DataSource ds;
     Event event;
-    User user = User.getNoah(); // TODO: change to actually receive session user
+    Show show;
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
+
+        this.ds = new DataSource();
+
         Intent intent = getIntent();
         String name = intent.getStringExtra("eventName");
         String eventID = intent.getStringExtra("eventID");
-        String showID = intent.getStringExtra("showID");
-        // TODO: get session user
+        this.user = this.ds.getUser(getIntent().getStringExtra("EMAIL"));
 
-        TextView eventName = (TextView) findViewById(R.id.event_name);
+        // TODO: remove after testing
+        if (this.user == null) {
+            this.user = User.getNoah();
+        }
+
+        TextView eventName = findViewById(R.id.event_name);
         eventName.setText(name);
-
-        ds = new DataSource();
 
         // execute in background to keep main thread smooth
         AsyncTask<String,Integer,Event> task = new LoadEventTask();
@@ -40,34 +44,55 @@ public class EventActivity extends AppCompatActivity {
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, eventID);
     }
 
+    void findShow() {
+        try {
+            String showID = this.event.shows.get(0).id;
+            for (Show show : event.shows) {
+                if (show.id.equals(showID)) {
+                    this.show = show;
+                }
+            }
+        } catch (Exception e) {
+            // TODO: event with no shows
+            finish();
+        }
+    }
 
     void handleValidEvent() {
-        TextView description = findViewById(R.id.event_description);
-        String descriptionText = event.getDescription() + "\n\n";
-        LinearLayout showList = findViewById(R.id.show_list);
-        for (int i = 0; i < event.shows.size(); i++) {
-            final Show show = event.shows.get(i);
-            TextView showView = new TextView(getApplicationContext());
-            showView.setText("Show " + (i+1) + ": " + show.getPrettyStartDate() + "\n" +
-                    show.getPrettyTimeRange() + "\n" +
-                    "Click here to purchase tickets");
-            showView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String showID = show.id;
-                    String email = user.email;
-                    if (ds.purchaseTicket(email, showID)) {
-                        showPurchaseSuccessToast();
-                    } else {
-                        showPurchaseFailureToast();
-                    }
-                }
-            });
-            showList.addView(showView);
-        }
 
-        description.setText(descriptionText);
-        Log.e("NOAH","start time " + event.shows.get(0).startTime);
+        findShow();
+
+        if (this.show != null) {
+
+            TextView description = findViewById(R.id.event_description);
+            String descriptionText = this.show.getDescription() + "\n\n";
+            LinearLayout showList = findViewById(R.id.show_list);
+            for (int i = 0; i < event.shows.size(); i++) {
+                final Show show = event.shows.get(i);
+                TextView showView = new TextView(getApplicationContext());
+                showView.setText(new StringBuilder()
+                        .append("Show ").append(i + 1).append(": ").append(show.getPrettyStartDate())
+                        .append("\n").append(show.getPrettyTimeRange()).append("\n")
+                        .append("Click here to purchase tickets").toString()
+                );
+                showView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String showID = show.id;
+                        String email = user.email;
+                        if (ds.purchaseTicket(email, showID)) {
+                            showPurchaseSuccessToast();
+                        } else {
+                            showPurchaseFailureToast();
+                        }
+                    }
+                });
+                showList.addView(showView);
+            }
+
+            description.setText(descriptionText);
+            Log.e("NOAH", "start time " + event.shows.get(0).startTime);
+        }
 
         // TODO: add description
         // TODO: display each show with purchase link (port code from other page?)
@@ -78,7 +103,7 @@ public class EventActivity extends AppCompatActivity {
     }
 
     void showPurchaseFailureToast() {
-        Toast.makeText(getApplicationContext(), "an error has occured...",Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "an error has occurred...",Toast.LENGTH_LONG).show();
     }
 
     void handleNullEvent() {

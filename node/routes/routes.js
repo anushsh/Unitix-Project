@@ -329,7 +329,7 @@ var findEventWithShows = function (req, res) {
             event.shows = shows;
             res.json({
                 "status": "success",
-                "event": event._id
+                "event": event
             });
         });
     });
@@ -378,7 +378,8 @@ var createUser = function (req, res) {
         phone: req.body.phone,
         following: [],
         past_tickets: [],
-        curr_tickets: []
+        curr_tickets: [],
+        saved_tickets: []
 
     })
     newUser.save((err) => {

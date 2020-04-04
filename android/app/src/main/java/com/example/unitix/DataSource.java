@@ -57,16 +57,6 @@ public class DataSource {
     }
 
 
-    // reads all contents from scanner
-//    public static String exhaust(Scanner in) {
-//        String total = "";
-//        while (in.hasNext()) {
-//            String line = in.nextLine();
-//            total += line;
-//        }
-//        return total;
-//    }
-
     public Event getEventByID(String eventID) {
         try {
             // TODO: make url based on variables !
@@ -77,6 +67,7 @@ public class DataSource {
                     new AccessWebJSONTask();
             task.execute(url);
             JSONObject jo = task.get();
+            Log.e("NOAH","json object is " + jo.toString());
             return new Event(jo.getJSONObject("event"));
 
         } catch (Exception e) {
@@ -108,22 +99,6 @@ public class DataSource {
 
     public boolean createUser(String email, String password, String firstName, String lastName, String phone) {
         try {
-            //haven't changed this - need to for create user
-            //need to figure out URL
-
-//            String urlString = host + ":" + port + "/create_user?email=" + email;
-//            urlString += "&password=" + password;
-//
-//            if (firstName != null && firstName.length() > 0) {
-//                urlString += "&first_name=" + firstName;
-//            }
-//            if (lastName != null && lastName.length() > 0) {
-//                urlString += "&last_name=" + lastName;
-//            }
-//
-//            if (phone != null && phone.length() > 0) {
-//                urlString += "&phone=" + phone;
-//            }
 
             JSONObject jsonParam = new JSONObject();
             jsonParam.put("email", email);

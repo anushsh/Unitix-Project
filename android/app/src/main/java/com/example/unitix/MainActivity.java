@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,12 +37,25 @@ public class MainActivity extends AppCompatActivity {
 
         if (emailText.length() > 0 && passwordText.length() > 0) {
             User u = ds.getUser(emailText);
-            String currPassword = u.password;
+            if (u != null) {
+                String currPassword = u.password;
 
-            if (currPassword.equals(passwordText)) {
-                Intent i = new Intent(this, DashboardActivity.class);
-                startActivityForResult(i, 1);
+                if (currPassword.equals(passwordText)) {
+                    Intent i = new Intent(this, DashboardActivity.class);
+
+                    // pass along current user email
+                    i.putExtra("EMAIL", emailText);
+                    startActivityForResult(i, 1);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Password is incorrect", Toast.LENGTH_LONG).show();
+
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "User and email does not exist", Toast.LENGTH_LONG).show();
             }
+        } else {
+            Toast.makeText(getApplicationContext(), "Please enter a username and a password", Toast.LENGTH_LONG).show();
+
         }
 
         //show toast that info is incorrect is user exists
