@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -39,6 +40,7 @@ public class Event {
                     this.shows.add(show);
                 }
             }
+            Collections.sort(this.shows);
             isValid = true;
         } catch (Exception e) {
             isValid = false;
