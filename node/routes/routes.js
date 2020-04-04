@@ -314,7 +314,8 @@ var purchaseTicket = function (req, res) {
                         // if there are tickets available, create a new ticket
                         var newTicket = new Ticket({
                             show: show._id,
-                            redeemed: false
+                            redeemed: false,
+                            requested: false
                         });
 
                         newTicket.save((err, ticket) => {
