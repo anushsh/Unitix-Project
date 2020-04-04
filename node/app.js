@@ -28,6 +28,7 @@ app.post('/checkLogin', routes.check_login);
 app.get('/logout', routes.get_logout);
 app.post('/updategroup', routes.update_group);
 // event creation
+app.get('/get_group', routes.get_group)
 app.get('/create_event', routes.get_create_event)
 app.post('/create_shows', routes.create_shows)
 app.post('/create_event', routes.create_event)
@@ -38,6 +39,7 @@ app.get('/list_events_with_shows', routes.list_events_with_shows)
 app.get('/find_event_with_shows', routes.find_event_with_shows)
 app.get('/get_event', routes.get_event)
 app.post('/add_event_id_to_show', routes.add_event_id_to_show);
+app.post('/add_event_id_to_group', routes.add_event_id_to_group);
 
 
 // mobile actions

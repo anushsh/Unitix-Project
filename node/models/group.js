@@ -17,8 +17,8 @@ var groupSchema = new Schema ({
     email: String,
     password: String,
     displayName: String,
-    currentEvents: [ObjectId], //Event model ID
-    pastEvents: [ObjectId], // Event ID
+    currentEvents: [String], //Event model ID
+    pastEvents: [String], // Event ID
     groupType: String,
     bio: String,
     followers: Number

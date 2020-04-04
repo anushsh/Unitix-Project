@@ -7,6 +7,14 @@
     <script type="text/javascript">
         var shows = []
         var currShowNum = 1
+        var group
+
+        function getGroup() {
+            $.get('/get_group', (data) => {
+                group = data.group
+                greet()
+            })
+        }
 
         function checkEvent() {
 
@@ -96,31 +104,44 @@
                 shows: shows
             }, function (showIDs, status) {
                 if (status == "success") {
-                    postEvent($("#eventName").val(), $("#eventTags").val().split(","), $("#groupName").val(), showIDs)
+                    postEvent($("#eventName").val(), $("#eventTags").val().split(","), showIDs)
                 }
                 else alert("Internal server error." + status)
             })
         }
 
-        function postEvent(name, tags, group, shows) {
+        function postEvent(name, tags, shows) {
             console.log("in post event... with shows " + shows)
             $.post("/create_event", {
                 name: name,
                 tags: tags,
-                group: group,
+                group_name: group.displayName,
+                group: group._id,
                 shows: shows
             }, function (data, status) {
                 if (status == "success" && data) {
                     propogateEventID(data.eventID)
                 } else {
                     alert("There was an error.")
-                    clearFields()
                 }
+                clearFields()
+                addSuccessfulNotif()
             })
         }
 
+        // send event ID to all of its shows as well as the group that created it
         function propogateEventID(eventID) {
             console.log("input to propogateEventID is " + JSON.stringify(eventID))
+
+            $.post("/add_event_id_to_group", {
+                "eventID": eventID,
+                "groupEmail": group.email
+            }, (data, success) => {
+                console.log(data)
+                console.log(success)
+             })
+
+
             $.get("/get_event", {
                 eventID: eventID
             }, function (data, status) {
@@ -134,8 +155,12 @@
                         }, (data, success) => { })
                     })
                 }
-                window.location.replace("/home")
             })
+        }
+
+        function addSuccessfulNotif() {
+            $('#successHeader').removeClass("is-hidden")
+            $('#successHeader').addClass("is-active")
         }
 
         function clearFields() {
@@ -143,8 +168,8 @@
             $('#eventName').addClass('is-info');
             $("#eventTags").val("")
             $('#eventTags').addClass('is-info');
-            $("#eventGroup").val("")
-            $('#eventGroup').addClass('is-info');
+            // $("#eventGroup").val("")
+            // $('#eventGroup').addClass('is-info');
             $("#showCount").val("")
             $('#showCount').addClass('is-info');
 
@@ -159,8 +184,15 @@
 
         }
 
+        function greet() {
+            console.log(group)
+            console.log(group.displayName)
+            $('#greeting').append(group.displayName)
+        }
+
         $(document).ready(function () {
             clearFields()
+            getGroup()
         })
     </script>
 </head>
@@ -168,7 +200,11 @@
 <body>
     <% include header.html %>
     <div class="container has-text-centered">
-        <h2 class="subtitle">Create Your Event</h2>
+        <h2 class="subtitle" id="greeting">Create Your Event, </h2>
+    </div>
+
+    <div class="container has-text-centered">
+        <h2 class="subtitle is-hidden" id="successHeader">We've added your event successsfully. Either return home or make another event.</h2>
     </div>
 
     <div class="container">
@@ -176,15 +212,6 @@
             <div class="columns">
                 <div class="column">
                     <h3>Event Details</h3>
-                    <div class="field">
-                        <label class="label">Group Name</label>
-                        <div class="control has-icons-left">
-                            <p class="help is-danger is-hidden" id="eventGroupInvalid">Please input your own group name
-                                as a non-empty field</p>
-                            <input class="input" type="text" placeholder="Group Name" id="eventGroup">
-                        </div>
-                    </div>
-
                     <div class="field">
                         <label class="label">Event Name</label>
                         <div class="control has-icons-left">

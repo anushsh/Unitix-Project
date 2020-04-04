@@ -12,8 +12,51 @@ var getSplash = function (req, res) {
 }
 
 var getHome = function (req, res) {
-    res.render('home.ejs')
+    if (req.session.user == null) {
+        res.redirect('/login');
+    }
+    res.render('home.ejs');
 }
+
+
+//Login functions
+
+var getLogin = (req, res) => {
+    if (req.session.user) {
+        res.redirect("/home");
+    }
+    res.render('login.ejs', {message: ""});
+}
+
+var getRegister = (req, res) => {
+    res.render('register.ejs', {message: ""});
+}
+
+//Checking login details
+var checkLogin = (req, res) => {
+    Group.findOne({email: req.body.email, password: req.body.password}, (err, user) => {
+        if (err) {
+            console.log(err);
+            res.json({'status': err})
+        } else {
+            if (!user) {
+                res.render('login.ejs', {message: "Invalid email credentials! Try again!"});
+            } else {
+                req.session.user = req.body.email;
+                res.redirect('/home');
+            }
+        }
+    })
+
+}
+
+var getGroup = function (req, res) {
+    //req.session.user has the email of the group, so we query for the full object
+    Group.findOne({email:req.session.user}, (err, group) => {
+        !err && group ? res.send({'status': 'success', 'group': group}) : res.send({'status':err})
+    })
+}
+
 
 var getProfile = (req, res) => {
     console.log("SESSION");
@@ -25,8 +68,10 @@ var getProfile = (req, res) => {
 }
 
 var getCreateEvent = function (req, res) {
-    // TODO: Get group name from session object
-    res.render('create_event.ejs')
+    if (req.session.user == null) {
+        res.redirect('/login');
+    }
+    res.render('create_event.ejs', {"group_email": req.session.user})
 }
 
 // use to test db saving
@@ -164,37 +209,6 @@ var createEvent = function (req, res) {
 var addEventTag = function (req, res) {
     //TODO: Implement for real
     res.render('create_event.ejs')
-}
-
-//Login functions
-
-var getLogin = (req, res) => {
-    if (req.session.user) {
-        res.redirect("/");
-    }
-    res.render('login.ejs', {message: ""});
-}
-
-var getRegister = (req, res) => {
-    res.render('register.ejs', {message: ""});
-}
-
-//Checking login details
-var checkLogin = (req, res) => {
-    Group.findOne({email: req.body.email, password: req.body.password}, (err, user) => {
-        if (err) {
-            console.log(err);
-            res.json({'status': err})
-        } else {
-            if (!user) {
-                res.render('login.ejs', {message: "Invalid email credentials! Try again!"});
-            } else {
-                req.session.user = req.body.email;
-                res.redirect('/home');
-            }
-        }
-    })
-
 }
 
 var createGroup = (req, res) => {
@@ -361,8 +375,25 @@ var addEventIdToShow = function (req, res) {
         } else {
             console.log(show)
             show.update({ event: eventID }, (err) => {
-                res.json({ "status": "success" });
+                !err ? res.json({ "status": "success" }) : res.json({"status":"failure"})
             });
+        }
+    })
+}
+
+var addEventIdToGroup = function (req, res) {
+    var eventID = req.body.eventID
+    var groupEmail = req.body.groupEmail
+    console.log("ADDING EVENT ID TO GROUP")
+    Group.findOne({email:groupEmail}, (err, group) => {
+        if (err || !group) {
+            res.json({"status":"failure finding group"})
+        } else {
+            currentEventsUpdated = group.currentEvents
+            currentEventsUpdated.push(eventID)
+            group.update({currentEvents: currentEventsUpdated}, (err) => {
+                !err ? res.json({ "status": "success" }) : res.json({"status":"failure"})
+            })
         }
     })
 }
@@ -416,6 +447,7 @@ module.exports = {
     create_event: createEvent,
     get_event: getEvent,
     add_event_id_to_show: addEventIdToShow,
+    add_event_id_to_group: addEventIdToGroup,
     list_events: listEvents,
     list_shows: listShows,
     list_events_with_shows: listEventsWithShows,
@@ -431,5 +463,6 @@ module.exports = {
     find_user: findUser,
     purchase_ticket: purchaseTicket,
     find_event_with_shows: findEventWithShows,
-    update_group: updateGroup
+    update_group: updateGroup,
+    get_group: getGroup
 }
