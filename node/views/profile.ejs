@@ -1,40 +1,89 @@
 <!DOCTYPE html>
 <html>
 
+
+    
+
 <head>
     <% include head_imports.html %>
+    <script type="text/javascript">
+
+
+        function loadEvents() {
+            $.get('/get_group_with_events', (res) => {
+                var group = res.group;
+                if (group) {
+                    var currentEvents = group.currentEvents;
+                    console.log(currentEvents);
+                    currentEvents.forEach(event => {
+                        $("#currentEvents").append(displayEvent(event));
+                        console.log(event.name);
+                        console.log("here");
+                    });
+                }
+            })
+        }
+
+        function displayEvent(event) {
+            return event.name;
+        }
+
+
+        // on document start
+        $(document).ready(function () {
+            loadEvents()
+            // TODO: populate with events
+            // TODO: add timer
+        })
+    </script>
 </head>
 
 <body>
     <% include header.html %>
-    <form action="/updategroup" method="post">
-        <div class="row">
-            <div class="column">
-                <h4>Group name: </h4>
-                <input type="text" name="groupName" required>
-            </div>
-            <div class="column">
-                <h4>Email: </h4>
-                <input type="email" name="email" required>
-            </div>
-            <div class="column">
-                <h4>Password: </h4>
-                <input type="password" name="password" required>
-            </div>
-            <div class="column">
-                <h4>Group Type: </h4>
-                <input type="text" name="groupType" required>
-            </div>
-            <div class="column">
-                <h4>Bio: </h4>
-                <input type="text" name="bio" required>
-            </div>
-            <div class="column">
-                <button style="margin-top: 2rem;" type="submit" value="Login" class="btn btn-primary">Save
-                    Changes</button>
-            </div>
+    
+    <div class="columns">
+        <div class="column">
+            <p class="subtitle is-3">Update Group Information</p>
+        
+        
+            <form action="/updategroup" method="post">
+                
+                <div class="row">
+                    
+                    <div class="column">
+                        <h4>Group name: </h4>
+                        <input type="text" name="groupName" required>
+                    </div>
+                    <div class="column">
+                        <h4>Email: </h4>
+                        <input type="email" name="email" required>
+                    </div>
+                    <div class="column">
+                        <h4>Password: </h4>
+                        <input type="password" name="password" required>
+                    </div>
+                    <div class="column">
+                        <h4>Group Type: </h4>
+                        <input type="text" name="groupType" required>
+                    </div>
+                    <div class="column">
+                        <h4>Bio: </h4>
+                        <input type="text" name="bio" required>
+                    </div>
+                    <div class="column">
+                        <button style="margin-top: 2rem;" type="submit" value="Login" class="btn btn-primary">Save
+                            Changes</button>
+                    </div>
+                </div>
+            </form>
         </div>
-    </form>
+
+        <div class="column">
+            <p class="subtitle is-3">Current Events</p>
+            <ul id="currentEvents">
+            </ul>
+        </div>
+    </div>
 </body>
 
 </html>

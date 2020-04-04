@@ -57,14 +57,36 @@ var getGroup = function (req, res) {
     })
 }
 
+var getGroupWithEvents = function (req, res) {
+    Group.findOne({email:req.session.user}, (err, group) => {
+        if (!err && group) {
+            var allEvents = [];
+            async.forEach(group.currentEvents, (eventID, done) => {
+                Event.findById(eventID, (err, event) => {
+                    if (!err && event) {
+                        allEvents.push(event);
+                    }
+                    done();
+                })
+            }, () => {
+                group.currentEvents = allEvents;
+                res.json({'status':'success',"group":group});
+            });
+        } else {
+            res.send({'status':err});
+        }
+    });
+}
+
 
 var getProfile = (req, res) => {
     console.log("SESSION");
     console.log(req.session);
     if (req.session.user) {
         res.render('profile.ejs')
+    } else {
+        res.redirect('/');
     }
-    res.redirect('/');
 }
 
 var getCreateEvent = function (req, res) {
@@ -464,5 +486,6 @@ module.exports = {
     purchase_ticket: purchaseTicket,
     find_event_with_shows: findEventWithShows,
     update_group: updateGroup,
-    get_group: getGroup
+    get_group: getGroup,
+    get_group_with_events: getGroupWithEvents
 }
