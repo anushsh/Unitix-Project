@@ -37,7 +37,7 @@ public class Show implements Comparable<Show> {
             this.description = (String) jo.get("description");
             this.location = (String) jo.get("location");
             this.id = jo.getString("_id");
-//            this.price = Double.parseDouble((String) jo.getJSONObject("price").get("$numberDecimal"));
+            this.price = Double.parseDouble((String) jo.getJSONObject("price").get("$numberDecimal"));
             this.isValid = true;
             this.startTime = jo.optString("start_time");
             this.endTime = jo.optString("end_time");

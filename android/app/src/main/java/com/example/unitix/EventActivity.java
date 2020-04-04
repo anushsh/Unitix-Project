@@ -72,7 +72,7 @@ public class EventActivity extends AppCompatActivity {
             TextView showDescription = new TextView(getApplicationContext());
             showDescription.setText(new StringBuilder()
                     .append("Show ").append(i + 1).append(": ").append(show.getPrettyStartDate())
-                    .append("\n").append(show.getPrettyTimeRange()).toString()
+                    .append("\n").append(show.getPrettyTimeRange()).append("\nPrice: $" + show.price).toString()
             );
             Button purchaseButton = new Button(getApplicationContext());
             purchaseButton.setText("Purchase Ticket");
