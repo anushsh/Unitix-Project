@@ -25,6 +25,7 @@ public class Show {
     String id;
     boolean isValid;
 
+    @Override
     public String toString() {
         return new StringBuilder()
                 .append(name)

@@ -70,7 +70,7 @@ public class DashboardActivity extends AppCompatActivity {
                 showText.setText(show.toString());
                 showView.addView(showText);
                 Button purchaseButton = new Button(getApplicationContext());
-                purchaseButton.setText("Purchase ticket");
+                purchaseButton.setText("View Details");
                 showView.addView(purchaseButton);
                 // add show to button so can have it when clicked
                 purchaseButton.setTag(show);

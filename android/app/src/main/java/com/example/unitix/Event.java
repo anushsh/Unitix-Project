@@ -13,11 +13,11 @@ import java.util.List;
  */
 public class Event {
 
-    // instance variables TODO: (change to private?)
-    public String name;
-    public String id;
-    public List<Show> shows;
-    public boolean isValid;
+    // instance variables, package protected
+    String name;
+    String id;
+    List<Show> shows;
+    boolean isValid;
 
 
     public String getDescription() {
@@ -45,12 +45,18 @@ public class Event {
         }
     }
 
+    @Override
     public String toString() {
-        return "name: " + name + " number of shows: " + shows.size();
+        return new StringBuilder()
+                .append("name: ")
+                .append(name)
+                .append(" number of shows: ")
+                .append(shows.size())
+                .toString();
     }
 
     public static Event[] createEventList(JSONArray jsonArray) {
-        List<Event> list = new ArrayList<Event>();
+        List<Event> list = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
                 Event e = new Event(jsonArray.getJSONObject(i));
