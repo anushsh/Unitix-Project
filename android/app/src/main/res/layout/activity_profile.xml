@@ -47,6 +47,6 @@
                 android:textSize="10pt"
                 android:text="Tickets\n"/>
         </LinearLayout>
-
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

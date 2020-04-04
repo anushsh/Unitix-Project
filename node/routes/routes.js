@@ -306,7 +306,7 @@ var findEventWithShows = function (req, res) {
             event.shows = shows;
             res.json({
                 "status": "success",
-                "event": event._id // NOAH: this should be event not event._id ?
+                "event": event // NOAH: this should be event not event._id ?
             });
         });
     });
