@@ -16,16 +16,21 @@ public class DashboardActivity extends AppCompatActivity {
 
     protected DataSource ds;
 
+    // track session user
+    User user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        ds = new DataSource();
+        this.ds = new DataSource();
 
         // execute in background to keep main thread smooth
         AsyncTask<Integer,Integer,Event[]> task = new HandleEventsTask();
         // allow for parallel execution
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+
 
 
 //        Log.e("NOAH", "here?");
@@ -40,16 +45,12 @@ public class DashboardActivity extends AppCompatActivity {
 //            Log.e("NOAH","dashboard received events, got" + events.length);
             addEventsToPage(events);
         }
-
     }
 
     void addEventsToPage(Event[] events) {
         LinearLayout feed = findViewById(R.id.event_feed);
 
-        for (int i = 0; i < events.length; i++) {
-            Event event = events[i];
-
-//            Log.e("NOAH","event " + i + " out of " + events.length);
+        for (Event event : events) {
             LinearLayout eventView = new LinearLayout(getApplicationContext());
             eventView.setOrientation(LinearLayout.VERTICAL);
 
@@ -61,16 +62,14 @@ public class DashboardActivity extends AppCompatActivity {
             LinearLayout allShowsView = new LinearLayout(getApplicationContext());
             allShowsView.setOrientation(LinearLayout.VERTICAL);
 
-            for (int j = 0; j < event.shows.size(); j++) {
-//                Log.e("NOAH","show " + j);
-                Show show = event.shows.get(j);
+            for (Show show : event.shows) {
                 LinearLayout showView = new LinearLayout(getApplicationContext());
                 showView.setOrientation(LinearLayout.VERTICAL);
                 TextView showText = new TextView(getApplicationContext());
                 showText.setText(show.toString());
                 showView.addView(showText);
                 Button purchaseButton = new Button(getApplicationContext());
-                purchaseButton.setText("View Details");
+                purchaseButton.setText("View Details"); // MICHAEL: Renamed since it opens the EventActivity screen
                 showView.addView(purchaseButton);
                 // add show to button so can have it when clicked
                 purchaseButton.setTag(show);
@@ -88,17 +87,15 @@ public class DashboardActivity extends AppCompatActivity {
                         i.putExtra("eventName", eventName);
                         i.putExtra("showID", showID);
                         i.putExtra("eventID", eventID);
+                        i.putExtra("EMAIL", getIntent().getStringExtra("EMAIL"));
                         startActivityForResult(i, 1);
 
                     }
                 });
                 allShowsView.addView(showView);
-
             }
             eventView.addView(allShowsView);
             feed.addView(eventView);
         }
     }
-
-
 }

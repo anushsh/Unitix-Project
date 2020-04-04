@@ -40,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
             if (currPassword.equals(passwordText)) {
                 Intent i = new Intent(this, DashboardActivity.class);
+
+                // pass along current user email
+                i.putExtra("EMAIL", emailText);
                 startActivityForResult(i, 1);
             }
         }

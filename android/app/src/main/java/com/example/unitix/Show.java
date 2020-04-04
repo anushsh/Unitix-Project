@@ -25,6 +25,32 @@ public class Show {
     String id;
     boolean isValid;
 
+    public Show(Event event, JSONObject jo) {
+        try {
+            // TODO: fix parsing
+            this.event = event;
+            this.name = (String) jo.get("name");
+            this.capacity = (Integer) jo.get("capacity");
+            this.ticketsSold = jo.optInt("ticketsSold", 0);
+            this.startTime = (String) jo.get("start_date");
+            this.endTime = (String) jo.get("end_date");
+            this.description = (String) jo.get("description");
+            this.location = (String) jo.get("location");
+            this.id = jo.getString("_id");
+            this.price = Double.parseDouble((String) jo.getJSONObject("price").get("$numberDecimal"));
+            this.isValid = true;
+            this.startTime = (String) jo.opt("start_time");
+            this.endTime = (String) jo.opt("end_time");
+            this.startDate = (String) jo.opt("start_date");
+            this.endDate = (String) jo.opt("end_date");
+
+
+        } catch (Exception e) {
+            Log.e("NOAH","exception in show" + e);
+            this.isValid = false;
+        }
+    }
+
     @Override
     public String toString() {
         return new StringBuilder()
@@ -79,33 +105,15 @@ public class Show {
 
     // TODO: handle ticket purchasing
 
-    public Show(Event event, JSONObject jo) {
-        try {
-            // TODO: fix parsing
-            this.event = event;
-            this.name = (String) jo.get("name");
-            this.capacity = (Integer) jo.get("capacity");
-            this.ticketsSold = jo.optInt("ticketsSold", 0);
-            this.startTime = (String) jo.get("start_date");
-            this.endTime = (String) jo.get("end_date");
-            this.description = (String) jo.get("description");
-            this.location = (String) jo.get("location");
-            this.id = jo.getString("_id");
-            this.isValid = true;
-            this.startTime = (String) jo.opt("start_time");
-            this.endTime = (String) jo.opt("end_time");
-            this.startDate = (String) jo.opt("start_date");
-            this.endDate = (String) jo.opt("end_date");
 
-
-        } catch (Exception e) {
-            Log.e("NOAH","exception in show" + e);
-            this.isValid = false;
-        }
-    }
 
     public boolean isSoldOut() {
         return ticketsSold >= capacity;
+    }
+
+
+    public String getDescription() {
+        return this.description;
     }
 
 
