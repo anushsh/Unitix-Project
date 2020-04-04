@@ -32,21 +32,20 @@ public class Show {
             this.name = (String) jo.get("name");
             this.capacity = (Integer) jo.get("capacity");
             this.ticketsSold = jo.optInt("ticketsSold", 0);
-            this.startTime = (String) jo.get("start_date");
-            this.endTime = (String) jo.get("end_date");
             this.description = (String) jo.get("description");
             this.location = (String) jo.get("location");
             this.id = jo.getString("_id");
-            this.price = Double.parseDouble((String) jo.getJSONObject("price").get("$numberDecimal"));
+//            this.price = Double.parseDouble((String) jo.getJSONObject("price").get("$numberDecimal"));
             this.isValid = true;
-            this.startTime = (String) jo.opt("start_time");
-            this.endTime = (String) jo.opt("end_time");
-            this.startDate = (String) jo.opt("start_date");
-            this.endDate = (String) jo.opt("end_date");
+            this.startTime = jo.optString("start_time");
+            this.endTime = jo.optString("end_time");
+            this.startDate = jo.optString("start_date");
+            this.endDate =  jo.optString("end_date");
 
 
         } catch (Exception e) {
             Log.e("NOAH","exception in show" + e);
+            Log.e("NOAH",jo.toString());
             this.isValid = false;
         }
     }
@@ -76,7 +75,7 @@ public class Show {
         return getPrettyStartTime() + " - " + getPrettyEndTime();
     }
     private static String getPrettyTime(String time) {
-        if (time == null) {
+        if (time == null || time.equals("")) {
             return "";
         }
         String[] parts = time.split(":");
