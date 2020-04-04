@@ -26,14 +26,21 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textSize="10pt"
-        android:text="User Name" />
+        android:text="Name: " />
     <TextView
         android:id="@+id/profile_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textSize="10pt"
-        android:text="email" />
+        android:text="Email: " />
+    <TextView
+        android:id="@+id/profile_phone_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="10pt"
+        android:text="Phone Number: " />
 
 
         <LinearLayout

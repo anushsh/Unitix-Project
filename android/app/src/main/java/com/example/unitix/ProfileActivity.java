@@ -20,12 +20,12 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         Intent intent = getIntent();
-        email = intent.getStringExtra("EMAIL");
+        this.user = this.ds.getUser(getIntent().getStringExtra("EMAIL"));
         // TODO: determine who user is
         // TODO: this should probably happen asynchronously...
         TextView emailProfile = (TextView) findViewById(R.id.profile_email);
 
-        emailProfile.setText(("  Email   " + String.valueOf(email)));
+        emailProfile.setText(("Email: " + user.email));
 
         showUser();
         showTickets();
@@ -34,9 +34,11 @@ public class ProfileActivity extends AppCompatActivity {
     void showUser() {
         if (user != null) {
             TextView userName = findViewById(R.id.profile_user_name);
-            userName.setText(user.firstName + " " + user.lastName);
-            TextView emailText = findViewById(R.id.profile_email);
-            emailText.setText(user.email);
+            userName.setText("Name: " + user.firstName + " " + user.lastName);
+            TextView phoneNumber = findViewById(R.id.profile_phone_number);
+            phoneNumber.setText("Phone Number: " + user.phone);
+//            TextView emailText = findViewById(R.id.profile_email);
+//            emailText.setText("Email: " + user.email);
         }
     }
 
