@@ -5,7 +5,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,16 +62,21 @@ public class EventActivity extends AppCompatActivity {
 
         TextView description = findViewById(R.id.event_description);
         String descriptionText = this.show.getDescription() + "\n\n";
+
         LinearLayout showList = findViewById(R.id.show_list);
         for (int i = 0; i < event.shows.size(); i++) {
             final Show show = event.shows.get(i);
-            TextView showView = new TextView(getApplicationContext());
-            showView.setText(new StringBuilder()
+            LinearLayout showView = new LinearLayout(getApplicationContext());
+            showView.setPadding(0,0,0,50);
+            showView.setOrientation(LinearLayout.VERTICAL);
+            TextView showDescription = new TextView(getApplicationContext());
+            showDescription.setText(new StringBuilder()
                     .append("Show ").append(i + 1).append(": ").append(show.getPrettyStartDate())
-                    .append("\n").append(show.getPrettyTimeRange()).append("\n")
-                    .append("Click here to purchase tickets").toString()
+                    .append("\n").append(show.getPrettyTimeRange()).toString()
             );
-            showView.setOnClickListener(new View.OnClickListener() {
+            Button purchaseButton = new Button(getApplicationContext());
+            purchaseButton.setText("Purchase Ticket");
+            purchaseButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     String showID = show.id;
@@ -81,6 +88,8 @@ public class EventActivity extends AppCompatActivity {
                     }
                 }
             });
+            showView.addView(showDescription);
+            showView.addView(purchaseButton);
             showList.addView(showView);
         }
 
@@ -101,7 +110,7 @@ public class EventActivity extends AppCompatActivity {
     }
 
     void handleNullEvent() {
-        // TODO: handle null event (LEAVE PAGE?)
+        finish();
     }
 
     private class LoadEventTask extends AsyncTask<String, Integer, Event> {

@@ -72,7 +72,12 @@ public class Show {
     }
 
     public String getPrettyTimeRange() {
-        return getPrettyStartTime() + " - " + getPrettyEndTime();
+        String start = getPrettyStartTime();
+        String end = getPrettyEndTime();
+        if (start.equals("")) {
+            return "TIME N/A";
+        }
+        return start + " - " + end;
     }
     private static String getPrettyTime(String time) {
         if (time == null || time.equals("")) {
