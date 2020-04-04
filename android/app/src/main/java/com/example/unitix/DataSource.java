@@ -67,6 +67,7 @@ public class DataSource {
                     new AccessWebJSONTask();
             task.execute(url);
             JSONObject jo = task.get();
+            Log.e("NOAH","json object is " + jo.toString());
             return new Event(jo.getJSONObject("event"));
 
         } catch (Exception e) {
