@@ -107,14 +107,14 @@ var getGroupWithEvents = function (req, res) {
 
 
 var getProfile = (req, res) => {
-    console.log("SESSION");
-    console.log(req);
+    // console.log("SESSION");
+    // console.log(req);
     if (req.session.user) {
         Group.findOne({email: req.session.user}, (err, user) => {
             if (err) {
                 res.render({succes: false, error: err})
             } else {
-                console.log(user.bio);
+                // console.log(user.bio);
                 res.render('profile.ejs', {email: user.email, password: user.password, 
                     displayName: user.displayName, groupType: user.groupType, 
                     bio: user.bio})
@@ -280,8 +280,8 @@ var addEventTag = function (req, res) {
 }
 
 var createGroup = (req, res) => {
-    console.log("BODY");
-    console.log(req.body);
+    // console.log("BODY");
+    // console.log(req.body);
     const { body } = req.body;
     var newUser = new Group({
         displayName: req.body.groupName,
@@ -317,9 +317,9 @@ var createGroup = (req, res) => {
 }
 
 var updateGroup = (req, res) => {
-    console.log("REQ");
-    console.log(req.body);
-    console.log(req.session.user);
+    // console.log("REQ");
+    // console.log(req.body);
+    // console.log(req.session.user);
     Group.findOneAndUpdate({email: req.session.user}, {email: req.body.email, password: req.body.password,
     displayName: req.body.groupName, groupType: req.body.groupType, bio: req.body.bio}, {new: true}, (err, user) => {
         if (err) {
