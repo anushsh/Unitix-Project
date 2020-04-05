@@ -59,6 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private class LoadTicketsTask extends AsyncTask<String, Integer, Ticket[]> {
+        //TODO replace with getUserShowInfo
         protected Ticket[] doInBackground(String... blank) {
             return ds.getUserTickets(user.email);
         }

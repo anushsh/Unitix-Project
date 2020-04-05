@@ -96,6 +96,29 @@ public class DataSource {
         }
     }
 
+    public Show[] getUserShowInfo(String email) {
+        try {
+            AccessWebJSONTask task = new AccessWebJSONTask();
+            String urlString = host + ":" + port + "/get_user_show_info?email=" + email;
+            URL url = new URL(urlString);
+            task.execute(url);
+            JSONObject jo = task.get();
+            JSONArray showInfoArray = jo.getJSONArray("shows");
+            List<ShowInfo> showInfo = new LinkedList();
+            for (int i = 0; i < showInfoArray.length(); i++) {
+                ShowInfo show = new ShowInfo(showInfoArray.getJSONObject(i));
+                if (show.isValid) {
+                    showInfo.add(show);
+                }
+            }
+            //TODO figure this out
+            return showInfo.toArray(new Show[0]);
+
+        } catch (Exception e) {
+            return new Show[0];
+        }
+    }
+
     public Ticket[] getUserTickets(String email) {
         try {
             AccessWebJSONTask task = new AccessWebJSONTask();

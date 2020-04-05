@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -26,6 +27,7 @@ public class SearchResultActivity extends AppCompatActivity {
     //private String email;
     //TextView mTextViewSearchResult;
     String query;
+    ViewGroup feed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +57,7 @@ public class SearchResultActivity extends AppCompatActivity {
     }
 
     void addSearchResultsToPage(Event[] events) {
-        LinearLayout feed = findViewById(R.id.event_feed);
+        feed = findViewById(R.id.event_feed);
 
         for (Event event : events) {
             List<Show> shows = event.shows;
@@ -104,7 +106,7 @@ public class SearchResultActivity extends AppCompatActivity {
                 }
             });
 
-
+            feed.removeAllViews();
             feed.addView(eventView);
         }
     }

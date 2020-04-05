@@ -630,6 +630,29 @@ var getUserTickets = function(req, res) {
     })
 }
 
+var getUserShowInfo = function(req, res) {
+    var email = req.query.email;
+    User.findOne({"email":email}, (err, user) => {
+        user = user.toJSON();
+        if (!err && user) {
+            var tickets = [];
+            async.forEach(user.curr_tickets, (ticketID, done) => {
+                Ticket.findById(ticketID, (err, ticket) => {
+                    ticket = ticket.toJSON();
+                    if (!err && ticket) {
+                        tickets.push(ticket);
+                    }
+                    done();
+                })
+            }, () => {
+                res.json({"status":"success","tickets":tickets})
+            });
+        } else {
+            res.json({"status":"error"})
+        }
+    })
+}
+
 var redeemTicket = function(req, res) {
     var ticketID = req.body.ticketID;
     console.log("redeeming ticket " + req.body.ticket);
@@ -678,5 +701,6 @@ module.exports = {
     get_ticket: getTicket,
     get_user_tickets: getUserTickets,
     redeem_ticket: redeemTicket,
-    get_search_result_events: getSearchResultEvents
+    get_search_result_events: getSearchResultEvents,
+    get_user_show_info: getUserShowInfo
 }
