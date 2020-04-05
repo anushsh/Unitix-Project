@@ -377,6 +377,18 @@ var purchaseTicket = function (req, res) {
     })
 }
 
+var requestTicket = function(req, res) {
+    var ticketID = req.body.ticketID;
+    Ticket.findByIdAndUpdate(ticketID, {requested : true}, (err) => {
+        if (err) {
+            res.json({"status":err})
+        } else {
+            res.json({"status":"success"});
+        }
+    })
+
+}
+
 // TODO: refactor with helper getEventwithShows
 var findEventWithShows = function (req, res) {
     var eventID = req.query.eventID;
@@ -546,5 +558,6 @@ module.exports = {
     update_group: updateGroup,
     get_group: getGroup,
     get_group_with_events: getGroupWithEvents,
-    get_show_with_tickets: getShowWithTickets
+    get_show_with_tickets: getShowWithTickets,
+    request_ticket: requestTicket
 }

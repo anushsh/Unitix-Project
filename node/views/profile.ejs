@@ -31,7 +31,11 @@
         }
 
         function requestTicket(ticketID) {
-            alert("TODO: request ticket");
+            $.post("/request_ticket",{"ticketID":ticketID},(res) => {
+                if (res.err == "success") {
+                    $("#status" + ticketID).html("");
+                }
+            });
         }
 
         function viewShow(showID) {
@@ -43,18 +47,25 @@
                 var show = data.show;
                 var tickets = show.tickets;
                 tickets.forEach((ticket) => {
-                    var attendee = ticket.name ? ticket.name : "NAME N/A (id=" +ticket._id+")";
+                    var attendee = ticket.customer ? ticket.customer : "NAME N/A (id=" +ticket._id+")";
+                    var status = "";//"<div id=\"status" + ticket._id + "\">";
                     var clickPart = 'onClick="requestTicket(\'' + ticket._id + '\')"';
-                    if (ticket.redeemed == false) {
+                    if (ticket.requested == false) {
                         // alert(1);
                         var btn = "<button "+clickPart+">Check in</button>";
-                        attendee += btn;
+                        status += btn;
+                    } else if (ticket.redeemed == false) {
+                        status += " (Pending)"
+                    } else {
+                        status += " (Checked in)"
                     }
+                    status += " </div>"
+                    attendee += status;
         
-                    $("#" + show._id).append(attendee);
+                    $("#" + show._id).append(attendee + "<br>");
                 })
                 var clickPart = 'onClick="unviewShow(\'' + show._id + '\')"';
-                var closeButton = "<br><button "+clickPart+">Close attendees</button>";
+                var closeButton = "<button "+clickPart+">Close attendees</button>";
                 $("#" + show._id).append(closeButton);
                 
             });
@@ -65,7 +76,7 @@
         }
 
         function displayEvent(event) {
-            var display = event.name;
+            var display = "<p class=\"subtitle is-5\">" + event.name + "</p>";
             event.shows.forEach((show) => {
                 var clickPart = 'onClick="viewShow(\'' + show._id + '\')"';
                 var list = "<ul id=\"" + show._id + "\"></ul>";

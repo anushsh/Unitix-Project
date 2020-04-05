@@ -45,9 +45,9 @@ app.get('/get_show_with_tickets', routes.get_show_with_tickets);
 
 
 
-// mobile actions
+// ticket handling
 app.post('/purchase_ticket', routes.purchase_ticket);
-
+app.post('/request_ticket', routes.request_ticket);
 //user(customer) management
 app.post('/create_user', routes.create_user)
 app.get('/find_user', routes.find_user)
