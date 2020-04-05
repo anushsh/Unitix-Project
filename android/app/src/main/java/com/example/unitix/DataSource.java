@@ -58,6 +58,24 @@ public class DataSource {
         return events;
     }
 
+    public Event[] getEventSearchResults(String searchQuery) {
+        Event[] events = new Event[0];
+        try {
+            URL url = new URL(host + ":" + port + "/get_search_result_events?searchQuery="+searchQuery);
+            AsyncTask<URL, String, JSONObject> task =
+                    new AccessWebJSONTask();
+            task.execute(url);
+            JSONObject jo = task.get();
+
+            events = Event.createEventList(jo.getJSONArray("events"));
+        } catch (Exception e) {
+            Log.e("KARA","exception: " + e);
+            // pass
+        }
+        Log.e("KARA","about to return search event results, got" + events.length);
+        return events;
+    }
+
 
     public Event getEventByID(String eventID) {
         try {

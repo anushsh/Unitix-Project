@@ -184,6 +184,8 @@ var listEventsWithShows = function (req, res) {
     });
 }
 
+
+
 // use to test db saving
 var listShows = function (req, res) {
     Show.find((err, allShows) => {
@@ -422,6 +424,50 @@ var findEventWithShows = function (req, res) {
     });
 }
 
+var getSearchResultEvents = function (req, res) {
+    var query = req.query.searchQuery;
+    console.log("**************" + query);
+
+    //TODO: COME BACK AND CHANGE "group" to "group_name" once that is updated in event creation
+    Event.find({ $or: [ {name:{$regex: ".*" + query + ".*"}}, {group:{$regex: ".*" + query + ".*"}} ] }, (err, allEvents) => {
+        if (err) {
+            res.json({ 'status': err })
+        } else if (allEvents.length == 0) {
+            res.json({ 'status': 'no events' })
+        }
+        events = [];
+        async.forEach(allEvents,
+            (event, done1) => {
+                event = event.toJSON();
+                var shows = []; // will contain actual shows
+                async.forEach(event.shows, (showID, done2) => {
+                    Show.findById(showID, (err, show) => {
+                        if (!err && show) {
+                            console.log(show.toJSON());
+                            shows.push(show.toJSON());
+                        } else {
+                            console.log(err);
+                        }
+                        done2();
+                    });
+                }, () => {
+                    event.shows = shows; // replace ID's with actual shows
+                    events.push(event);
+                    done1();
+                });
+            }, () => {
+                res.json({
+                    'status': 'success',
+                    'events': events
+                })
+            })
+
+    });
+    // Event.find({ $or: [ { "name":{$regex:".*" + query + ".*"} }, 
+    // { "group_name":{$regex:".*" + query + ".*"} } ] }, (err, allEvents) => {
+        
+}
+
 var getEvent = function (req, res) {
     var eventID = req.query.eventID
     Event.findById(eventID, (err, event) => {
@@ -621,5 +667,6 @@ module.exports = {
     request_ticket: requestTicket,
     get_ticket: getTicket,
     get_user_tickets: getUserTickets,
-    redeem_ticket: redeemTicket
+    redeem_ticket: redeemTicket,
+    get_search_result_events: getSearchResultEvents
 }
