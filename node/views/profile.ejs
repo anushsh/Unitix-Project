@@ -11,20 +11,12 @@
 
         function loadEvents() {
             $.getJSON('/get_group_with_events', (res) => {
-                // console.log(typeof res);
-                // console.log(res);
                 var group = res.group;
                 
                 if (group) {
                     var currentEvents = group.currentEvents;
-                    console.log(typeof currentEvents);
-                    console.log(currentEvents);
-                    currentEvents.forEach(event => {
-                        
-                        console.log(event);
+                    currentEvents.forEach(event => {     
                         $("#currentEvents").append(displayEvent(event));
-                        // console.log(typeof event);
-                        // console.log("here");
                     });
                 }
             })
@@ -38,12 +30,15 @@
             });
         }
 
+        function f(showID) {
+            alert(showID);
+        }
+
+
         function viewShow(showID) {
             // alert('here');
             $("#" + showID).html("");
             $.getJSON("/get_show_with_tickets", {"showID":showID}, (data) => {
-                console.log("show below");
-                console.log(data.show);
                 var show = data.show;
                 var tickets = show.tickets;
                 tickets.forEach((ticket) => {
@@ -62,7 +57,7 @@
                     status += " </div>"
                     attendee += status;
         
-                    $("#" + show._id).append(attendee + "<br>");
+                    $("#" + show._id).append(attendee + "<br>");                                        
                 })
                 var clickPart = 'onClick="unviewShow(\'' + show._id + '\')"';
                 var closeButton = "<button "+clickPart+">Close attendees</button>";
