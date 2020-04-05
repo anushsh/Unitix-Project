@@ -359,16 +359,18 @@ var purchaseTicket = function (req, res) {
                 if (err || !show) {
                     res.json({ "status": (err ? err : "show not found") });
                 } else {
+                    var tickets_sold = show.tickets_sold;
                     // if the show is found, make sure there are tickets available
-                    if (!show.tickets_sold) {
-                        var tickets_sold = 0;
+                    if (!tickets_sold) {
+                        tickets_sold = 0;
                     }
-                    if (show.tickets_sold < show.capacity) {
+                    if (tickets_sold < show.capacity) {
                         // if there are tickets available, create a new ticket
                         var newTicket = new Ticket({
                             show: show._id,
                             redeemed: false,
-                            requested: false
+                            requested: false,
+                            customer: user.first_name + " " + user.last_name 
                         });
 
                         newTicket.save((err, ticket) => {

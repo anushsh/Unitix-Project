@@ -18,7 +18,8 @@ var Schema = mongoose.Schema
 var ticketSchema = new Schema({
   show: String, // showID
   redeemed: Boolean,
-  requested: Boolean
+  requested: Boolean,
+  customer: String
 })
 
 module.exports = mongoose.model('Ticket', ticketSchema)
