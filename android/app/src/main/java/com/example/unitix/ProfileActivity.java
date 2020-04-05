@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,7 +25,8 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         Intent intent = getIntent();
-        this.user = this.ds.getUser(intent.getStringExtra("EMAIL"));
+        email = intent.getStringExtra("EMAIL");
+        this.user = this.ds.getUser(email);
         TextView emailProfile = (TextView) findViewById(R.id.profile_email);
 
         emailProfile.setText(("Email: " + user.email));
@@ -81,5 +83,32 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             }
         }
-        }
+    }
+
+    public void onEditProfileButtonClick(View v) {
+
+        Intent i = new Intent(this, EditProfileActivity.class);
+        i.putExtra("EMAIL", email);
+
+        startActivityForResult(i, 1);
+    }
+
+    public void onBackButtonClick(View v) {
+
+        finish();
+    }
+
+    public void onLogoutButtonClick(View v) {
+
+        //need to figure out a way to remove all active activities from stack instead of starting new activity to  login page
+        Intent i = new Intent(this, MainActivity.class);
+
+        startActivityForResult(i, 1);
+
+        Log.d("Yash", "User logged out");
+
+        Toast.makeText(getApplicationContext(), "Successfully logged out", Toast.LENGTH_LONG).show();
+        finish();
+
+    }
 }

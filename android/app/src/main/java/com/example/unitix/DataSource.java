@@ -179,4 +179,28 @@ public class DataSource {
         }
     }
 
+    public boolean updateUser(String email, String password, String firstName, String lastName, String phone) {
+        try {
+
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put("email", email);
+            jsonParam.put("password", password);
+            jsonParam.put("first_name", firstName);
+            jsonParam.put("last_name", lastName);
+            jsonParam.put("phone", phone);
+            String urlString = "http://10.0.2.2:3000/update_user";
+
+            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(urlString, jsonParam);
+
+            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
+            task.execute(req);
+
+            return true;
+
+        } catch (Exception e) {
+            Log.e("Yash","updateUser exception " + e);
+            return false;
+        }
+    }
+
 }

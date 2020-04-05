@@ -67,8 +67,6 @@ public class MainActivity extends AppCompatActivity {
 
         Intent i = new Intent(this, RegisterActivity.class);
 
-        //i.putExtra("message", "hi");
-
         startActivityForResult(i, 1);
     }
 

@@ -513,6 +513,18 @@ var findUser = function (req, res) {
     })
 }
 
+var updateUser = function (req, res) {
+
+    User.findOneAndUpdate({email: req.body.email}, {$set: {password: req.body.password,
+         first_name: req.body.first_name, last_name: req.body.last_name, phone: req.body.phone}}, (err, user) => {
+        if (err) {
+            res.json({'status': err})
+        } else {
+            res.json({ 'status': 'success' })
+        }
+    })
+}
+
 function getShowWithTickets(req, res) {
     var showID = req.query.showID;
     console.log("SHOW ID " + showID);
@@ -599,6 +611,7 @@ module.exports = {
     get_profile: getProfile,
     create_user: createUser,
     find_user: findUser,
+    update_user, updateUser,
     purchase_ticket: purchaseTicket,
     find_event_with_shows: findEventWithShows,
     update_group: updateGroup,

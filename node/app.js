@@ -52,8 +52,9 @@ app.post('/request_ticket', routes.request_ticket);
 app.post('/redeem_ticket', routes.redeem_ticket);
 
 //user(customer) management
-app.post('/create_user', routes.create_user)
-app.get('/find_user', routes.find_user)
+app.post('/create_user', routes.create_user);
+app.get('/find_user', routes.find_user);
+app.post('/update_user', routes.update_user);
 
 // run server - we use the http server we made so that express doesn't make a new one and ignore socket.io
 http.listen(port)

@@ -8,52 +8,73 @@
 
 
     <LinearLayout
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="20dp">
-
-    <TextView
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="20pt"
-        android:text="Profile" />
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp">
 
-    <TextView
-        android:id="@+id/profile_user_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="10pt"
-        android:text="Name: " />
-    <TextView
-        android:id="@+id/profile_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="10pt"
-        android:text="Email: " />
-    <TextView
-        android:id="@+id/profile_phone_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="10pt"
-        android:text="Phone Number: " />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="20pt"
+            android:text="Profile" />
 
-
-        <LinearLayout
-            android:id="@+id/ticket_list"
-            android:orientation="vertical"
+        <TextView
+            android:id="@+id/profile_user_name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="30in"
-                android:layout_height="wrap_content"
-                android:textSize="10pt"
-                android:text="\nTickets\n"/>
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="10pt"
+            android:text="Name: " />
+        <TextView
+            android:id="@+id/profile_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="10pt"
+            android:text="Email: " />
+        <TextView
+            android:id="@+id/profile_phone_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="10pt"
+            android:text="Phone Number: " />
+
+
+            <LinearLayout
+                android:id="@+id/ticket_list"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="30in"
+                    android:layout_height="wrap_content"
+                    android:textSize="10pt"
+                    android:text="\nTickets\n"/>
+            </LinearLayout>
+
+        <Button
+            android:id="@+id/editprofilebtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onEditProfileButtonClick"
+            android:text="Edit Profile" />
+
+        <Button
+            android:id="@+id/backbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onBackButtonClick"
+            android:text="Back to Dashboard" />
+
+        <Button
+            android:id="@+id/logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onLogoutButtonClick"
+            android:text="Logout" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
