@@ -590,9 +590,6 @@ module.exports = {
     get_group_with_events: getGroupWithEvents,
     get_show_with_tickets: getShowWithTickets,
     request_ticket: requestTicket,
-<<<<<<< HEAD
-    get_ticket: getTicket
-=======
+    get_ticket: getTicket,
     get_user_tickets: getUserTickets
->>>>>>> added android access to tickets
 }
