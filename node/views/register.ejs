@@ -9,6 +9,8 @@
 
 <body>
     <% include header.html %>
+    <div class="container">
+        <div class="box">
     <form action="/creategroup" method="post">
         <center>
         <h4>Enter group name: </h4>
@@ -43,6 +45,8 @@
         </a>
         </center>
     </form>
+        </div>
+    </div>
     &nbsp;
     <%if (message != null) { %>
         <font color="red">
@@ -51,7 +55,6 @@
             <center><%= message %><p>
         <% } %></center>
     </p>
-    </div>
 </body>
 </p>
 

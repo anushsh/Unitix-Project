@@ -17,9 +17,9 @@ var getHome = function (req, res) {
 
 var getProfile = (req, res) => {
     console.log("SESSION");
-    console.log(req.session);
+    console.log(req);
     if (req.session.user) {
-        res.render('profile.ejs')
+        res.render('profile.ejs', {message: req.session.user})
     }
     res.redirect('/');
 }
@@ -238,11 +238,12 @@ var updateGroup = (req, res) => {
     console.log("REQ");
     console.log(req.body);
     console.log(req.session.user);
-    Group.findOneAndUpdate({email: req.session.user}, (err, user) => {
+    Group.findOneAndUpdate({email: req.session.user}, {email: req.body.email, password: req.body.password,
+    displayName: req.body.groupName, groupType: req.body.groupType, bio: req.body.bio}, {new: true}, (err, user) => {
         if (err) {
             res.json({'status': err})
         } else {
-            res.json(user);
+            res.redirect('/profile');
         }
     })
 }
