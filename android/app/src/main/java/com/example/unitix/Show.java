@@ -25,6 +25,7 @@ public class Show implements Comparable<Show> {
     String description;
     String location;
     String id;
+
     boolean isValid;
 
     public Show(Event event, JSONObject jo) {

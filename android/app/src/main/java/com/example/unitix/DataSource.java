@@ -76,6 +76,19 @@ public class DataSource {
         return events;
     }
 
+    public Group getGroupByID(String groupID) {
+        try {
+            URL url = new URL(host + ":" + port + "/get_group_by_id?groupID=" + groupID);
+            AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
+            task.execute(url);
+            JSONObject jo = task.get();
+            return new Group(jo.getJSONObject("group"));
+        } catch (Exception e) {
+            Log.e("MICHAEL", "Error getting group by id: " + e);
+            return null;
+        }
+    }
+
 
     public Event getEventByID(String eventID) {
         try {

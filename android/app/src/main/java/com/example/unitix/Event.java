@@ -18,6 +18,7 @@ public class Event {
     String name;
     String id;
     List<Show> shows;
+    String group;
     boolean isValid;
 
 
@@ -33,6 +34,7 @@ public class Event {
         try {
             this.name = jo.getString("name");
             this.id = jo.getString("_id");
+            this.group = (String) jo.get("group");
             JSONArray shows = jo.getJSONArray("shows");
             for (int i = 0; i < shows.length(); i++){
                 Show show = new Show(this, shows.getJSONObject(i));

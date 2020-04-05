@@ -29,6 +29,7 @@ app.get('/logout', routes.get_logout);
 app.post('/updategroup', routes.update_group);
 // event creation
 app.get('/get_group', routes.get_group)
+app.get('/get_group_by_id', routes.get_group_by_id)
 app.get('/get_group_with_events', routes.get_group_with_events)
 app.get('/create_event', routes.get_create_event)
 app.post('/create_shows', routes.create_shows)

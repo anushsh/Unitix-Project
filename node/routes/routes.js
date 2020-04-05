@@ -57,6 +57,12 @@ var getGroup = function (req, res) {
     })
 }
 
+var getGroupByID = function (req, res) {
+    Group.findById(req.query.groupID, (err, group) => {
+        !err && group ? res.json({"group":group}) : res.json({"err":err})
+    })
+}
+
 // helper to find event pre-populated with shows
 var getEventWithShows= function(eventID, callback) {
     Event.findById(eventID, (err, event) => {
@@ -695,6 +701,7 @@ module.exports = {
     find_event_with_shows: findEventWithShows,
     update_group: updateGroup,
     get_group: getGroup,
+    get_group_by_id: getGroupByID,
     get_group_with_events: getGroupWithEvents,
     get_show_with_tickets: getShowWithTickets,
     request_ticket: requestTicket,
