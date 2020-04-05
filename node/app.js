@@ -41,6 +41,8 @@ app.get('/find_event_with_shows', routes.find_event_with_shows)
 app.get('/get_event', routes.get_event)
 app.post('/add_event_id_to_show', routes.add_event_id_to_show);
 app.post('/add_event_id_to_group', routes.add_event_id_to_group);
+app.get('/get_show_with_tickets', routes.get_show_with_tickets);
+
 
 
 // mobile actions

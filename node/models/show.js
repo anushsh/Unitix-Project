@@ -20,6 +20,7 @@ var showSchema = new Schema({
   tickets_sold: Number,
   location: String,
   description: String,
+  tickets: [String],
   event: String, // uses UUID of Event obj
   price: Schema.Types.Decimal128 // allows for non-integer prices
 })

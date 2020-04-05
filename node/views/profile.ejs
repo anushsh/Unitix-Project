@@ -10,22 +10,71 @@
 
 
         function loadEvents() {
-            $.get('/get_group_with_events', (res) => {
+            $.getJSON('/get_group_with_events', (res) => {
+                // console.log(typeof res);
+                // console.log(res);
                 var group = res.group;
+                
                 if (group) {
                     var currentEvents = group.currentEvents;
+                    console.log(typeof currentEvents);
                     console.log(currentEvents);
                     currentEvents.forEach(event => {
+                        
+                        console.log(event);
                         $("#currentEvents").append(displayEvent(event));
-                        console.log(event.name);
-                        console.log("here");
+                        // console.log(typeof event);
+                        // console.log("here");
                     });
                 }
             })
         }
 
+        function requestTicket(ticketID) {
+            alert("TODO: request ticket");
+        }
+
+        function viewShow(showID) {
+            // alert('here');
+            $("#" + showID).html("");
+            $.getJSON("/get_show_with_tickets", {"showID":showID}, (data) => {
+                console.log("show below");
+                console.log(data.show);
+                var show = data.show;
+                var tickets = show.tickets;
+                tickets.forEach((ticket) => {
+                    var attendee = ticket.name ? ticket.name : "NAME N/A (id=" +ticket._id+")";
+                    var clickPart = 'onClick="requestTicket(\'' + ticket._id + '\')"';
+                    if (ticket.redeemed == false) {
+                        // alert(1);
+                        var btn = "<button "+clickPart+">Check in</button>";
+                        attendee += btn;
+                    }
+        
+                    $("#" + show._id).append(attendee);
+                })
+                var clickPart = 'onClick="unviewShow(\'' + show._id + '\')"';
+                var closeButton = "<br><button "+clickPart+">Close attendees</button>";
+                $("#" + show._id).append(closeButton);
+                
+            });
+        }
+
+        function unviewShow(showID) {
+            $("#" + showID).html("");
+        }
+
         function displayEvent(event) {
-            return event.name;
+            var display = event.name;
+            event.shows.forEach((show) => {
+                var clickPart = 'onClick="viewShow(\'' + show._id + '\')"';
+                var list = "<ul id=\"" + show._id + "\"></ul>";
+                display += show.start_time + " " + show.start_date + "<br><button "+clickPart+">View Attendees</button>" + 
+                list + "<br>";
+            });
+            
+            
+            return display;
         }
 
 

@@ -57,23 +57,50 @@ var getGroup = function (req, res) {
     })
 }
 
+// helper to find event pre-populated with shows
+var getEventWithShows= function(eventID, callback) {
+    Event.findById(eventID, (err, event) => {
+        if (!err && event) {
+            event = event.toJSON();
+            var shows = [];
+            async.forEach(event.shows, (showID, done) => {
+                Show.findById(showID, (err, show) => {
+                    if (!err && show) {
+                        show = show.toJSON();
+                        shows.push(show);
+                        done();
+                    } else {
+                        done();
+                    }
+                })
+            }, () => {
+                event.shows = shows;
+                callback(null, event);
+            });
+        } else {
+            callback("no such event", null);
+        }
+    })
+}
+
 var getGroupWithEvents = function (req, res) {
     Group.findOne({email:req.session.user}, (err, group) => {
         if (!err && group) {
-            var allEvents = [];
+            group = group.toJSON();
+            var currentEvents = [];
             async.forEach(group.currentEvents, (eventID, done) => {
-                Event.findById(eventID, (err, event) => {
+                getEventWithShows(eventID, (err, event) => {
                     if (!err && event) {
-                        allEvents.push(event);
+                        currentEvents.push(event);
                     }
                     done();
                 })
             }, () => {
-                group.currentEvents = allEvents;
+                group.currentEvents = currentEvents;
                 res.json({'status':'success',"group":group});
             });
         } else {
-            res.send({'status':err});
+            res.json({'status':err});
         }
     });
 }
@@ -112,6 +139,7 @@ var listEvents = function (req, res) {
     })
 }
 
+// TODO: refactor with helper method getEventWithShows
 var listEventsWithShows = function (req, res) {
     Event.find((err, allEvents) => {
         if (err) {
@@ -328,7 +356,9 @@ var purchaseTicket = function (req, res) {
                                 user.update({ curr_tickets: tickets }, (err) => {
                                     if (!err) {
                                         // update tickets sold for show
-                                        show.update({ tickets_sold: tickets_sold + 1 }, (err) => {
+                                        var newTickets = show.tickets ? show.tickets : [];
+                                        newTickets.push(ticket._id);
+                                        show.update({ tickets_sold: tickets_sold + 1, tickets: newTickets }, (err) => {
                                             res.json({ "status": "success" });
                                         });
                                     }
@@ -347,6 +377,7 @@ var purchaseTicket = function (req, res) {
     })
 }
 
+// TODO: refactor with helper getEventwithShows
 var findEventWithShows = function (req, res) {
     var eventID = req.query.eventID;
     Event.findById(eventID, (err, event) => {
@@ -463,6 +494,32 @@ var findUser = function (req, res) {
     })
 }
 
+function getShowWithTickets(req, res) {
+    var showID = req.query.showID;
+    console.log("SHOW ID " + showID);
+    Show.findById(showID, (err, show) => {
+        if (!err && show) {
+            show = show.toJSON();
+            var tickets = show.tickets ? show.tickets : [];
+            var fullTickets = []
+            async.forEach(tickets, (ticketID, done) => {
+                Ticket.findById(ticketID, (err, ticket) => {
+                    if (!err && ticket) {
+                        ticket = ticket.toJSON();
+                        fullTickets.push(ticket);
+                    }
+                    done();
+                });
+            }, () => {
+                show.tickets = fullTickets;
+                res.json({"status":"success", "show":show});
+            });
+        } else {
+            res.json({"status":"error"})
+        }
+    });
+}
+
 module.exports = {
     get_splash: getSplash,
     get_create_event: getCreateEvent,
@@ -488,5 +545,6 @@ module.exports = {
     find_event_with_shows: findEventWithShows,
     update_group: updateGroup,
     get_group: getGroup,
-    get_group_with_events: getGroupWithEvents
+    get_group_with_events: getGroupWithEvents,
+    get_show_with_tickets: getShowWithTickets
 }
