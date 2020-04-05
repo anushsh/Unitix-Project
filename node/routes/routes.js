@@ -539,6 +539,29 @@ function getShowWithTickets(req, res) {
     });
 }
 
+var getUserTickets = function(req, res) {
+    var email = req.query.email;
+    User.findOne({"email":email}, (err, user) => {
+        user = user.toJSON();
+        if (!err && user) {
+            var tickets = [];
+            async.forEach(user.curr_tickets, (ticketID, done) => {
+                Ticket.findById(ticketID, (err, ticket) => {
+                    ticket = ticket.toJSON();
+                    if (!err && ticket) {
+                        tickets.push(ticket);
+                    }
+                    done();
+                })
+            }, () => {
+                res.json({"status":"success","tickets":tickets})
+            });
+        } else {
+            res.json({"status":"error"})
+        }
+    })
+}
+
 module.exports = {
     get_splash: getSplash,
     get_create_event: getCreateEvent,
@@ -567,5 +590,9 @@ module.exports = {
     get_group_with_events: getGroupWithEvents,
     get_show_with_tickets: getShowWithTickets,
     request_ticket: requestTicket,
+<<<<<<< HEAD
     get_ticket: getTicket
+=======
+    get_user_tickets: getUserTickets
+>>>>>>> added android access to tickets
 }

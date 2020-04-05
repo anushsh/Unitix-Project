@@ -3,6 +3,7 @@ package com.example.unitix;
 
 import java.net.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import android.os.AsyncTask;
@@ -75,6 +76,28 @@ public class DataSource {
         } catch (Exception e) {
             Log.e("NOAH","getEventByID exception " + e);
             return null;
+        }
+    }
+
+    public Ticket[] getUserTickets(String email) {
+        try {
+            AccessWebJSONTask task = new AccessWebJSONTask();
+            String urlString = host + ":" + port + "/get_user_tickets?email=" + email;
+            URL url = new URL(urlString);
+            task.execute(url);
+            JSONObject jo = task.get();
+            JSONArray ticketsArray = jo.getJSONArray("tickets");
+            List<Ticket> tickets = new LinkedList();
+            for (int i = 0; i < ticketsArray.length(); i++) {
+                Ticket ticket = new Ticket(ticketsArray.getJSONObject(i));
+                if (ticket.isValid) {
+                    tickets.add(ticket);
+                }
+            }
+            return tickets.toArray(new Ticket[0]);
+
+        } catch (Exception e) {
+            return new Ticket[0];
         }
     }
 

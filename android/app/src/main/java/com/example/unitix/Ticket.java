@@ -9,6 +9,7 @@ public class Ticket {
     String showID;
     boolean isRedeemed;
     boolean isRequested;
+    String customer;
 
     boolean isValid;
 
@@ -18,6 +19,7 @@ public class Ticket {
             this.showID = jo.getString("show");
             this.isRedeemed = jo.getBoolean("redeemed");
             this.isRequested = jo.getBoolean("requested");
+            this.customer = jo.optString("customer", "NAME N/A");
         } catch (Exception e) {
             Log.e("MICHAEL", "Error creating ticket - " + e);
             this.isValid = false;
@@ -28,5 +30,4 @@ public class Ticket {
     public String toString() {
         return "Ticket applies to " + this.showID + " and has " + (this.isRedeemed ? "" : "not ") + "been redeemed";
     }
-
 }

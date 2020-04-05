@@ -1,7 +1,9 @@
 package com.example.unitix;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -28,7 +30,9 @@ public class ProfileActivity extends AppCompatActivity {
         emailProfile.setText(("Email: " + user.email));
 
         showUser();
-        showTickets();
+//        showTickets();
+        LoadTicketsTask task = new LoadTicketsTask();
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     void showUser() {
@@ -53,4 +57,21 @@ public class ProfileActivity extends AppCompatActivity {
             // TODO: get user shows
         }
     }
+
+    private class LoadTicketsTask extends AsyncTask<String, Integer, Ticket[]> {
+        protected Ticket[] doInBackground(String... blank) {
+            return ds.getUserTickets(user.email);
+        }
+
+        protected void onPostExecute(Ticket[] tickets) {
+            Log.e("NOAH","got " + tickets.length + " tickets");
+            LinearLayout ticketList = findViewById(R.id.ticket_list);
+            for (Ticket ticket : tickets) {
+                TextView ticketView = new TextView(getApplicationContext());
+                String ticketInfo = ticket.toString();
+                ticketView.setText(ticketInfo);
+                ticketList.addView(ticketView);
+            }
+        }
+        }
 }
