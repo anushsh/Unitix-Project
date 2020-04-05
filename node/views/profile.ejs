@@ -72,7 +72,7 @@
             event.shows.forEach((show) => {
                 var list = "<ul id=\"" + show._id + "\"></ul>";
                 var btn = createButton("View Attendees", "viewShow", show._id);
-                display += show.start_time + " " + show.start_date + "<br>" + btn + list + "<br>";
+                display +=  prettyDate(show.start_date) + " " + prettyTime(show.start_time) + "<br>" + btn + list + "<br>";
             });            
             return display;
         }
