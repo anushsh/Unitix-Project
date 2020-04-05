@@ -138,6 +138,21 @@ public class DataSource {
         return tickets;
     }
 
+    public void redeemTicket(String ticketID) {
+        try {
+            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
+            String urlString = host + ":" + port + "/redeem_ticket";
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put("ticketID", ticketID);
+            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(urlString, jsonParam);
+            task.execute(req);
+
+            Log.e("NOAH","redeem ticket RESPONSE" + task.get().toString());
+        } catch (Exception e) {
+            Log.e("NOAH","redeem ticket exception " +e);
+        }
+    }
+
 
 
     public boolean createUser(String email, String password, String firstName, String lastName, String phone) {

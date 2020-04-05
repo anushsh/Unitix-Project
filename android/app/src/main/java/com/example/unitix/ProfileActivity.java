@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -62,11 +64,21 @@ public class ProfileActivity extends AppCompatActivity {
         protected void onPostExecute(Ticket[] tickets) {
             Log.e("NOAH","got " + tickets.length + " tickets");
             LinearLayout ticketList = findViewById(R.id.ticket_list);
-            for (Ticket ticket : tickets) {
+            for (final Ticket ticket : tickets) {
                 TextView ticketView = new TextView(getApplicationContext());
-                String ticketInfo = ticket.toString();
-                ticketView.setText(ticketInfo);
+                ticketView.setText(ticket.toString());
                 ticketList.addView(ticketView);
+                Button redeemButton = new Button(getApplicationContext());
+                redeemButton.setText("Accept Redeem Request");
+                redeemButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ds.redeemTicket(ticket.id);
+                    }
+                });
+                if (ticket.isRequested && !ticket.isRedeemed) {
+                    ticketList.addView(redeemButton);
+                }
             }
         }
         }

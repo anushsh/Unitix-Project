@@ -49,6 +49,8 @@ app.get('/get_user_tickets', routes.get_user_tickets)
 app.get('/get_ticket', routes.get_ticket);
 app.post('/purchase_ticket', routes.purchase_ticket);
 app.post('/request_ticket', routes.request_ticket);
+app.post('/redeem_ticket', routes.redeem_ticket);
+
 //user(customer) management
 app.post('/create_user', routes.create_user)
 app.get('/find_user', routes.find_user)

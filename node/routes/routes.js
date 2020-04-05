@@ -562,6 +562,22 @@ var getUserTickets = function(req, res) {
     })
 }
 
+var redeemTicket = function(req, res) {
+    var ticketID = req.body.ticketID;
+    console.log("redeeming ticket " + req.body.ticket);
+    console.log("redeeming ticket " + req.body.ticket);
+    console.log("redeeming ticket " + req.body.ticket);
+    console.log("redeeming ticket " + req.body.ticket);
+    console.log("redeeming ticket " + req.body.ticket);
+    
+    Ticket.findByIdAndUpdate(ticketID, {redeemed: true}, (err) => {
+        if (err) {
+            console.log(err);
+        }
+        res.json({"status":(!err ? "success":"error")});
+    });
+}
+
 module.exports = {
     get_splash: getSplash,
     get_create_event: getCreateEvent,
@@ -591,5 +607,6 @@ module.exports = {
     get_show_with_tickets: getShowWithTickets,
     request_ticket: requestTicket,
     get_ticket: getTicket,
-    get_user_tickets: getUserTickets
+    get_user_tickets: getUserTickets,
+    redeem_ticket: redeemTicket
 }
