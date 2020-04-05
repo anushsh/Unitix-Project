@@ -611,7 +611,7 @@ module.exports = {
     get_profile: getProfile,
     create_user: createUser,
     find_user: findUser,
-    update_user, updateUser,
+    update_user: updateUser,
     purchase_ticket: purchaseTicket,
     find_event_with_shows: findEventWithShows,
     update_group: updateGroup,
