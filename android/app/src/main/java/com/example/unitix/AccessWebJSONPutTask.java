@@ -65,6 +65,7 @@ public class AccessWebJSONPutTask extends AsyncTask<AccessWebJSONPutTask.Req, St
             return out;
 
         } catch (Exception e) {
+            Log.e("NOAH","JSON POST EXCEPTION " +e);
             return null;
         }
     }

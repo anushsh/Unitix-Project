@@ -1,42 +1,149 @@
 <!DOCTYPE html>
 <html>
 
+
+    
+
 <head>
     <% include head_imports.html %>
+    <script type="text/javascript">
+
+
+        function loadEvents() {
+            $.getJSON('/get_group_with_events', (res) => {
+                // console.log(typeof res);
+                // console.log(res);
+                var group = res.group;
+                
+                if (group) {
+                    var currentEvents = group.currentEvents;
+                    console.log(typeof currentEvents);
+                    console.log(currentEvents);
+                    currentEvents.forEach(event => {
+                        
+                        console.log(event);
+                        $("#currentEvents").append(displayEvent(event));
+                        // console.log(typeof event);
+                        // console.log("here");
+                    });
+                }
+            })
+        }
+
+        function requestTicket(ticketID) {
+            $.post("/request_ticket",{"ticketID":ticketID},(res) => {
+                if (res.err == "success") {
+                    $("#status" + ticketID).html("");
+                }
+            });
+        }
+
+        function viewShow(showID) {
+            // alert('here');
+            $("#" + showID).html("");
+            $.getJSON("/get_show_with_tickets", {"showID":showID}, (data) => {
+                console.log("show below");
+                console.log(data.show);
+                var show = data.show;
+                var tickets = show.tickets;
+                tickets.forEach((ticket) => {
+                    var attendee = ticket.customer ? ticket.customer : "NAME N/A (id=" +ticket._id+")";
+                    var status = "";//"<div id=\"status" + ticket._id + "\">";
+                    var clickPart = 'onClick="requestTicket(\'' + ticket._id + '\')"';
+                    if (ticket.requested == false) {
+                        // alert(1);
+                        var btn = "<button "+clickPart+">Check in</button>";
+                        status += btn;
+                    } else if (ticket.redeemed == false) {
+                        status += " (Pending)"
+                    } else {
+                        status += " (Checked in)"
+                    }
+                    status += " </div>"
+                    attendee += status;
+        
+                    $("#" + show._id).append(attendee + "<br>");
+                })
+                var clickPart = 'onClick="unviewShow(\'' + show._id + '\')"';
+                var closeButton = "<button "+clickPart+">Close attendees</button>";
+                $("#" + show._id).append(closeButton);
+                
+            });
+        }
+
+        function unviewShow(showID) {
+            $("#" + showID).html("");
+        }
+
+        function displayEvent(event) {
+            var display = "<p class=\"subtitle is-5\">" + event.name + "</p>";
+            event.shows.forEach((show) => {
+                var clickPart = 'onClick="viewShow(\'' + show._id + '\')"';
+                var list = "<ul id=\"" + show._id + "\"></ul>";
+                display += show.start_time + " " + show.start_date + "<br><button "+clickPart+">View Attendees</button>" + 
+                list + "<br>";
+            });
+            
+            
+            return display;
+        }
+
+
+        // on document start
+        $(document).ready(function () {
+            loadEvents()
+            // TODO: populate with events
+            // TODO: add timer
+        })
+    </script>
 </head>
 
 <body>
     <% include header.html %>
-    <form action="/updategroup" method="post">
-        <div class="row">
-            <div class="column">
-                <div class="field">
-                    <h4>Group name: </h4>
-                    <input id="groupName" type="text" name="groupName" required>
+    
+    <div class="columns">
+        <div class="column">
+            <p class="subtitle is-3">Update Group Information</p>
+        
+        
+            <form action="/updategroup" method="post">
+                
+                <div class="row">
+                    
+                    <div class="column">
+                        <h4>Group name: </h4>
+                        <input type="text" name="groupName" required>
+                    </div>
+                    <div class="column">
+                        <h4>Email: </h4>
+                        <input type="email" name="email" required>
+                    </div>
+                    <div class="column">
+                        <h4>Password: </h4>
+                        <input type="password" name="password" required>
+                    </div>
+                    <div class="column">
+                        <h4>Group Type: </h4>
+                        <input type="text" name="groupType" required>
+                    </div>
+                    <div class="column">
+                        <h4>Bio: </h4>
+                        <input type="text" name="bio" required>
+                    </div>
+                    <div class="column">
+                        <button style="margin-top: 2rem;" type="submit" value="Login" class="btn btn-primary">Save
+                            Changes</button>
+                    </div>
                 </div>
-            </div>
-            <div class="column">
-                <h4>Email: </h4>
-                <input type="email" name="email" required>
-            </div>
-            <div class="column">
-                <h4>Password: </h4>
-                <input type="password" name="password" required>
-            </div>
-            <div class="column">
-                <h4>Group Type: </h4>
-                <input type="text" name="groupType" required>
-            </div>
-            <div class="column">
-                <h4>Bio: </h4>
-                <input type="text" name="bio" required>
-            </div>
-            <div class="column">
-                <button style="margin-top: 2rem;" type="submit" value="Login" class="btn btn-primary">Save
-                    Changes</button>
-            </div>
+            </form>
         </div>
-    </form>
+
+        <div class="column">
+            <p class="subtitle is-3">Current Events</p>
+            <ul id="currentEvents">
+            </ul>
+        </div>
+    </div>
 </body>
 
 </html>

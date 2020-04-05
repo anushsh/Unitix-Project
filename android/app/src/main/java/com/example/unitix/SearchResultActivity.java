@@ -1,59 +1,60 @@
 package com.example.unitix;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MenuItemCompat;
 
 import java.util.List;
 
-
-public class DashboardActivity extends AppCompatActivity {
-
-    protected DataSource ds;
-
-    // track session user
-    User user;
-    private String email;
+public class SearchResultActivity extends AppCompatActivity {
+    DataSource ds = new DataSource();
+    //User user;
+    //private String email;
+    //TextView mTextViewSearchResult;
+    String query;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);
-        Intent intent = getIntent();
-        email = intent.getStringExtra("EMAIL");
-        this.ds = new DataSource();
+        setContentView(R.layout.activity_search_result);
+    }
 
 
+    public void onSearchButtonClick(View view) {
+        EditText searchQuery = (EditText) findViewById(R.id.search_query_input);
+        query = searchQuery.getText().toString();
         // execute in background to keep main thread smooth
-        AsyncTask<Integer,Integer,Event[]> task = new HandleEventsTask();
+        AsyncTask<Integer,Integer,Event[]> task = new SearchResultActivity.HandleSearch();
         // allow for parallel execution
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-
-
-
-//        Log.e("NOAH", "here?");
-
     }
 
-    private class HandleEventsTask extends AsyncTask<Integer, Integer, Event[]> {
+    private class HandleSearch extends AsyncTask<Integer, Integer, Event[]> {
         protected Event[] doInBackground(Integer... ints) {
-            return ds.getAllEvents();
+            return ds.getEventSearchResults(query);
         }
         protected void onPostExecute(Event[] events) {
-            Log.e("NOAH","dashboard received events, got" + events.length);
-            addEventsToPage(events);
+            //Log.e("NOAH","dashboard received events, got" + events.length);
+            addSearchResultsToPage(events);
         }
     }
 
-    void addEventsToPage(Event[] events) {
+    void addSearchResultsToPage(Event[] events) {
         LinearLayout feed = findViewById(R.id.event_feed);
 
         for (Event event : events) {
@@ -94,7 +95,7 @@ public class DashboardActivity extends AppCompatActivity {
                     Event event = (Event) v.getTag();
                     String eventName = event.name;
                     String eventID = event.id;
-                    Intent i = new Intent(DashboardActivity.this, EventActivity.class);
+                    Intent i = new Intent(SearchResultActivity.this, EventActivity.class);
                     i.putExtra("eventName", eventName);
                     i.putExtra("eventID", eventID);
                     i.putExtra("EMAIL", getIntent().getStringExtra("EMAIL"));
@@ -108,20 +109,32 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
-    public void onProfileButtonClick(View v) {
 
-        Intent i = new Intent(this, ProfileActivity.class);
+    //used to be in onCreate
+//        mTextViewSearchResult = (TextView) findViewById(R.id.textViewSearchResult);
+//
+//        if (Intent.ACTION_SEARCH.equals(getIntent().getAction())) {
+//            handleSearch(getIntent().getStringExtra(SearchManager.QUERY));
+//        }
 
-        i.putExtra("EMAIL", email);
+//        Intent intent = getIntent();
+//        this.user = this.ds.getUser(intent.getStringExtra("EMAIL"));
 
-        startActivityForResult(i, 1);
-    }
 
-    public void onSearchButtonClick(View v) {
-        Intent i = new Intent(this, SearchResultActivity.class);
 
-        i.putExtra("EMAIL", email);
-
-        startActivityForResult(i, 1);
-    }
+//    public void handleSearch(String searchQuery) {
+//        mTextViewSearchResult.setText(searchQuery);
+//    }
+//
+//
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.options_menu, menu);
+//
+//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+//        return true;
+//    }
 }

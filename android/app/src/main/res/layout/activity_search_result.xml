@@ -22,24 +22,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Events Feed"
+            android:text="Search for Events"
             android:textColor="@android:color/holo_purple"
             android:textSize="36dp" />
 
 
-<!--        temporarily at this location the page - need to fix UI/UX-->
-        <Button
-            android:id="@+id/profilebtn"
-            android:layout_width="wrap_content"
+        <!--        temporarily at this location the page - need to fix UI/UX-->
+        <EditText
+            android:id="@+id/search_query_input"
             android:layout_height="wrap_content"
-            android:onClick="onProfileButtonClick"
-            android:text="View Profile" />
+            android:layout_width="match_parent"
+            android:inputType="text"/>
+
         <Button
-            android:id="@+id/searchbtn"
+            android:id="@+id/search_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onSearchButtonClick"
-            android:text="Search for Events" />
+            android:text="Search" />
 
         <ScrollView
             android:layout_width="wrap_content"

@@ -2,6 +2,9 @@ package com.example.unitix;
 
 
 import java.net.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 import android.os.AsyncTask;
 import org.json.*;
@@ -18,7 +21,6 @@ public class DataSource {
         host = "http://10.0.2.2";
         port = 3000;
     }
-
 
     public User getUser(String email) {
 
@@ -56,6 +58,24 @@ public class DataSource {
         return events;
     }
 
+    public Event[] getEventSearchResults(String searchQuery) {
+        Event[] events = new Event[0];
+        try {
+            URL url = new URL(host + ":" + port + "/get_search_result_events?searchQuery="+searchQuery);
+            AsyncTask<URL, String, JSONObject> task =
+                    new AccessWebJSONTask();
+            task.execute(url);
+            JSONObject jo = task.get();
+
+            events = Event.createEventList(jo.getJSONArray("events"));
+        } catch (Exception e) {
+            Log.e("KARA","exception: " + e);
+            // pass
+        }
+        Log.e("KARA","about to return search event results, got" + events.length);
+        return events;
+    }
+
 
     public Event getEventByID(String eventID) {
         try {
@@ -73,6 +93,28 @@ public class DataSource {
         } catch (Exception e) {
             Log.e("NOAH","getEventByID exception " + e);
             return null;
+        }
+    }
+
+    public Ticket[] getUserTickets(String email) {
+        try {
+            AccessWebJSONTask task = new AccessWebJSONTask();
+            String urlString = host + ":" + port + "/get_user_tickets?email=" + email;
+            URL url = new URL(urlString);
+            task.execute(url);
+            JSONObject jo = task.get();
+            JSONArray ticketsArray = jo.getJSONArray("tickets");
+            List<Ticket> tickets = new LinkedList();
+            for (int i = 0; i < ticketsArray.length(); i++) {
+                Ticket ticket = new Ticket(ticketsArray.getJSONObject(i));
+                if (ticket.isValid) {
+                    tickets.add(ticket);
+                }
+            }
+            return tickets.toArray(new Ticket[0]);
+
+        } catch (Exception e) {
+            return new Ticket[0];
         }
     }
 
@@ -96,6 +138,40 @@ public class DataSource {
         return false;
     }
 
+    public List<Ticket> getTickets(String[] ticketIDs) {
+        List<Ticket> tickets = new ArrayList<>();
+        for (String ticketID : ticketIDs) {
+            try {
+                URL url = new URL(host + ":" + port + "/get_ticket?ticketID=" + ticketID);
+                AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
+                task.execute(url);
+                JSONObject jo = task.get();
+                System.out.println("TICKET JSON OBJECT IS:\n" + jo.toString());
+                tickets.add(new Ticket(jo.getJSONObject("ticket")));
+            } catch (Exception e) {
+                // skip this ticket
+                Log.e("MICHAEL", "ERROR - COULD NOT RETRIEVE TICKET:" + e);
+            }
+        }
+        return tickets;
+    }
+
+    public void redeemTicket(String ticketID) {
+        try {
+            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
+            String urlString = host + ":" + port + "/redeem_ticket";
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put("ticketID", ticketID);
+            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(urlString, jsonParam);
+            task.execute(req);
+
+            Log.e("NOAH","redeem ticket RESPONSE" + task.get().toString());
+        } catch (Exception e) {
+            Log.e("NOAH","redeem ticket exception " +e);
+        }
+    }
+
+
 
     public boolean createUser(String email, String password, String firstName, String lastName, String phone) {
         try {
@@ -117,6 +193,30 @@ public class DataSource {
 
         } catch (Exception e) {
             Log.e("Yash","createUser exception " + e);
+            return false;
+        }
+    }
+
+    public boolean updateUser(String email, String password, String firstName, String lastName, String phone) {
+        try {
+
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put("email", email);
+            jsonParam.put("password", password);
+            jsonParam.put("first_name", firstName);
+            jsonParam.put("last_name", lastName);
+            jsonParam.put("phone", phone);
+            String urlString = "http://10.0.2.2:3000/update_user";
+
+            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(urlString, jsonParam);
+
+            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
+            task.execute(req);
+
+            return true;
+
+        } catch (Exception e) {
+            Log.e("Yash","updateUser exception " + e);
             return false;
         }
     }

@@ -12,22 +12,123 @@ var getSplash = function (req, res) {
 }
 
 var getHome = function (req, res) {
-    res.render('home.ejs')
+    if (req.session.user == null) {
+        res.redirect('/login');
+    }
+    res.render('home.ejs');
 }
+
+
+//Login functions
+
+var getLogin = (req, res) => {
+    if (req.session.user) {
+        res.redirect("/home");
+    }
+    res.render('login.ejs', {message: ""});
+}
+
+var getRegister = (req, res) => {
+    res.render('register.ejs', {message: ""});
+}
+
+//Checking login details
+var checkLogin = (req, res) => {
+    Group.findOne({email: req.body.email, password: req.body.password}, (err, user) => {
+        if (err) {
+            console.log(err);
+            res.json({'status': err})
+        } else {
+            if (!user) {
+                res.render('login.ejs', {message: "Invalid email credentials! Try again!"});
+            } else {
+                req.session.user = req.body.email;
+                res.redirect('/home');
+            }
+        }
+    })
+
+}
+
+var getGroup = function (req, res) {
+    //req.session.user has the email of the group, so we query for the full object
+    Group.findOne({email:req.session.user}, (err, group) => {
+        !err && group ? res.send({'status': 'success', 'group': group}) : res.send({'status':err})
+    })
+}
+
+// helper to find event pre-populated with shows
+var getEventWithShows= function(eventID, callback) {
+    Event.findById(eventID, (err, event) => {
+        if (!err && event) {
+            event = event.toJSON();
+            var shows = [];
+            async.forEach(event.shows, (showID, done) => {
+                Show.findById(showID, (err, show) => {
+                    if (!err && show) {
+                        show = show.toJSON();
+                        shows.push(show);
+                        done();
+                    } else {
+                        done();
+                    }
+                })
+            }, () => {
+                event.shows = shows;
+                callback(null, event);
+            });
+        } else {
+            callback("no such event", null);
+        }
+    })
+}
+
+var getGroupWithEvents = function (req, res) {
+    Group.findOne({email:req.session.user}, (err, group) => {
+        if (!err && group) {
+            group = group.toJSON();
+            var currentEvents = [];
+            async.forEach(group.currentEvents, (eventID, done) => {
+                getEventWithShows(eventID, (err, event) => {
+                    if (!err && event) {
+                        currentEvents.push(event);
+                    }
+                    done();
+                })
+            }, () => {
+                group.currentEvents = currentEvents;
+                res.json({'status':'success',"group":group});
+            });
+        } else {
+            res.json({'status':err});
+        }
+    });
+}
+
 
 var getProfile = (req, res) => {
     console.log("SESSION");
     console.log(req);
     if (req.session.user) {
-        res.render('profile.ejs', {message: req.session.user})
+        res.render('profile.ejs')
+    } else {
+        res.redirect('/');
     }
-    res.redirect('/');
 }
 
 var getCreateEvent = function (req, res) {
-    // TODO: Get group name from session object
-    res.render('create_event.ejs')
+    if (req.session.user == null) {
+        res.redirect('/login');
+    }
+    res.render('create_event.ejs', {"group_email": req.session.user})
 }
+
+var getTicket = function (req, res) {
+        var ticketID = req.query.ticketID
+        Ticket.findById(ticketID, (err, ticket) => {
+            !err && ticket ? res.json({ "ticket": ticket }) : res.json({ "err": err })
+        })
+    }
 
 // use to test db saving
 var listEvents = function (req, res) {
@@ -45,6 +146,7 @@ var listEvents = function (req, res) {
     })
 }
 
+// TODO: refactor with helper method getEventWithShows
 var listEventsWithShows = function (req, res) {
     Event.find((err, allEvents) => {
         if (err) {
@@ -81,6 +183,8 @@ var listEventsWithShows = function (req, res) {
 
     });
 }
+
+
 
 // use to test db saving
 var listShows = function (req, res) {
@@ -166,37 +270,6 @@ var addEventTag = function (req, res) {
     res.render('create_event.ejs')
 }
 
-//Login functions
-
-var getLogin = (req, res) => {
-    if (req.session.user) {
-        res.redirect("/");
-    }
-    res.render('login.ejs', {message: ""});
-}
-
-var getRegister = (req, res) => {
-    res.render('register.ejs', {message: ""});
-}
-
-//Checking login details
-var checkLogin = (req, res) => {
-    Group.findOne({email: req.body.email, password: req.body.password}, (err, user) => {
-        if (err) {
-            console.log(err);
-            res.json({'status': err})
-        } else {
-            if (!user) {
-                res.render('login.ejs', {message: "Invalid email credentials! Try again!"});
-            } else {
-                req.session.user = req.body.email;
-                res.redirect('/home');
-            }
-        }
-    })
-
-}
-
 var createGroup = (req, res) => {
     console.log("BODY");
     console.log(req.body);
@@ -279,7 +352,8 @@ var purchaseTicket = function (req, res) {
                         // if there are tickets available, create a new ticket
                         var newTicket = new Ticket({
                             show: show._id,
-                            redeemed: false
+                            redeemed: false,
+                            requested: false
                         });
 
                         newTicket.save((err, ticket) => {
@@ -292,7 +366,9 @@ var purchaseTicket = function (req, res) {
                                 user.update({ curr_tickets: tickets }, (err) => {
                                     if (!err) {
                                         // update tickets sold for show
-                                        show.update({ tickets_sold: tickets_sold + 1 }, (err) => {
+                                        var newTickets = show.tickets ? show.tickets : [];
+                                        newTickets.push(ticket._id);
+                                        show.update({ tickets_sold: tickets_sold + 1, tickets: newTickets }, (err) => {
                                             res.json({ "status": "success" });
                                         });
                                     }
@@ -311,6 +387,19 @@ var purchaseTicket = function (req, res) {
     })
 }
 
+var requestTicket = function(req, res) {
+    var ticketID = req.body.ticketID;
+    Ticket.findByIdAndUpdate(ticketID, {requested : true}, (err) => {
+        if (err) {
+            res.json({"status":err})
+        } else {
+            res.json({"status":"success"});
+        }
+    })
+
+}
+
+// TODO: refactor with helper getEventwithShows
 var findEventWithShows = function (req, res) {
     var eventID = req.query.eventID;
     Event.findById(eventID, (err, event) => {
@@ -334,6 +423,50 @@ var findEventWithShows = function (req, res) {
             });
         });
     });
+}
+
+var getSearchResultEvents = function (req, res) {
+    var query = req.query.searchQuery;
+    console.log("**************" + query);
+
+    //TODO: COME BACK AND CHANGE "group" to "group_name" once that is updated in event creation
+    Event.find({ $or: [ {name:{$regex: ".*" + query + ".*"}}, {group:{$regex: ".*" + query + ".*"}} ] }, (err, allEvents) => {
+        if (err) {
+            res.json({ 'status': err })
+        } else if (allEvents.length == 0) {
+            res.json({ 'status': 'no events' })
+        }
+        events = [];
+        async.forEach(allEvents,
+            (event, done1) => {
+                event = event.toJSON();
+                var shows = []; // will contain actual shows
+                async.forEach(event.shows, (showID, done2) => {
+                    Show.findById(showID, (err, show) => {
+                        if (!err && show) {
+                            console.log(show.toJSON());
+                            shows.push(show.toJSON());
+                        } else {
+                            console.log(err);
+                        }
+                        done2();
+                    });
+                }, () => {
+                    event.shows = shows; // replace ID's with actual shows
+                    events.push(event);
+                    done1();
+                });
+            }, () => {
+                res.json({
+                    'status': 'success',
+                    'events': events
+                })
+            })
+
+    });
+    // Event.find({ $or: [ { "name":{$regex:".*" + query + ".*"} }, 
+    // { "group_name":{$regex:".*" + query + ".*"} } ] }, (err, allEvents) => {
+        
 }
 
 var getEvent = function (req, res) {
@@ -362,8 +495,25 @@ var addEventIdToShow = function (req, res) {
         } else {
             console.log(show)
             show.update({ event: eventID }, (err) => {
-                res.json({ "status": "success" });
+                !err ? res.json({ "status": "success" }) : res.json({"status":"failure"})
             });
+        }
+    })
+}
+
+var addEventIdToGroup = function (req, res) {
+    var eventID = req.body.eventID
+    var groupEmail = req.body.groupEmail
+    console.log("ADDING EVENT ID TO GROUP")
+    Group.findOne({email:groupEmail}, (err, group) => {
+        if (err || !group) {
+            res.json({"status":"failure finding group"})
+        } else {
+            currentEventsUpdated = group.currentEvents
+            currentEventsUpdated.push(eventID)
+            group.update({currentEvents: currentEventsUpdated}, (err) => {
+                !err ? res.json({ "status": "success" }) : res.json({"status":"failure"})
+            })
         }
     })
 }
@@ -410,6 +560,83 @@ var findUser = function (req, res) {
     })
 }
 
+var updateUser = function (req, res) {
+
+    User.findOneAndUpdate({email: req.body.email}, {$set: {password: req.body.password,
+         first_name: req.body.first_name, last_name: req.body.last_name, phone: req.body.phone}}, (err, user) => {
+        if (err) {
+            res.json({'status': err})
+        } else {
+            res.json({ 'status': 'success' })
+        }
+    })
+}
+
+function getShowWithTickets(req, res) {
+    var showID = req.query.showID;
+    console.log("SHOW ID " + showID);
+    Show.findById(showID, (err, show) => {
+        if (!err && show) {
+            show = show.toJSON();
+            var tickets = show.tickets ? show.tickets : [];
+            var fullTickets = []
+            async.forEach(tickets, (ticketID, done) => {
+                Ticket.findById(ticketID, (err, ticket) => {
+                    if (!err && ticket) {
+                        ticket = ticket.toJSON();
+                        fullTickets.push(ticket);
+                    }
+                    done();
+                });
+            }, () => {
+                show.tickets = fullTickets;
+                res.json({"status":"success", "show":show});
+            });
+        } else {
+            res.json({"status":"error"})
+        }
+    });
+}
+
+var getUserTickets = function(req, res) {
+    var email = req.query.email;
+    User.findOne({"email":email}, (err, user) => {
+        user = user.toJSON();
+        if (!err && user) {
+            var tickets = [];
+            async.forEach(user.curr_tickets, (ticketID, done) => {
+                Ticket.findById(ticketID, (err, ticket) => {
+                    ticket = ticket.toJSON();
+                    if (!err && ticket) {
+                        tickets.push(ticket);
+                    }
+                    done();
+                })
+            }, () => {
+                res.json({"status":"success","tickets":tickets})
+            });
+        } else {
+            res.json({"status":"error"})
+        }
+    })
+}
+
+var redeemTicket = function(req, res) {
+    var ticketID = req.body.ticketID;
+    console.log("redeeming ticket " + req.body.ticket);
+    console.log("redeeming ticket " + req.body.ticket);
+    console.log("redeeming ticket " + req.body.ticket);
+    console.log("redeeming ticket " + req.body.ticket);
+    console.log("redeeming ticket " + req.body.ticket);
+    
+    Ticket.findByIdAndUpdate(ticketID, {redeemed: true}, (err) => {
+        if (err) {
+            console.log(err);
+        }
+        res.json({"status":(!err ? "success":"error")});
+    });
+}
+
 module.exports = {
     get_splash: getSplash,
     get_create_event: getCreateEvent,
@@ -417,6 +644,7 @@ module.exports = {
     create_event: createEvent,
     get_event: getEvent,
     add_event_id_to_show: addEventIdToShow,
+    add_event_id_to_group: addEventIdToGroup,
     list_events: listEvents,
     list_shows: listShows,
     list_events_with_shows: listEventsWithShows,
@@ -430,7 +658,16 @@ module.exports = {
     get_profile: getProfile,
     create_user: createUser,
     find_user: findUser,
+    update_user: updateUser,
     purchase_ticket: purchaseTicket,
     find_event_with_shows: findEventWithShows,
-    update_group: updateGroup
+    update_group: updateGroup,
+    get_group: getGroup,
+    get_group_with_events: getGroupWithEvents,
+    get_show_with_tickets: getShowWithTickets,
+    request_ticket: requestTicket,
+    get_ticket: getTicket,
+    get_user_tickets: getUserTickets,
+    redeem_ticket: redeemTicket,
+    get_search_result_events: getSearchResultEvents
 }
