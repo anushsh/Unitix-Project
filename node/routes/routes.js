@@ -320,7 +320,7 @@ var updateGroup = (req, res) => {
     // console.log("REQ");
     // console.log(req.body);
     // console.log(req.session.user);
-    Group.findOneAndUpdate({email: req.session.user}, {email: req.body.email, password: req.body.password,
+    Group.findOneAndUpdate({email: req.session.user}, {password: req.body.password,
     displayName: req.body.groupName, groupType: req.body.groupType, bio: req.body.bio}, {new: true}, (err, user) => {
         if (err) {
             res.json({'status': err})
