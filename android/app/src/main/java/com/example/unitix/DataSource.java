@@ -22,7 +22,6 @@ public class DataSource {
         port = 3000;
     }
 
-
     public User getUser(String email) {
 
         try {

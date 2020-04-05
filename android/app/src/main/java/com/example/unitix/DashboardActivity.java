@@ -116,4 +116,12 @@ public class DashboardActivity extends AppCompatActivity {
 
         startActivityForResult(i, 1);
     }
+
+    public void onSearchButtonClick(View v) {
+        Intent i = new Intent(this, SearchActivity.class);
+
+        i.putExtra("EMAIL", email);
+
+        startActivityForResult(i, 1);
+    }
 }

@@ -51,8 +51,8 @@
             <TextView
                 android:layout_width="30in"
                 android:layout_height="wrap_content"
-                android:textSize="8pt"
-                android:text="Tickets\n"/>
+                android:textSize="10pt"
+                android:text="\nTickets\n"/>
         </LinearLayout>
     </LinearLayout>
 

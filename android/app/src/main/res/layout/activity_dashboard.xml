@@ -34,6 +34,12 @@
             android:layout_height="wrap_content"
             android:onClick="onProfileButtonClick"
             android:text="View Profile" />
+        <Button
+            android:id="@+id/searchbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onSearchButtonClick"
+            android:text="Search for Events" />
 
         <ScrollView
             android:layout_width="wrap_content"
