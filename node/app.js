@@ -9,6 +9,8 @@ var port = 3000
 
 app.use(express.bodyParser());
 app.use(express.logger("default"))
+app.use('/', express.static(__dirname +  "/views/static",{maxAge:1}));
+
 
 app.use(session({
 	resave: false,
