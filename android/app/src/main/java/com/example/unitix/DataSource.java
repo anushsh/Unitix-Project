@@ -2,6 +2,8 @@ package com.example.unitix;
 
 
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import android.os.AsyncTask;
 import org.json.*;
@@ -95,6 +97,25 @@ public class DataSource {
         }
         return false;
     }
+
+    public List<Ticket> getTickets(String[] ticketIDs) {
+        List<Ticket> tickets = new ArrayList<>();
+        for (String ticketID : ticketIDs) {
+            try {
+                URL url = new URL(host + ":" + port + "/get_ticket?ticketID=" + ticketID);
+                AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
+                task.execute(url);
+                JSONObject jo = task.get();
+                System.out.println("TICKET JSON OBJECT IS:\n" + jo.toString());
+                tickets.add(new Ticket(jo.getJSONObject("ticket")));
+            } catch (Exception e) {
+                // skip this ticket
+                Log.e("MICHAEL", "ERROR - COULD NOT RETRIEVE TICKET:" + e);
+            }
+        }
+        return tickets;
+    }
+
 
 
     public boolean createUser(String email, String password, String firstName, String lastName, String phone) {

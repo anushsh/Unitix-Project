@@ -46,6 +46,7 @@ app.get('/get_show_with_tickets', routes.get_show_with_tickets);
 
 
 // ticket handling
+app.get('/get_ticket', routes.get_ticket);
 app.post('/purchase_ticket', routes.purchase_ticket);
 app.post('/request_ticket', routes.request_ticket);
 //user(customer) management

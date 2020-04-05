@@ -123,6 +123,13 @@ var getCreateEvent = function (req, res) {
     res.render('create_event.ejs', {"group_email": req.session.user})
 }
 
+var getTicket = function (req, res) {
+        var ticketID = req.query.ticketID
+        Ticket.findById(ticketID, (err, ticket) => {
+            !err && ticket ? res.json({ "ticket": ticket }) : res.json({ "err": err })
+        })
+    }
+
 // use to test db saving
 var listEvents = function (req, res) {
     Event.find((err, allEvents) => {
@@ -559,5 +566,6 @@ module.exports = {
     get_group: getGroup,
     get_group_with_events: getGroupWithEvents,
     get_show_with_tickets: getShowWithTickets,
-    request_ticket: requestTicket
+    request_ticket: requestTicket,
+    get_ticket: getTicket
 }
