@@ -450,33 +450,34 @@ var getSearchResultEvents = function (req, res) {
             res.json({ 'status': err })
         } else if (allEvents.length == 0) {
             res.json({ 'status': 'no events' })
-        }
-        events = [];
-        async.forEach(allEvents,
-            (event, done1) => {
-                event = event.toJSON();
-                var shows = []; // will contain actual shows
-                async.forEach(event.shows, (showID, done2) => {
-                    Show.findById(showID, (err, show) => {
-                        if (!err && show) {
-                            console.log(show.toJSON());
-                            shows.push(show.toJSON());
-                        } else {
-                            console.log(err);
-                        }
-                        done2();
+        } else {
+            events = [];
+            async.forEach(allEvents,
+                (event, done1) => {
+                    event = event.toJSON();
+                    var shows = []; // will contain actual shows
+                    async.forEach(event.shows, (showID, done2) => {
+                        Show.findById(showID, (err, show) => {
+                            if (!err && show) {
+                                console.log(show.toJSON());
+                                shows.push(show.toJSON());
+                            } else {
+                                console.log(err);
+                            }
+                            done2();
+                        });
+                    }, () => {
+                        event.shows = shows; // replace ID's with actual shows
+                        events.push(event);
+                        done1();
                     });
                 }, () => {
-                    event.shows = shows; // replace ID's with actual shows
-                    events.push(event);
-                    done1();
-                });
-            }, () => {
-                res.json({
-                    'status': 'success',
-                    'events': events
+                    res.json({
+                        'status': 'success',
+                        'events': events
+                    })
                 })
-            })
+        }
 
     });
     // Event.find({ $or: [ { "name":{$regex:".*" + query + ".*"} }, 
