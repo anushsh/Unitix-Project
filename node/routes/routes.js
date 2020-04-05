@@ -110,7 +110,16 @@ var getProfile = (req, res) => {
     console.log("SESSION");
     console.log(req);
     if (req.session.user) {
-        res.render('profile.ejs')
+        Group.findOne({email: req.session.user}, (err, user) => {
+            if (err) {
+                res.render({succes: false, error: err})
+            } else {
+                console.log(user.bio);
+                res.render('profile.ejs', {email: user.email, password: user.password, 
+                    displayName: user.displayName, groupType: user.groupType, 
+                    bio: user.bio})
+            }
+        })
     } else {
         res.redirect('/');
     }
