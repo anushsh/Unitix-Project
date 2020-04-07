@@ -45,3 +45,40 @@
     parts[1] = monthNames[parseInt(parts[1], 10)]
     return [parts[1], parts[2], parts[0]].join(" ");
  }
+
+ var sortShows = function (shows) {
+     return shows.sort((a, b) => {
+        try {
+            var parts = [a.start_date,b.start_date].map(x => {
+                return x.split("T")[0].split("-").map(y => {
+                    return parseInt(y, 10)
+                })
+            });
+            var aParts = parts[0];
+            var bParts = parts[1];
+            var diffs = aParts.map((x, i) => {return x - bParts[i]});
+            for (diff of diffs) {
+                if (diff != 0) {
+                    return diff;
+                }
+            }
+            parts = [a.start_time,b.start_time].map(x => {
+                return x.split(":")}).map((y) => {
+                    return parseInt(y, 10)
+                });
+            console.log(parts);
+            aParts = parts[0];
+            bParts = parts[1];
+            diffs = aParts.map((x, i) => {return -x + bParts[i]});
+            for (diff of diffs) {
+                if (diff != 0) {
+                    return diff;
+                }
+            }
+        } catch(err) {
+            console.log(err);
+        }
+        return -1;
+
+     });
+ }
