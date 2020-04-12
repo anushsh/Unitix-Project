@@ -58,7 +58,7 @@
     event.shows.forEach((show) => {
         var list = "<ul id=\"" + show._id + "\"></ul>";
         var name = prettyDate(show.start_date) + " " + prettyTime(show.start_time);
-        var btn1 = createButton("View Attendees", "viewShow", show._id, "button is-small");
+        var btn1 = createButton("View Attendees", "viewShow", show._id, "button is-small","show_button"+show._id);
         var btn2 = createButton("Notify Ticket Holders (this show only)", "showNotifyShow", show._id, "button is-small");
         display +=  name + "<br>" + 
             btn1 + btn2  + list + "<br>";
@@ -72,25 +72,24 @@ function unviewShow(showID) {
     $("#" + showID).html("");
 }
 
+// TODO: refactor to allow for notifying shows or events
 function showNotifyEvent(eventID) {
     // create form
-    //<div class="columns"><div class="column is-4">
     var btn = $("#notification_button" + eventID);
     if (btn.val() == "on") {
-        btn.html("Notify all ticket holders");
+        btn.html("Notify all ticket holders"); // make generic
         btn.prop("value","off");
-        $("#eventNotifyText" + eventID).html("");
+        $("#eventNotifyText" + eventID).html(""); // make generic
     } else {
         btn.html("Cancel");
         btn.prop("value","on");
         
-        var form = '<form action="/notifyEvent" method="post">'
+        var form = '<form action="/notifyEvent" method="post">' // make generic
         form += '<textarea class = "textarea" type="text" placeholder="(Write your notification here)"'
         form += 'name="notification" required></textarea>'
         form += '<button class="button is-link is-small" type="submit" class="btn btn-primary">Notify!</button>'
         form += '</form>';
-        //</div></div>
-        $("#eventNotifyText" + eventID).html(form);
+        $("#eventNotifyText" + eventID).html(form); // make generic
     }
 }
 
@@ -122,30 +121,38 @@ function requestTicket(ticketID) {
 
 function viewShow(showID) {
     // alert('here');
-    $("#" + showID).html("");
-    $.getJSON("/get_show_with_tickets", {"showID":showID}, (data) => {
-        var show = data.show;
-        var tickets = show.tickets;
-        tickets.forEach((ticket) => {
-            var attendee = ticket.customer ? ticket.customer : "NAME N/A (id=" +ticket._id+")";
-            var status = "";
-            if (ticket.requested == false) {
-                var btn = createButton("Check in", "requestTicket", ticket._id, "button is-small");
-                status += btn;
-            } else if (ticket.redeemed == false) {
-                status += " (Pending)"
-            } else {
-                status += " (Checked in)"
-            }
-            status += " </div>"
-            attendee += status;
 
-            $("#" + show._id).append(attendee + "<br>");                                        
-        })
-        var closeButton = createButton("Close Attendees", "unviewShow", show._id,"button is-small");
-        $("#" + show._id).append(closeButton);
-        
-    });
+    var btn = $("#show_button" + showID);
+    if (btn.val() == "on") {
+        btn.html("View attendees");
+        btn.prop("value","off");
+        $("#" + showID).html("");
+    } else {
+        btn.prop("value","on");
+        btn.html("Hide attendees");
+        $.getJSON("/get_show_with_tickets", {"showID":showID}, (data) => {
+            var show = data.show;
+            var tickets = show.tickets;
+            tickets.forEach((ticket) => {
+                var attendee = ticket.customer ? ticket.customer : "NAME N/A (id=" +ticket._id+")";
+                var status = "";
+                if (ticket.requested == false) {
+                    var btn = createButton("Check in", "requestTicket", ticket._id, "button is-small");
+                    status += btn;
+                } else if (ticket.redeemed == false) {
+                    status += " (Pending)"
+                } else {
+                    status += " (Checked in)"
+                }
+                status += " </div>"
+                attendee += status;
+
+                $("#" + show._id).append(attendee + "<br>");                                        
+            })
+            $("#" + show._id).append(closeButton);
+            
+        });
+    }
 }
 
 
