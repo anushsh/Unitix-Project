@@ -46,6 +46,95 @@
     return [parts[1], parts[2], parts[0]].join(" ");
  }
 
+ function displayEvent(event) {
+    var display = '<div class="box">';
+    display += "<p class=\"subtitle is-5\">" + event.name + "</p>";
+    display += createButton("Notify all ticket holders", "showNotifyEvent", event._id, "button is-small");
+    display += "<br><br>"
+    event.shows = sortShows(event.shows);
+    event.shows.forEach((show) => {
+        var list = "<ul id=\"" + show._id + "\"></ul>";
+        var name = prettyDate(show.start_date) + " " + prettyTime(show.start_time);
+        var btn1 = createButton("View Attendees", "viewShow", show._id, "button is-small");
+        var btn2 = createButton("Notify Ticket Holders (this show only)", "showNotifyShow", show._id, "button is-small");
+        display +=  name + "<br>" + 
+            btn1 + btn2  + list + "<br>";
+    });            
+    display += ' </div>'
+    return display;
+}
+
+
+function unviewShow(showID) {
+    $("#" + showID).html("");
+}
+
+function showNotifyEvent(eventID) {
+    alert("TODO: notify event " + eventID);
+}
+
+function showNotifyShow(showID) {
+    alert("TODO: notify show " + showID);
+}
+
+function loadEvents() {
+    $.getJSON('/get_group_with_events', (res) => {
+        var group = res.group;
+        
+        if (group) {
+            var currentEvents = sortEvents(group.currentEvents);
+            currentEvents.forEach(event => {     
+                $("#currentEvents").append(displayEvent(event));
+            });
+        }
+    })
+}
+
+function requestTicket(ticketID) {
+    $.post("/request_ticket",{"ticketID":ticketID},(res) => {
+        if (res.err == "success") {
+            $("#status" + ticketID).html("");
+        }
+    });
+}   
+
+
+function viewShow(showID) {
+    // alert('here');
+    $("#" + showID).html("");
+    $.getJSON("/get_show_with_tickets", {"showID":showID}, (data) => {
+        var show = data.show;
+        var tickets = show.tickets;
+        tickets.forEach((ticket) => {
+            var attendee = ticket.customer ? ticket.customer : "NAME N/A (id=" +ticket._id+")";
+            var status = "";
+            if (ticket.requested == false) {
+                var btn = createButton("Check in", "requestTicket", ticket._id, "button is-small");
+                status += btn;
+            } else if (ticket.redeemed == false) {
+                status += " (Pending)"
+            } else {
+                status += " (Checked in)"
+            }
+            status += " </div>"
+            attendee += status;
+
+            $("#" + show._id).append(attendee + "<br>");                                        
+        })
+        var closeButton = createButton("Close Attendees", "unviewShow", show._id,"button is-small");
+        $("#" + show._id).append(closeButton);
+        
+    });
+}
+
+
+
+
+ var sortEvents = function(events) {
+    events.forEach(event => {sortShows(event.shows)});
+    return events;
+ }
+
  var sortShows = function (shows) {
      return shows.sort((a, b) => {
         try {

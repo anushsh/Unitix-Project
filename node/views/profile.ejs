@@ -7,85 +7,11 @@
 <head>
     <% include head_imports.html %>
     <script type="text/javascript">
-
-
-        function loadEvents() {
-            $.getJSON('/get_group_with_events', (res) => {
-                var group = res.group;
-                
-                if (group) {
-                    var currentEvents = group.currentEvents;
-                    currentEvents.forEach(event => {     
-                        $("#currentEvents").append(displayEvent(event));
-                    });
-                }
-            })
-        }
-
-        function requestTicket(ticketID) {
-            $.post("/request_ticket",{"ticketID":ticketID},(res) => {
-                if (res.err == "success") {
-                    $("#status" + ticketID).html("");
-                }
-            });
-        }
-
-        function f(showID) {
-            alert(showID);
-        }
-
-
-        function viewShow(showID) {
-            // alert('here');
-            $("#" + showID).html("");
-            $.getJSON("/get_show_with_tickets", {"showID":showID}, (data) => {
-                var show = data.show;
-                var tickets = show.tickets;
-                tickets.forEach((ticket) => {
-                    var attendee = ticket.customer ? ticket.customer : "NAME N/A (id=" +ticket._id+")";
-                    var status = "";
-                    if (ticket.requested == false) {
-                        var btn = createButton("Check in", "requestTicket", ticket._id, "button is-small");
-                        status += btn;
-                    } else if (ticket.redeemed == false) {
-                        status += " (Pending)"
-                    } else {
-                        status += " (Checked in)"
-                    }
-                    status += " </div>"
-                    attendee += status;
-        
-                    $("#" + show._id).append(attendee + "<br>");                                        
-                })
-                var closeButton = createButton("Close Attendees", "unviewShow", show._id,"button is-small");
-                $("#" + show._id).append(closeButton);
-                
-            });
-        }
-
-        function unviewShow(showID) {
-            $("#" + showID).html("");
-        }
-
-        function displayEvent(event) {
-            var display = "<p class=\"subtitle is-5\">" + event.name + "</p>";
-            event.shows = sortShows(event.shows);
-            event.shows.forEach((show) => {
-                var list = "<ul id=\"" + show._id + "\"></ul>";
-                var name = prettyDate(show.start_date) + " " + prettyTime(show.start_time);
-                var btn = createButton("View Attendees", "viewShow", show._id, "button is-small");
-                display +=  name + "<br>" + 
-                    btn + list + "<br>";
-            });            
-            return display;
-        }
-
-
+       
         // on document start
         $(document).ready(function () {
+            // NOTE: this method is in static/helper.js
             loadEvents()
-            // TODO: populate with events
-            // TODO: add timer
         })
     </script>
 </head>
@@ -94,6 +20,11 @@
     <% include header.html %>
     
     <div class="columns">
+
+        <!-- left margin -->
+        <div class="column is-1">
+        </div>
+
         <div class="column">
             <p class="subtitle is-3">Update Group Information</p>
         
@@ -130,12 +61,23 @@
             </form>
         </div>
 
+        <!-- middle margin -->
+        <div class="column is-narrow">
+        </div>
+
+
         <div class="column">
             <p class="subtitle is-3">Current Events</p>
+            <button class="button is-link" type="submit" onclick="location.href = '/create_event';">Create New Event</button>
+            <br><br>
             <ul id="currentEvents">
             </ul>
-            <button class="button is-link" type="submit" onclick="location.href = '/create_event';">Create Event</button>
         </div>
+
+        <!-- right margin -->
+        <div class="column is-1">
+        </div>
+
     </div>
 </body>
 

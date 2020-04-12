@@ -3,11 +3,32 @@
 
 <head>
     <% include head_imports.html %>
+    <script type="text/javascript">
+       
+        // on document start
+        $(document).ready(function () {
+            // NOTE: this method is in static/helper.js
+            loadEvents()
+        })
+    </script>
 </head>
 
 <body>
     <% include header.html %>
-    <button class="button is-link" type="submit" onclick="location.href = '/create_event';">Create Event</button>
+    <div class="columns">
+
+        <!-- left margin -->
+        <div class="column is-1">
+        </div>
+
+        <div class="column is-6">
+            <p class="subtitle is-3">Current Events</p>
+                    <button class="button is-link" type="submit" onclick="location.href = '/create_event';">Create New Event</button>
+                    <br><br>
+            <ul id="currentEvents">
+            </ul>
+        </div>
+    </div>
 </body>
 
 </html>
