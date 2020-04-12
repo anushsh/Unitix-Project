@@ -8,11 +8,12 @@
  }
 
  // creates a button that calls the specified function with optional parameter using 
- // optional bulmaClass. Only buttonText and functionName are required
- var createButton = function(buttonText, functionName, functionParameter, bulmaClass) {
+ // optional bulmaClass. Can also set button id. Only buttonText and functionName are required
+ var createButton = function(buttonText, functionName, functionParameter, bulmaClass, buttonID) {
     var param = functionParameter ? "(\'" + functionParameter + '\')"' : '()"';
     var clickPart = 'onClick="' + functionName + param;
     var leftSide = "<button " + (bulmaClass ? 'class ="' + bulmaClass + '"' : '');
+    leftSide += (buttonID ? ' id="' + buttonID + '"' : "");
     return leftSide + clickPart+">"+buttonText+"</button>";
  }
 
@@ -49,8 +50,10 @@
  function displayEvent(event) {
     var display = '<div class="box">';
     display += "<p class=\"subtitle is-5\">" + event.name + "</p>";
-    display += createButton("Notify all ticket holders", "showNotifyEvent", event._id, "button is-small");
-    display += "<br><br>"
+    display += createButton("Notify all ticket holders", "showNotifyEvent", event._id, "button is-small",
+        "notification_button"+event._id);
+    display += '<div id="eventNotifyText' + event._id + '"></div>'
+    display += "<br>"
     event.shows = sortShows(event.shows);
     event.shows.forEach((show) => {
         var list = "<ul id=\"" + show._id + "\"></ul>";
@@ -70,7 +73,25 @@ function unviewShow(showID) {
 }
 
 function showNotifyEvent(eventID) {
-    alert("TODO: notify event " + eventID);
+    // create form
+    //<div class="columns"><div class="column is-4">
+    var btn = $("#notification_button" + eventID);
+    if (btn.val() == "on") {
+        btn.html("Notify all ticket holders");
+        btn.prop("value","off");
+        $("#eventNotifyText" + eventID).html("");
+    } else {
+        btn.html("Cancel");
+        btn.prop("value","on");
+        
+        var form = '<form action="/notifyEvent" method="post">'
+        form += '<textarea class = "textarea" type="text" placeholder="(Write your notification here)"'
+        form += 'name="notification" required></textarea>'
+        form += '<button class="button is-link is-small" type="submit" class="btn btn-primary">Notify!</button>'
+        form += '</form>';
+        //</div></div>
+        $("#eventNotifyText" + eventID).html(form);
+    }
 }
 
 function showNotifyShow(showID) {
