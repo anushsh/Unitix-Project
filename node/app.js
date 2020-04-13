@@ -47,6 +47,9 @@ app.post('/add_event_id_to_group', routes.add_event_id_to_group);
 app.get('/get_show_with_tickets', routes.get_show_with_tickets);
 app.get('/get_user_tickets', routes.get_user_tickets)
 
+//notifications
+app.post('/create_notification', routes.create_notification);
+
 //profile
 app.get('/get_user_show_info', routes.get_user_show_info);
 

@@ -662,14 +662,59 @@ var getUserShowInfo = function(req, res) {
     })
 }
 
+var createNotification = function(req, res) {
+    var userID = req.body.userID;
+    var content = req.body.content;
+    addNotification(userID, content, (err, notification) => {
+        if (!err) {
+            res.json({
+                "status":"success", 
+                "notification":notification
+            });
+        } else {
+            res.json({"status":"error"});
+        }
+    })
+}
+
+var addNotification = function(userID, content, callback) {
+    var newNotification = new Notification({
+        content: content
+    })
+    newNotification.save((err, notification) => {
+        if (err || !notification) {
+            callback("error", null);
+        } else {
+            User.findById(userID, (err, user) => {
+                if (err || !user) {
+                    callback("error", null);
+                } else {
+                    user = user.toJSON();
+                    notification = notification.toJSON();
+                    // get notifications if exist
+                    var notifications = user.notifications ? user.notifications : [];
+                    // add notification to list
+                    notifications.push(notification._id);
+                    User.findByIdAndUpdate(userID, {"notifications":notifications}, (err, user) => {
+                        if (!err && user) {
+                            // send back notification
+                            callback(null, notification);
+                        } else {
+                            callback("error", null);
+                        }
+                    })
+
+                }
+            });
+        }
+    });
+
+}
+
+
+
 var redeemTicket = function(req, res) {
-    var ticketID = req.body.ticketID;
-    console.log("redeeming ticket " + req.body.ticket);
-    console.log("redeeming ticket " + req.body.ticket);
-    console.log("redeeming ticket " + req.body.ticket);
-    console.log("redeeming ticket " + req.body.ticket);
-    console.log("redeeming ticket " + req.body.ticket);
-    
+    var ticketID = req.body.ticketID;  
     Ticket.findByIdAndUpdate(ticketID, {redeemed: true}, (err) => {
         if (err) {
             console.log(err);
@@ -712,5 +757,6 @@ module.exports = {
     get_user_tickets: getUserTickets,
     redeem_ticket: redeemTicket,
     get_search_result_events: getSearchResultEvents,
-    get_user_show_info: getUserShowInfo
+    get_user_show_info: getUserShowInfo,
+    create_notification: createNotification
 }

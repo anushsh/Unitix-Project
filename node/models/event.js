@@ -1,6 +1,4 @@
 // initialization from mongoosejs documentation
-var Show = require('./show.js')
-
 var mongoose = require('mongoose')
 
 // need to use "test" (for example) and not "admin" bc admin won't allow for raw queries

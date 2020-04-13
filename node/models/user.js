@@ -1,4 +1,3 @@
-var Event = require('./event.js')
 var mongoose = require('mongoose');
 
 mongoose.connect('mongodb+srv://UNITIX_GLOBAL:UnitixCis350@cluster0-q0aj1.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true })
@@ -21,7 +20,8 @@ var userSchema = new Schema({
     following: [String],
     past_tickets: [String], // string of ids
     curr_tickets: [String],  // string of ids
-    saved_tickets: [String] 
+    saved_tickets: [String], // string of ids
+    notifications: [String] // string of ids
 });
 
 module.exports = mongoose.model('User', userSchema);
