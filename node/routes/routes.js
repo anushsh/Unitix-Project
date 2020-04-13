@@ -565,8 +565,21 @@ var updateUser = function (req, res) {
     })
 }
 
-// TODO: refactor two methods below with a new getAllTickets method which returns
-// an array of ticket objects for the passed in array of ticket ids
+function getAllTickets(ticketIDs, callback) {
+    var tickets = []; // array of ticket objects
+    async.forEach(ticketIDs, (ticketID, done) => {
+        Ticket.findById(ticketID, (err, ticket) => {
+            if (!err && ticket) {
+                ticket = ticket.toJSON();
+                tickets.push(ticket);
+            }
+            done();
+        })
+    }, () => {
+        // no error since will always return at least empty array
+        callback(tickets);
+    });
+}
 
 function getShowWithTickets(req, res) {
     var showID = req.query.showID;
@@ -574,18 +587,9 @@ function getShowWithTickets(req, res) {
     Show.findById(showID, (err, show) => {
         if (!err && show) {
             show = show.toJSON();
-            var tickets = show.tickets ? show.tickets : [];
-            var fullTickets = []
-            async.forEach(tickets, (ticketID, done) => {
-                Ticket.findById(ticketID, (err, ticket) => {
-                    if (!err && ticket) {
-                        ticket = ticket.toJSON();
-                        fullTickets.push(ticket);
-                    }
-                    done();
-                });
-            }, () => {
-                show.tickets = fullTickets;
+            var ticketIDs = show.tickets ? show.tickets : [];
+            getAllTickets(ticketIDs, (tickets) => {
+                show.tickets = tickets;
                 res.json({"status":"success", "show":show});
             });
         } else {
@@ -599,16 +603,8 @@ var getUserTickets = function(req, res) {
     User.findOne({"email":email}, (err, user) => {
         user = user.toJSON();
         if (!err && user) {
-            var tickets = [];
-            async.forEach(user.curr_tickets, (ticketID, done) => {
-                Ticket.findById(ticketID, (err, ticket) => {
-                    ticket = ticket.toJSON();
-                    if (!err && ticket) {
-                        tickets.push(ticket);
-                    }
-                    done();
-                })
-            }, () => {
+            var ticketIDs = user.curr_tickets ? user.curr_tickets : [];
+            getAllTickets(ticketIDs, (tickets) => {
                 res.json({"status":"success","tickets":tickets})
             });
         } else {
