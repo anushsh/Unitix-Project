@@ -104,24 +104,6 @@ function showNotify(id, isShow) {
 function showNotifyEvent(eventID) {
     showNotify(eventID, false);
     return;
-    // // create form
-    // var btn = $("#notification_button" + eventID);
-    // if (btn.val() == "on") {
-    //     btn.html("Notify all ticket holders"); // make generic
-    //     btn.prop("value","off");
-    //     $("#eventNotifyText" + eventID).html(""); // make generic
-    // } else {
-    //     btn.html("Cancel");
-    //     btn.prop("value","on");
-    //     // action="/notifyEvent" method="post"
-    //     var form = '<form >' // make generic
-    //     form += '<textarea class = "textarea" id="content'+eventID+'" type="text" placeholder="(Write your notification here)"'
-    //     form += 'name="notification" required></textarea>'
-    //     form += createButton("Notify!","notifyEvent",eventID,"button is-link is-small");
-    //     // form += '<button class="button is-link is-small" type="submit" class="btn btn-primary">Notify!</button>'
-    //     form += '</form>';
-    //     $("#eventNotifyText" + eventID).html(form); // make generic
-    // }
 }
 
 function notifyEvent(eventID) {
