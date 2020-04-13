@@ -87,14 +87,23 @@ function showNotifyEvent(eventID) {
     } else {
         btn.html("Cancel");
         btn.prop("value","on");
-        
-        var form = '<form action="/notifyEvent" method="post">' // make generic
-        form += '<textarea class = "textarea" type="text" placeholder="(Write your notification here)"'
+        // action="/notifyEvent" method="post"
+        var form = '<form >' // make generic
+        form += '<textarea class = "textarea" id="content'+eventID+'" type="text" placeholder="(Write your notification here)"'
         form += 'name="notification" required></textarea>'
-        form += '<button class="button is-link is-small" type="submit" class="btn btn-primary">Notify!</button>'
+        form += createButton("Notify!","notifyEvent",eventID,"button is-link is-small");
+        // form += '<button class="button is-link is-small" type="submit" class="btn btn-primary">Notify!</button>'
         form += '</form>';
         $("#eventNotifyText" + eventID).html(form); // make generic
     }
+}
+
+function notifyEvent(eventID) {
+    var content = $("#content" + eventID).val();
+    $.post('/notifyEvent',{"eventID":eventID,"content":content}, (e,d) => {
+        // TODO: ?
+    })
+    // alert("notify event " + eventID + v);
 }
 
 function showNotifyShow(showID) {

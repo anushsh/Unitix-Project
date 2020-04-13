@@ -687,6 +687,15 @@ var addNotification = function(userID, content, callback) {
 
 }
 
+
+
+var notifyEvent = function(req, res) {
+    var content = req.body.content;
+    var eventID = req.body.content;
+    // TODO: NEED WAY TO DETERMINE LIST OF USERS
+    // have tickets store userIDs?
+}
+
 var redeemTicket = function(req, res) {
     var ticketID = req.body.ticketID;  
     Ticket.findByIdAndUpdate(ticketID, {redeemed: true}, (err) => {
@@ -732,5 +741,6 @@ module.exports = {
     redeem_ticket: redeemTicket,
     get_search_result_events: getSearchResultEvents,
     get_user_show_info: getUserShowInfo,
-    create_notification: createNotification
+    create_notification: createNotification,
+    notify_event: notifyEvent
 }
