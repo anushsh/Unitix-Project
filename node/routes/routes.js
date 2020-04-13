@@ -4,6 +4,7 @@ var User = require('../models/user.js');
 var Group = require('../models/group.js');
 var Ticket = require('../models/ticket.js')
 var User = require('../models/user.js')
+var Notification = require('../models/notification.js')
 
 var async = require('async')
 
@@ -14,8 +15,9 @@ var getSplash = function (req, res) {
 var getHome = function (req, res) {
     if (req.session.user == null) {
         res.redirect('/login');
+    } else {
+        res.render('home.ejs');
     }
-    res.render('home.ejs');
 }
 
 
@@ -357,7 +359,8 @@ var purchaseTicket = function (req, res) {
                             show: show._id,
                             redeemed: false,
                             requested: false,
-                            customer: user.first_name + " " + user.last_name 
+                            customer: user.first_name + " " + user.last_name ,
+                            user: user._id
                         });
 
                         newTicket.save((err, ticket) => {
@@ -687,11 +690,69 @@ var addNotification = function(userID, content, callback) {
 
 }
 
+var notifyAllShowTicketHolders = function(showID, content, callback) {
+    Show.findById(showID, (err, show) => {
+        if (!err && show) {
+            var ticketIDs = show.tickets ? show.tickets : [];
+            getAllTickets(ticketIDs, (tickets) => {
+                async.forEach(tickets, (ticket, done) => {
+                    var userID = ticket.user;
+                    if (userID) {
+                        addNotification(userID, content, (err, _) => {
+                            done();
+                        })
+                    } else {
+                        // if ticket has no user
+                        done();
+                    }
 
+                }, () => {
+                    callback(null); // return no error
+                });
+            })
+        } else {
+            callback(err);
+        }
+    });
+} 
+
+var notifyShow = function(req, res) {
+    var content = req.body.content;
+    var showID = req.body.showID;
+    notifyAllShowTicketHolders(showID, content, (err) => {
+        if (err) {
+            res.json({"status":"error"});
+        } else {
+            res.json({"status":"success"})
+        }
+    });
+}
 
 var notifyEvent = function(req, res) {
+    console.log("NOTIFY EVENT RUN");
+
     var content = req.body.content;
-    var eventID = req.body.content;
+    var eventID = req.body.eventID;
+    console.log(content);
+    console.log(eventID)
+    Event.findById(eventID, (err, event) => {
+        if (!err && event) {
+            event = event.toJSON();
+            async.forEach(event.shows, (showID, done) => {
+                notifyAllShowTicketHolders(showID, content, (err) => {
+                    if (err) {
+                        res.json({"status":"error"});
+                    } else {
+                        done();
+                    }
+                });
+            }, () => {
+                res.json({"status":"success"})
+            });
+        } else {
+
+        }
+    });
     // TODO: NEED WAY TO DETERMINE LIST OF USERS
     // have tickets store userIDs?
 }
@@ -742,5 +803,6 @@ module.exports = {
     get_search_result_events: getSearchResultEvents,
     get_user_show_info: getUserShowInfo,
     create_notification: createNotification,
-    notify_event: notifyEvent
+    notify_event: notifyEvent,
+    notify_show: notifyShow
 }

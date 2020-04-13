@@ -51,7 +51,7 @@
     var display = '<div class="box">';
     display += "<p class=\"subtitle is-5\">" + event.name + "</p>";
     display += createButton("Notify all ticket holders", "showNotifyEvent", event._id, "button is-small",
-        "notification_button"+event._id);
+        "event_notification_button"+event._id);
     display += '<div id="eventNotifyText' + event._id + '"></div>'
     display += "<br>"
     // event.shows = sortShows(event.shows);
@@ -60,9 +60,11 @@
         var name = prettyDate(show.start_date) + " " + prettyTime(show.start_time);
         var tickets = "<br>Tickets sold: " + show.tickets_sold;
         var btn1 = createButton("View Attendees", "viewShow", show._id, "button is-small","show_button"+show._id);
-        var btn2 = createButton("Notify Ticket Holders (this show only)", "showNotifyShow", show._id, "button is-small");
+        var btn2 = createButton("Notify Ticket Holders (this show only)", "showNotifyShow", show._id, "button is-small",
+        "show_notification_button" + show._id);
+        var notificationBox = '<div id="showNotifyText' + show._id + '"></div>';
         display +=  name + tickets + "<br>" + 
-            btn1 + btn2  + list + "<br>";
+            btn1 + btn2 + notificationBox + list + "<br>";
     });            
     var footer =   '<footer class="card-footer">'+
     '<a href="/edit_event?eventID='+event._id+'" class="card-footer-item">Edit Event</a></footer>';
@@ -76,38 +78,70 @@ function unviewShow(showID) {
     $("#" + showID).html("");
 }
 
-// TODO: refactor to allow for notifying shows or events
-function showNotifyEvent(eventID) {
+function showNotify(id, isShow) {
     // create form
-    var btn = $("#notification_button" + eventID);
+    var type = !isShow ? "event" : "show";
+    var btn = $("#" + type + "_notification_button" + id);
     if (btn.val() == "on") {
-        btn.html("Notify all ticket holders"); // make generic
+        var msg = "Notify all ticket holders";
+        msg = isShow ? 'Notify Ticket Holders (this show only)' : msg;
+        btn.html(msg); // make generic
         btn.prop("value","off");
-        $("#eventNotifyText" + eventID).html(""); // make generic
+        $("#" + type + "NotifyText" + id).html(""); // make generic
     } else {
         btn.html("Cancel");
         btn.prop("value","on");
         // action="/notifyEvent" method="post"
         var form = '<form >' // make generic
-        form += '<textarea class = "textarea" id="content'+eventID+'" type="text" placeholder="(Write your notification here)"'
+        form += '<textarea class = "textarea" id="content'+id+'" type="text" placeholder="(Write your notification here)"'
         form += 'name="notification" required></textarea>'
-        form += createButton("Notify!","notifyEvent",eventID,"button is-link is-small");
-        // form += '<button class="button is-link is-small" type="submit" class="btn btn-primary">Notify!</button>'
+        form += createButton("Notify!",isShow ? "notifyShow" : "notifyEvent", id, "button is-link is-small");
         form += '</form>';
-        $("#eventNotifyText" + eventID).html(form); // make generic
+        $("#" + type + "NotifyText" + id).html(form); // make generic
     }
+}
+
+function showNotifyEvent(eventID) {
+    showNotify(eventID, false);
+    return;
+    // // create form
+    // var btn = $("#notification_button" + eventID);
+    // if (btn.val() == "on") {
+    //     btn.html("Notify all ticket holders"); // make generic
+    //     btn.prop("value","off");
+    //     $("#eventNotifyText" + eventID).html(""); // make generic
+    // } else {
+    //     btn.html("Cancel");
+    //     btn.prop("value","on");
+    //     // action="/notifyEvent" method="post"
+    //     var form = '<form >' // make generic
+    //     form += '<textarea class = "textarea" id="content'+eventID+'" type="text" placeholder="(Write your notification here)"'
+    //     form += 'name="notification" required></textarea>'
+    //     form += createButton("Notify!","notifyEvent",eventID,"button is-link is-small");
+    //     // form += '<button class="button is-link is-small" type="submit" class="btn btn-primary">Notify!</button>'
+    //     form += '</form>';
+    //     $("#eventNotifyText" + eventID).html(form); // make generic
+    // }
 }
 
 function notifyEvent(eventID) {
     var content = $("#content" + eventID).val();
-    $.post('/notifyEvent',{"eventID":eventID,"content":content}, (e,d) => {
-        // TODO: ?
+    $.post('/notify_event',{"eventID":eventID,"content":content}, (res) => {
+        alert("" + res);
+        console.log(res);
     })
-    // alert("notify event " + eventID + v);
+    // alert("notify event " + eventID + content);
+}
+
+function notifyShow(showID) {
+    var content = $("#content" + showID).val();
+    $.post('/notify_show',{"showID":showID,"content":content}, (res) => {
+        console.log(res);
+    })
 }
 
 function showNotifyShow(showID) {
-    alert("TODO: notify show " + showID);
+    showNotify(showID, true);
 }
 
 function loadEvents() {
@@ -160,7 +194,7 @@ function viewShow(showID) {
 
                 $("#" + show._id).append(attendee + "<br>");                                        
             })
-            $("#" + show._id).append(closeButton);
+            // $("#" + show._id).append(closeButton);
             
         });
     }
@@ -198,8 +232,9 @@ var compareShows = function(showA, showB) {
         if (datesDiff != 0) {
             return datesDiff;
         }
-        return compareTimes(a.start_time, b.start_time);
+        return compareTimes(showA.start_time, showB.start_time);
     } catch(err) {
+        console.log("sorting error below");
         console.log(err);
     }
     return 0;
@@ -224,13 +259,12 @@ var compareShows = function(showA, showB) {
 
  var compareTimes = function(aTime, bTime) {
     var parts = [aTime, bTime].map(x => {
-        return x.split(":")}).map((y) => {
+        return x.split(":").map((y) => {
             return parseInt(y, 10)
-        });
-    console.log(parts);
+        })});
     aParts = parts[0];
     bParts = parts[1];
-    diffs = aParts.map((x, i) => {return -x + bParts[i]});
+    diffs = aParts.map((x, i) => {return x - bParts[i]});
     for (diff of diffs) {
         if (diff != 0) {
             return diff;
