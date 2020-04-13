@@ -54,15 +54,19 @@
         "notification_button"+event._id);
     display += '<div id="eventNotifyText' + event._id + '"></div>'
     display += "<br>"
-    event.shows = sortShows(event.shows);
+    // event.shows = sortShows(event.shows);
     event.shows.forEach((show) => {
         var list = "<ul id=\"" + show._id + "\"></ul>";
         var name = prettyDate(show.start_date) + " " + prettyTime(show.start_time);
+        var tickets = "<br>Tickets sold: " + show.tickets_sold;
         var btn1 = createButton("View Attendees", "viewShow", show._id, "button is-small","show_button"+show._id);
         var btn2 = createButton("Notify Ticket Holders (this show only)", "showNotifyShow", show._id, "button is-small");
-        display +=  name + "<br>" + 
+        display +=  name + tickets + "<br>" + 
             btn1 + btn2  + list + "<br>";
     });            
+    var footer =   '<footer class="card-footer">'+
+    '<a href="/edit_event?eventID='+event._id+'" class="card-footer-item">Edit Event</a></footer>';
+    display += footer;
     display += ' </div>'
     return display;
 }
@@ -120,8 +124,6 @@ function requestTicket(ticketID) {
 
 
 function viewShow(showID) {
-    // alert('here');
-
     var btn = $("#show_button" + showID);
     if (btn.val() == "on") {
         btn.html("View attendees");
@@ -160,42 +162,74 @@ function viewShow(showID) {
 
  var sortEvents = function(events) {
     events.forEach(event => {sortShows(event.shows)});
+    events = events.sort((eventA, eventB) => {
+        try {
+            // first show should be earliest
+            var showA = eventA.shows[0];
+            var showB = eventB.shows[0];
+            return compareShows(showA, showB);
+            
+        } catch(err) {
+            // in case no shows
+            return 0;
+        }
+    });
     return events;
  }
 
  var sortShows = function (shows) {
-     return shows.sort((a, b) => {
-        try {
-            var parts = [a.start_date,b.start_date].map(x => {
-                return x.split("T")[0].split("-").map(y => {
-                    return parseInt(y, 10)
-                })
-            });
-            var aParts = parts[0];
-            var bParts = parts[1];
-            var diffs = aParts.map((x, i) => {return x - bParts[i]});
-            for (diff of diffs) {
-                if (diff != 0) {
-                    return diff;
-                }
-            }
-            parts = [a.start_time,b.start_time].map(x => {
-                return x.split(":")}).map((y) => {
-                    return parseInt(y, 10)
-                });
-            console.log(parts);
-            aParts = parts[0];
-            bParts = parts[1];
-            diffs = aParts.map((x, i) => {return -x + bParts[i]});
-            for (diff of diffs) {
-                if (diff != 0) {
-                    return diff;
-                }
-            }
-        } catch(err) {
-            console.log(err);
-        }
-        return -1;
+    return shows.sort(compareShows);
+}
 
-     });
+// -------- sorting helpers -------
+
+var compareShows = function(showA, showB) {
+    try {
+        var datesDiff = compareDates(showA.start_date, showB.start_date);
+        if (datesDiff != 0) {
+            return datesDiff;
+        }
+        return compareTimes(a.start_time, b.start_time);
+    } catch(err) {
+        console.log(err);
+    }
+    return 0;
  }
+
+ var compareDates = function(aDate, bDate) {
+    var parts = [aDate, bDate].map(x => {
+        return x.split("T")[0].split("-").map(y => {
+            return parseInt(y, 10)
+        })
+    });
+    var aParts = parts[0];
+    var bParts = parts[1];
+    var diffs = aParts.map((x, i) => {return x - bParts[i]});
+    for (diff of diffs) {
+        if (diff != 0) {
+            return diff;
+        }
+    }
+    return 0;
+ }
+
+ var compareTimes = function(aTime, bTime) {
+    var parts = [aTime, bTime].map(x => {
+        return x.split(":")}).map((y) => {
+            return parseInt(y, 10)
+        });
+    console.log(parts);
+    aParts = parts[0];
+    bParts = parts[1];
+    diffs = aParts.map((x, i) => {return -x + bParts[i]});
+    for (diff of diffs) {
+        if (diff != 0) {
+            return diff;
+        }
+    }
+    return 0;
+ }
+
+ 
+
+ 
