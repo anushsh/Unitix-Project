@@ -89,6 +89,7 @@ var getEventWithShows= function(eventID, callback) {
     })
 }
 
+// TODO: make into helper
 var getGroupWithEvents = function (req, res) {
     Group.findOne({email:req.session.user}, (err, group) => {
         if (!err && group) {
@@ -161,8 +162,7 @@ var listEvents = function (req, res) {
     })
 }
 
-// TODO: refactor with helper method getEventWithShows
-var listEventsWithShows = function (req, res) {
+var listEventsWithShows = function (_, res) {
     Event.find((err, allEvents) => {
         if (err) {
             res.json({ 'status': err })
@@ -170,32 +170,19 @@ var listEventsWithShows = function (req, res) {
             res.json({ 'status': 'no events' })
         }
         events = [];
-        async.forEach(allEvents,
-            (event, done1) => {
-                event = event.toJSON();
-                var shows = []; // will contain actual shows
-                async.forEach(event.shows, (showID, done2) => {
-                    Show.findById(showID, (err, show) => {
-                        if (!err && show) {
-                            console.log(show.toJSON());
-                            shows.push(show.toJSON());
-                        } else {
-                            console.log(err);
-                        }
-                        done2();
-                    });
-                }, () => {
-                    event.shows = shows; // replace ID's with actual shows
+        async.forEach(allEvents, (event, done) => {
+            event = event.toJSON();
+            getEventWithShows(event._id, (err, event) => {
+                if (!err && event) {
                     events.push(event);
-                    done1();
-                });
-            }, () => {
-                res.json({
-                    'status': 'success',
-                    'events': events
-                })
+                }
+                done();
+            })}, () => {
+            res.json({
+                'status': 'success',
+                'events': events
             })
-
+        })
     });
 }
 
@@ -416,30 +403,18 @@ var requestTicket = function(req, res) {
 
 }
 
-// TODO: refactor with helper getEventwithShows
 var findEventWithShows = function (req, res) {
     var eventID = req.query.eventID;
-    Event.findById(eventID, (err, event) => {
+    getEventWithShows(eventID, (err, event) => {
         if (err || !event) {
             res.json({ "status": "failure" });
-        }
-        event = event.toJSON();
-        var shows = []; // to fill with actual show objects
-        async.forEach(event.shows, (showID, done) => {
-            Show.findById(showID, (err, show) => {
-                if (!err && show) {
-                    shows.push(show.toJSON());
-                }
-                done();
-            })
-        }, () => {
-            event.shows = shows;
+        } else {
             res.json({
                 "status": "success",
                 "event": event
             });
-        });
-    });
+        }
+    })
 }
 
 var getSearchResultEvents = function (req, res) {
@@ -590,6 +565,9 @@ var updateUser = function (req, res) {
     })
 }
 
+// TODO: refactor two methods below with a new getAllTickets method which returns
+// an array of ticket objects for the passed in array of ticket ids
+
 function getShowWithTickets(req, res) {
     var showID = req.query.showID;
     console.log("SHOW ID " + showID);
@@ -639,6 +617,7 @@ var getUserTickets = function(req, res) {
     })
 }
 
+// TODO: is this gonna change to be different from one above?
 var getUserShowInfo = function(req, res) {
     var email = req.query.email;
     User.findOne({"email":email}, (err, user) => {
@@ -665,8 +644,9 @@ var getUserShowInfo = function(req, res) {
 var createNotification = function(req, res) {
     var userID = req.body.userID;
     var content = req.body.content;
+    // calls helper which also handles user side
     addNotification(userID, content, (err, notification) => {
-        if (!err) {
+        if (!err && notification) {
             res.json({
                 "status":"success", 
                 "notification":notification
@@ -710,8 +690,6 @@ var addNotification = function(userID, content, callback) {
     });
 
 }
-
-
 
 var redeemTicket = function(req, res) {
     var ticketID = req.body.ticketID;  
