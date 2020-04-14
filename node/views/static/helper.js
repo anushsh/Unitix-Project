@@ -32,10 +32,6 @@
         min = "0" + min;
     }
     return hour + ":" + min + " " + end;
-
-
-
-    return time;
  }
 
  var prettyDate = function(date) {
@@ -44,7 +40,7 @@
     var dateTrim = date.split("T")[0];
     var parts = dateTrim.split("-");
     parts[1] = monthNames[parseInt(parts[1], 10)]
-    return [parts[1], parts[2], parts[0]].join(" ");
+    return [parts[1], parts[2] + ",", parts[0]].join(" ");
  }
 
  function displayEvent(event) {
@@ -54,10 +50,10 @@
         "event_notification_button"+event._id);
     display += '<div id="eventNotifyText' + event._id + '"></div>'
     display += "<br>"
-    // event.shows = sortShows(event.shows);
+    var showNumber = 1;
     event.shows.forEach((show) => {
         var list = "<ul id=\"" + show._id + "\"></ul>";
-        var name = prettyDate(show.start_date) + " " + prettyTime(show.start_time);
+        var name = "Show #" + showNumber + " on " + prettyDate(show.start_date) + " at " + prettyTime(show.start_time);
         var tickets = "<br>Tickets sold: " + show.tickets_sold;
         var btn1 = createButton("View Attendees", "viewShow", show._id, "button is-small","show_button"+show._id);
         var btn2 = createButton("Notify Ticket Holders (this show only)", "showNotifyShow", show._id, "button is-small",
@@ -65,6 +61,7 @@
         var notificationBox = '<div id="showNotifyText' + show._id + '"></div>';
         display +=  name + tickets + "<br>" + 
             btn1 + btn2 + notificationBox + list + "<br>";
+        showNumber += 1;
     });            
     var footer =   '<footer class="card-footer">'+
     '<a href="/edit_event?eventID='+event._id+'" class="card-footer-item">Edit Event</a></footer>';
@@ -73,46 +70,44 @@
     return display;
 }
 
-
-function unviewShow(showID) {
-    $("#" + showID).html("");
-}
-
 function showNotify(id, isShow) {
-    // create form
+    // determine if handling show or event notifications
     var type = !isShow ? "event" : "show";
     var btn = $("#" + type + "_notification_button" + id);
+    // if notification form is already open...
     if (btn.val() == "on") {
+        // close it and restore button text
         var msg = "Notify all ticket holders";
         msg = isShow ? 'Notify Ticket Holders (this show only)' : msg;
-        btn.html(msg); // make generic
+        btn.html(msg); 
         btn.prop("value","off");
-        $("#" + type + "NotifyText" + id).html(""); // make generic
+        $("#" + type + "NotifyText" + id).html(""); 
     } else {
+        // otherwise, create form to handle posting notifications
         btn.html("Cancel");
         btn.prop("value","on");
-        // action="/notifyEvent" method="post"
-        var form = '<form >' // make generic
+        var form = '<form >' 
         form += '<textarea class = "textarea" id="content'+id+'" type="text" placeholder="(Write your notification here)"'
         form += 'name="notification" required></textarea>'
-        form += createButton("Notify!",isShow ? "notifyShow" : "notifyEvent", id, "button is-link is-small");
+        form += createButton("Notify!", isShow ? "notifyShow" : "notifyEvent", id, "button is-link is-small");
         form += '</form>';
-        $("#" + type + "NotifyText" + id).html(form); // make generic
+        $("#" + type + "NotifyText" + id).html(form);
     }
 }
 
 function showNotifyEvent(eventID) {
     showNotify(eventID, false);
-    return;
+}
+
+function showNotifyShow(showID) {
+    showNotify(showID, true);
 }
 
 function notifyEvent(eventID) {
     var content = $("#content" + eventID).val();
     $.post('/notify_event',{"eventID":eventID,"content":content}, (res) => {
-        alert("" + res);
         console.log(res);
     })
-    // alert("notify event " + eventID + content);
 }
 
 function notifyShow(showID) {
@@ -122,10 +117,7 @@ function notifyShow(showID) {
     })
 }
 
-function showNotifyShow(showID) {
-    showNotify(showID, true);
-}
-
+// loads events into ul with id 'currentEvents'
 function loadEvents() {
     $.getJSON('/get_group_with_events', (res) => {
         var group = res.group;
@@ -142,7 +134,7 @@ function loadEvents() {
 function requestTicket(ticketID) {
     $.post("/request_ticket",{"ticketID":ticketID},(res) => {
         if (res.err == "success") {
-            $("#status" + ticketID).html("");
+            // $("#status" + ticketID).html("");
         }
     });
 }   
