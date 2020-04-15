@@ -732,6 +732,40 @@ function getAllNotifications(email, callback) {
     })
 }
 
+function readAllNotifications(req, res) {
+    var email = req.body.email;
+    User.findOne({email:email}, (err, user) => {
+        if (!err && user) {
+            user = user.toJSON();
+            var notificationIDs = user.notifications;
+            if (notificationIDs) {
+                async.forEach(notificationIDs, (notificationID, done) => {
+                    readNotification(user._id, notificationID, () => {
+                        done();
+                    })
+                }, () => {
+                    res.json({"status":"success"});
+                });
+            }
+        }
+    });
+}
+
+function readNotification(userID, notificationID, callback) {
+    Notification.findByIdAndRemove(notificationID, (err, notification) => {
+        User.findById(userID, (err, user) => {
+            if (!err && user) {
+                user = user.toJSON();
+                var notifications = user.notifications ? user.notifications : [];
+                notifications = notifications.filter((n) => {return n != notificationID});
+                User.findByIdAndUpdate(userID, {notifications:notifications}, (err, user) => {
+                    callback();
+                })
+            }
+        });
+    })
+}
+
 function sortNotifications(notifications) {
     // TODO: this does not work!
     notifications = notifications.sort((a, b) => {
@@ -855,5 +889,6 @@ module.exports = {
     create_notification: createNotification,
     notify_event: notifyEvent,
     notify_show: notifyShow,
-    get_user_notifications: getUserNotifications
+    get_user_notifications: getUserNotifications,
+    read_all_notifications: readAllNotifications
 }

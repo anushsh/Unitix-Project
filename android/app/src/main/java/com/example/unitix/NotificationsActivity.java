@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -52,6 +53,28 @@ public class NotificationsActivity extends AppCompatActivity  {
             notificationText.setTextSize(30);
             feed.addView(notificationText);
         }
+        if (notifications.length == 0) {
+            hideReadNotificationsButton();
+        }
     }
+
+    void hideReadNotificationsButton() {
+        Button button = findViewById(R.id.readnotificationsbtn);
+        button.setVisibility(View.INVISIBLE);
+        LinearLayout feed = findViewById(R.id.notification_list);
+        TextView notificationText = new TextView(getApplicationContext());
+        notificationText.setText("No notifications");
+        notificationText.setTextSize(30);
+        feed.addView(notificationText);
+    }
+
+    public void onReadNotificationButtonClick(View v) {
+        ds.readNotifications(email);
+        LinearLayout feed = findViewById(R.id.notification_list);
+        feed.removeAllViews();
+        hideReadNotificationsButton();
+    }
+
+
 
 }

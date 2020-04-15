@@ -52,6 +52,7 @@ app.post('/create_notification', routes.create_notification);
 app.post('/notify_event', routes.notify_event);
 app.post('/notify_show', routes.notify_show);
 app.get('/get_user_notifications', routes.get_user_notifications)
+app.post('/read_all_notifications', routes.read_all_notifications)
 
 //profile
 app.get('/get_user_show_info', routes.get_user_show_info);

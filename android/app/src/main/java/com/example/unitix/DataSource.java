@@ -169,6 +169,21 @@ public class DataSource {
         }
     }
 
+    public void readNotifications(String email) {
+        try {
+            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
+            JSONObject jo = new JSONObject();
+            jo.put("email", email);
+            String url = host + ":" + port + "/read_all_notifications";
+            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(url, jo);
+            task.execute(req);
+            JSONObject res = task.get();
+            Log.e("NOAH","res is " + res);
+        } catch (Exception e) {
+            Log.e("NOAH","failed to purchase");
+        }
+    }
+
     public boolean purchaseTicket(String email, String showID) {
         try {
             AccessWebJSONPutTask task = new AccessWebJSONPutTask();
