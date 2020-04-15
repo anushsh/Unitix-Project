@@ -94,6 +94,14 @@ public class ProfileActivity extends AppCompatActivity {
         startActivityForResult(i, 1);
     }
 
+    public void onNotificationButtonClick(View v) {
+
+        Intent i = new Intent(this, NotificationsActivity.class);
+        i.putExtra("EMAIL", email);
+
+        startActivityForResult(i, 1);
+    }
+
     public void onBackButtonClick(View v) {
 
         finish();

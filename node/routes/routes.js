@@ -690,6 +690,46 @@ var addNotification = function(userID, content, callback) {
 
 }
 
+function getUserNotifications(req, res) {
+    var userID = req.body.userID;
+    getAllNotifications(userID, (err, notifications) => {
+        if (err) {
+            res.json({"status":"error"})
+        } else {
+            res.json({
+                "status":"success","notifications":notifications
+            })
+        }
+    })
+}
+
+function getAllNotifications(userID, callback) {
+    User.findById(userID, (err, user) => {
+        if (err || !user) {
+            callback("error", null);
+        } else {
+            user = user.toJSON();
+            var notificationIDs = user.notifications;
+            if (!notificationIDs) {
+                notificationIDs = [];
+            }
+            var notifications = [];
+            async.forEach(notificationIDs, (notificationID, done) => {
+                Notification.findById(notificationID, (err, notification) => {
+                    if (!err && notification) {
+                        notification = notification.toJSON();
+                        notifications.push(notification);
+                    }
+                    done();
+                })
+            }, () => {
+                callback(null, notifications);
+            });
+
+        }
+    })
+}
+
 var notifyAllShowTicketHolders = function(showID, content, callback) {
     Show.findById(showID, (err, show) => {
         if (!err && show) {
@@ -804,5 +844,6 @@ module.exports = {
     get_user_show_info: getUserShowInfo,
     create_notification: createNotification,
     notify_event: notifyEvent,
-    notify_show: notifyShow
+    notify_show: notifyShow,
+    get_user_notifications: getUserNotifications
 }

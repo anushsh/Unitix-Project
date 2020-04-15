@@ -39,7 +39,11 @@ public class DataSource {
         }
     }
 
-    // for testing purposes
+    public Notification[] getAllNotifications() {
+        // TODO
+        return new Notification[0];
+    }
+
     public Event[] getAllEvents() {
         Event[] events = new Event[0];
         try {

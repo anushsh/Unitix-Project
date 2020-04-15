@@ -21,29 +21,29 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Login Page"
-            android:textSize="30dp" />
+            android:textSize="40dp" />
 
         <EditText
             android:id="@+id/email"
-            android:layout_width="540px"
-            android:layout_height="80px"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="30px"
-            android:hint="example@mail.com"
+            android:hint="          example@mail.com          "
             android:selectAllOnFocus="false"
             android:textAlignment="center"
-            android:textSize="10sp" />
+            android:textSize="15sp" />
 
 
         <EditText
             android:id="@+id/password"
-            android:layout_width="540px"
-            android:layout_height="80px"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:hint="******"
+            android:hint="                  ******                  "
             android:inputType="textPassword"
             android:textAlignment="center"
-            android:textSize="10sp" />
+            android:textSize="15sp" />
 
         <Button
             android:id="@+id/loginbtn"

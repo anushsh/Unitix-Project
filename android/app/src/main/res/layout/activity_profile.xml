@@ -42,6 +42,17 @@
             android:textSize="10pt"
             android:text="Phone Number: " />
 
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="45dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="36dp">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
             <LinearLayout
                 android:id="@+id/ticket_list"
@@ -54,6 +65,13 @@
                     android:textSize="10pt"
                     android:text="\nTickets\n"/>
             </LinearLayout>
+
+        <Button
+            android:id="@+id/notificationbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onNotificationButtonClick"
+            android:text="Notifications" />
 
         <Button
             android:id="@+id/editprofilebtn"
@@ -75,6 +93,10 @@
             android:layout_height="wrap_content"
             android:onClick="onLogoutButtonClick"
             android:text="Logout" />
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

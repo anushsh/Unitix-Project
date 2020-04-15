@@ -51,6 +51,7 @@ app.get('/get_user_tickets', routes.get_user_tickets)
 app.post('/create_notification', routes.create_notification);
 app.post('/notify_event', routes.notify_event);
 app.post('/notify_show', routes.notify_show);
+app.post('/get_user_notifications', routes.get_user_notifications)
 
 //profile
 app.get('/get_user_show_info', routes.get_user_show_info);
