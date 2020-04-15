@@ -16,6 +16,7 @@ public class User {
     //following
     public String[] pastTickets;
     public String[] currTickets;
+    public int numNotifications;
     public boolean isValid;
 
     public User(JSONObject jo) {
@@ -27,6 +28,12 @@ public class User {
             this.phone = jo.getString("phone");
             this.pastTickets = makeStringArray(jo.optJSONArray("past_tickets"));
             this.currTickets = makeStringArray(jo.optJSONArray("curr_tickets"));
+            JSONArray notifications = jo.optJSONArray("notifications");
+            if (notifications != null) {
+                this.numNotifications = notifications.length();
+            } else {
+                this.numNotifications = 0;
+            }
             isValid = true;
         } catch (Exception e) {
             isValid = false;

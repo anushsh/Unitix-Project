@@ -43,6 +43,11 @@ public class ProfileActivity extends AppCompatActivity {
             userName.setText("Name: " + user.firstName + " " + user.lastName);
             TextView phoneNumber = findViewById(R.id.profile_phone_number);
             phoneNumber.setText("Phone Number: " + user.phone);
+
+            Button notificationsButton = findViewById(R.id.notificationbtn);
+            notificationsButton.setText(notificationsButton.getText() +
+                    " (" + user.numNotifications + ")");
+
         }
     }
 

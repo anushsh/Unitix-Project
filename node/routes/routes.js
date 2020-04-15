@@ -744,7 +744,11 @@ function readAllNotifications(req, res) {
                         done();
                     })
                 }, () => {
-                    res.json({"status":"success"});
+                    // need to manually clear any remaining notifications
+                    User.findOneAndUpdate({email:email}, {notifications:[]}, (err, _) => {
+                        res.json({"status":"success"});
+                    });
+                    
                 });
             }
         }
