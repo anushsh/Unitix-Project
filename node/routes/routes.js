@@ -691,8 +691,8 @@ var addNotification = function(userID, content, callback) {
 }
 
 function getUserNotifications(req, res) {
-    var userID = req.body.userID;
-    getAllNotifications(userID, (err, notifications) => {
+    var email = req.query.email;
+    getAllNotifications(email, (err, notifications) => {
         if (err) {
             res.json({"status":"error"})
         } else {
@@ -703,8 +703,8 @@ function getUserNotifications(req, res) {
     })
 }
 
-function getAllNotifications(userID, callback) {
-    User.findById(userID, (err, user) => {
+function getAllNotifications(email, callback) {
+    User.findOne({email:email}, (err, user) => {
         if (err || !user) {
             callback("error", null);
         } else {
@@ -734,11 +734,12 @@ var notifyAllShowTicketHolders = function(showID, content, callback) {
     Show.findById(showID, (err, show) => {
         if (!err && show) {
             var ticketIDs = show.tickets ? show.tickets : [];
+            var preface = show.name ? show.name + ": " : "";
             getAllTickets(ticketIDs, (tickets) => {
                 async.forEach(tickets, (ticket, done) => {
                     var userID = ticket.user;
                     if (userID) {
-                        addNotification(userID, content, (err, _) => {
+                        addNotification(userID, preface + content, (err, _) => {
                             done();
                         })
                     } else {
@@ -793,8 +794,6 @@ var notifyEvent = function(req, res) {
 
         }
     });
-    // TODO: NEED WAY TO DETERMINE LIST OF USERS
-    // have tickets store userIDs?
 }
 
 var redeemTicket = function(req, res) {

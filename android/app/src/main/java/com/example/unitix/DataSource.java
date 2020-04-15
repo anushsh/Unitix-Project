@@ -39,9 +39,20 @@ public class DataSource {
         }
     }
 
-    public Notification[] getAllNotifications() {
-        // TODO
-        return new Notification[0];
+    public Notification[] getAllNotifications(String email) {
+        Notification[] notifications = new Notification[0];
+        try {
+            URL url = new URL(host + ":" + port + "/get_user_notifications?email=" + email);
+            AsyncTask<URL, String, JSONObject> task =
+                    new AccessWebJSONTask();
+            task.execute(url);
+            JSONObject jo = task.get();
+
+            notifications = Notification.createNotificationList(jo.getJSONArray("notifications"));
+        } catch (Exception e) {
+            Log.e("NOAH","exception: " + e);
+        }
+        return notifications;
     }
 
     public Event[] getAllEvents() {

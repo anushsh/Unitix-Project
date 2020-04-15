@@ -6,8 +6,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.w3c.dom.Text;
 
 public class NotificationsActivity extends AppCompatActivity  {
 
@@ -32,7 +36,7 @@ public class NotificationsActivity extends AppCompatActivity  {
 
     private class HandleNotificationsTask extends AsyncTask<Integer, Integer, Notification[]> {
         protected Notification[] doInBackground(Integer... ints) {
-            return ds.getAllNotifications();
+            return ds.getAllNotifications(user.email);
         }
         protected void onPostExecute(Notification[] notifications) {
             Log.e("NOAH","notification view received notifications, got" + notifications.length);
@@ -41,7 +45,12 @@ public class NotificationsActivity extends AppCompatActivity  {
     }
 
     void addNotificationsToPage(Notification[] notifications) {
-        //   TODO
+        LinearLayout feed = findViewById(R.id.notification_list);
+        for (Notification notification : notifications) {
+            TextView notificationText = new TextView(getApplicationContext());
+            notificationText.setText(notification.content);
+            feed.addView(notificationText);
+        }
     }
 
 }
