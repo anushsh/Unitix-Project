@@ -717,17 +717,28 @@ function getAllNotifications(email, callback) {
             async.forEach(notificationIDs, (notificationID, done) => {
                 Notification.findById(notificationID, (err, notification) => {
                     if (!err && notification) {
-                        notification = notification.toJSON();
+                        // notification = notification.toJSON();
                         notifications.push(notification);
                     }
                     done();
                 })
             }, () => {
+
+                notifications = sortNotifications(notifications);
                 callback(null, notifications);
             });
 
         }
     })
+}
+
+function sortNotifications(notifications) {
+    // TODO: this does not work!
+    notifications = notifications.sort((a, b) => {
+        console.log(typeof new Date(a._id.getTimestamp()))
+        return -new Date(a._id.getTimestamp()) + new Date(b._id.getTimestamp());
+    })
+    return notifications;
 }
 
 var notifyAllShowTicketHolders = function(showID, content, callback) {

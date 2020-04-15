@@ -54,6 +54,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
+                <Button
+                    android:id="@+id/notificationbtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onNotificationButtonClick"
+                    android:text="Notifications" />
+
             <LinearLayout
                 android:id="@+id/ticket_list"
                 android:orientation="vertical"
@@ -65,13 +72,6 @@
                     android:textSize="10pt"
                     android:text="\nTickets\n"/>
             </LinearLayout>
-
-        <Button
-            android:id="@+id/notificationbtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onNotificationButtonClick"
-            android:text="Notifications" />
 
         <Button
             android:id="@+id/editprofilebtn"

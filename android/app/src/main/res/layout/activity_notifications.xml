@@ -21,13 +21,17 @@
             android:textSize="20pt"
             android:text="Notifications" />
 
-        <LinearLayout
-            android:id="@+id/notification_list"
-            android:orientation="vertical"
+        <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/notification_list"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-        </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
 

@@ -49,6 +49,7 @@ public class NotificationsActivity extends AppCompatActivity  {
         for (Notification notification : notifications) {
             TextView notificationText = new TextView(getApplicationContext());
             notificationText.setText(notification.content);
+            notificationText.setTextSize(30);
             feed.addView(notificationText);
         }
     }
