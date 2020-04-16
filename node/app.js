@@ -42,10 +42,14 @@ app.get('/list_shows', routes.list_shows)
 app.get('/list_events_with_shows', routes.list_events_with_shows)
 app.get('/find_event_with_shows', routes.find_event_with_shows)
 app.get('/get_event', routes.get_event)
+app.get('/get_event_by_name', routes.get_event_by_name)
 app.post('/add_event_id_to_show', routes.add_event_id_to_show);
 app.post('/add_event_id_to_group', routes.add_event_id_to_group);
 app.get('/get_show_with_tickets', routes.get_show_with_tickets);
 app.get('/get_user_tickets', routes.get_user_tickets)
+
+// editing
+app.get('/edit_event/:event', routes.edit_event)
 
 //notifications
 app.post('/create_notification', routes.create_notification);

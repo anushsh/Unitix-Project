@@ -7,6 +7,22 @@
      return "test";
  }
 
+ /**
+  * get a group and greet them. requires a greeting id in the html
+  */
+ function getGroup() {
+    $.get('/get_group', (data) => {
+        group = data.group
+        greet()
+    })
+  }
+
+  function greet() {
+    console.log(group)
+    console.log(group.displayName)
+    $('#greeting').append(group.displayName)
+  }
+
  // creates a button that calls the specified function with optional parameter using 
  // optional bulmaClass. Can also set button id. Only buttonText and functionName are required
  var createButton = function(buttonText, functionName, functionParameter, bulmaClass, buttonID) {
@@ -64,7 +80,7 @@
         showNumber += 1;
     });            
     var footer =   '<footer class="card-footer">'+
-    '<a href="/edit_event?eventID='+event._id+'" class="card-footer-item">Edit Event</a></footer>';
+    '<a href="/edit_event/'+encodeURI(event.name)+'" class="card-footer-item">Edit Event</a></footer>';
     display += footer;
     display += ' </div>'
     return display;

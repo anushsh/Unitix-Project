@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include head_imports.html %>
+    <script type="text/javascript">
+
+        var group // populated by getGroup() which is in helper.js
+        var event
+
+        // on document start
+        $(document).ready(function () {
+            getGroup()
+            getEvent()
+        })
+
+        function getEvent() {
+            $.get("/get_event_by_name", {
+                eventName: $("#eventName").val()
+            }, (eventRes) => {
+                event = eventRes
+                console.log(event)
+            })
+            
+        }
+    </script>
+</head>
+
+<body>
+    <% include header.html %>
+
+    <div class="container has-text-centered">
+        <h2 class="subtitle" id="greeting">Edit Your Event, </h2>
+    </div>
+
+    <div class="container">
+        <div class="box">
+            <h3> Event Details </h3>
+            <div class="field">
+                <label class="label">Event Name</label>
+                <div class="control has-icons-left">
+                    <p class="help is-danger is-hidden" id="eventNameInvalid">Please input a non-empty value</p>
+                    <input class="input" type="text" id="eventName" value="<%= name%>">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

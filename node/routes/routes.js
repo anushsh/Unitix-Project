@@ -141,6 +141,16 @@ var getCreateEvent = function (req, res) {
     res.render('create_event.ejs', {"group_email": req.session.user})
 }
 
+var editEvent = function (req, res) {
+    if (req.session.user == null) {
+        res.redirect('/login')
+    }
+    res.render('edit_event.ejs', {"name":req.params.event})
+    // Event.findOne({name:req.params.event}, (err, event) => {
+    //     !err && event ? res.render('edit_event.ejs', {"event":event}) : res.json({"err":err})
+    // })
+}
+
 var getTicket = function (req, res) {
         var ticketID = req.query.ticketID
         Ticket.findById(ticketID, (err, ticket) => {
@@ -477,6 +487,13 @@ var getEvent = function (req, res) {
                 "showIDs": event.shows
             })
         }
+    })
+}
+
+var getEventByName = function(req, res) {
+    var eventName = req.query.eventName
+    Event.findOne({name:eventName}, (err, event) => {
+        !err && event ? res.json({"event":event}) : res.json({"err":err})
     })
 }
 
@@ -860,7 +877,9 @@ module.exports = {
     get_create_event: getCreateEvent,
     create_shows: createShows,
     create_event: createEvent,
+    edit_event: editEvent,
     get_event: getEvent,
+    get_event_by_name: getEventByName,
     add_event_id_to_show: addEventIdToShow,
     add_event_id_to_group: addEventIdToGroup,
     list_events: listEvents,

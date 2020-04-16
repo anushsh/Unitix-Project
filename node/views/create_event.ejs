@@ -7,14 +7,7 @@
     <script type="text/javascript">
         var shows = []
         var currShowNum = 1
-        var group
-
-        function getGroup() {
-            $.get('/get_group', (data) => {
-                group = data.group
-                greet()
-            })
-        }
+        var group // populated by getGroup() which is in helper.js
 
         function checkEvent() {
 
@@ -182,12 +175,6 @@
             $("#startTime").val("")
             $("#endTime").val("")
 
-        }
-
-        function greet() {
-            console.log(group)
-            console.log(group.displayName)
-            $('#greeting').append(group.displayName)
         }
 
         $(document).ready(function () {
