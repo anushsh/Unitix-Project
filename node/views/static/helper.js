@@ -23,6 +23,28 @@
     $('#greeting').append(group.displayName)
   }
 
+  // redirect user to the home page
+  function goHome(msg) {
+    window.location.href = "/home?msg=" + msg
+  }
+
+  function getMessage() {
+      $.get("/get_message", (messageRes) => {
+          console.log(messageRes)
+          message = messageRes
+          if (message) {
+            $('#msgBlock').addClass('is-active')
+            $('#msgBlock').removeClass('is-hidden')
+            $('#msg').html(message)
+        }
+      })
+  }
+
+  function deleteMessage() {
+      $('#msgBlock').removeClass('is-active')
+      $('#msgBlock').addClass('is-hidden')
+  }
+
  // creates a button that calls the specified function with optional parameter using 
  // optional bulmaClass. Can also set button id. Only buttonText and functionName are required
  var createButton = function(buttonText, functionName, functionParameter, bulmaClass, buttonID) {

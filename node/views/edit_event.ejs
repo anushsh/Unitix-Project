@@ -8,18 +8,44 @@
         var group // populated by getGroup() which is in helper.js
         var event
 
+
+        function submitChanges() {
+            tags = $('#eventTags').val().split(',')
+            var editedEvent = {
+                "name": $('#eventName').val(),
+                "tags": tags
+            }
+            $.post("/update_event_overview", {
+                old: event,
+                updated: editedEvent
+            }, goHome("Successfully updated event!"))
+        }
+
         // on document start
         $(document).ready(function () {
             getGroup()
             getEvent()
         })
 
+        function fillFields() {
+            console.log(event)
+            tags = ""
+            event.tags.forEach(tag => {
+                tags += tag + ","
+            })
+            tags = tags.substring(0, tags.length - 1)
+            $("#eventTags").val(tags)
+
+            $("#showCount").val(event.shows.length)
+        }
+
         function getEvent() {
             $.get("/get_event_by_name", {
                 eventName: $("#eventName").val()
-            }, (eventRes) => {
-                event = eventRes
+            }, (data) => {
+                event = data.event
                 console.log(event)
+                fillFields()
             })
             
         }
@@ -43,7 +69,36 @@
                     <input class="input" type="text" id="eventName" value="<%= name%>">
                 </div>
             </div>
+
+            <div class="field">
+                <label class="label">Tags (enter as comma separated values)</label>
+                <div class="control has-icons-left">
+                    <p class="help is-danger is-hidden" id="eventTagsInvalid">Please input a non-empty value</p>
+                    <input class="input" type="text" id="eventTags">
+                </div>
+            </div>
+
+            <div class="field is-hidden">
+                <label class="label">Number of Shows</label>
+                <div class="control has-icons-left">
+                    <p class="help is-danger is-hidden" id="showCountInvalid">Please input a positive integer
+                    </p>
+                    <input class="input" type="text" id="showCount">
+                </div>
+            </div>
+
+            <div class="control">
+                <button class="button is-link" onclick="submitChanges()">Edit Event</button>
+            </div>
+
+            <div class="control">
+                <button class="button is-link" onclick="editShows()">I want to change show information, too</button>
+            </div>
+
+
         </div>
+
+        
     </div>
 </body>
 

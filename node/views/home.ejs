@@ -9,12 +9,19 @@
         $(document).ready(function () {
             // NOTE: this method is in static/helper.js
             loadEvents()
+            getMessage()
         })
     </script>
 </head>
 
 <body>
     <% include header.html %>
+
+    <article class="message is-success is-small is-hidden" id="msgBlock">
+        <button class="delete is-small" aria-label="delete" onclick="deleteMessage()"></button>
+        <div class="message-body" id="msg"></div>
+      </article>
+
     <div class="columns">
 
         <!-- left margin -->

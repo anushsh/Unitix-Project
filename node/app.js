@@ -50,6 +50,8 @@ app.get('/get_user_tickets', routes.get_user_tickets)
 
 // editing
 app.get('/edit_event/:event', routes.edit_event)
+app.post('/update_event_overview', routes.update_event_overview)
+app.get('/get_message', routes.get_message)
 
 //notifications
 app.post('/create_notification', routes.create_notification);

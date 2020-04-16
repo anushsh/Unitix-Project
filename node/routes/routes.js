@@ -8,6 +8,12 @@ var Notification = require('../models/notification.js')
 
 var async = require('async')
 
+var msg // to send notifications at top of screen when getting to a page
+
+var getMessage = function (req, res) {
+    res.send(msg)
+}
+
 var getSplash = function (req, res) {
     res.render('splash.ejs')
 }
@@ -16,7 +22,11 @@ var getHome = function (req, res) {
     if (req.session.user == null) {
         res.redirect('/login');
     } else {
+        if (req.query.msg) {
+            msg = req.query.msg
+        }
         res.render('home.ejs');
+        
     }
 }
 
@@ -149,6 +159,16 @@ var editEvent = function (req, res) {
     // Event.findOne({name:req.params.event}, (err, event) => {
     //     !err && event ? res.render('edit_event.ejs', {"event":event}) : res.json({"err":err})
     // })
+}
+var updateEventOverview = function (req, res) {
+    old = req.body.old
+    updated = req.body.updated
+    Event.findOneAndUpdate({name: old.name}, {
+        name: updated.name,
+        tags: updated.tags
+    }, (err, _) => {
+        err ? res.json({'err': err}) : res.redirect('/home')
+    })
 }
 
 var getTicket = function (req, res) {
@@ -874,6 +894,7 @@ var redeemTicket = function(req, res) {
 
 module.exports = {
     get_splash: getSplash,
+    get_message: getMessage,
     get_create_event: getCreateEvent,
     create_shows: createShows,
     create_event: createEvent,
@@ -896,6 +917,7 @@ module.exports = {
     create_user: createUser,
     find_user: findUser,
     update_user: updateUser,
+    update_event_overview: updateEventOverview,
     purchase_ticket: purchaseTicket,
     find_event_with_shows: findEventWithShows,
     update_group: updateGroup,
