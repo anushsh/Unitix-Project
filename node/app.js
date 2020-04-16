@@ -53,6 +53,9 @@ app.get('/edit_event/:event', routes.edit_event)
 app.post('/update_event_overview', routes.update_event_overview)
 app.get('/get_message', routes.get_message)
 
+// deleting
+app.get('/delete_event', routes.delete_event)
+
 //notifications
 app.post('/create_notification', routes.create_notification);
 app.post('/notify_event', routes.notify_event);

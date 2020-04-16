@@ -18,7 +18,8 @@ var eventSchema = new Schema({
   group: String, // this is the actual object ID
   group_name: String, // this is display name of the group
   shows: [String], // these are uuids of Show objs
-  tags: [String]
+  tags: [String],
+  changes: [String]
 })
 
 module.exports = mongoose.model('Event', eventSchema)

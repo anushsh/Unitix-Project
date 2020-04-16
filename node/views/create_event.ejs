@@ -117,8 +117,7 @@
                 } else {
                     alert("There was an error.")
                 }
-                clearFields()
-                addSuccessfulNotif()
+                goHome("Successfully added event " + name + "!")
             })
         }
 
@@ -149,11 +148,6 @@
                     })
                 }
             })
-        }
-
-        function addSuccessfulNotif() {
-            $('#successHeader').removeClass("is-hidden")
-            $('#successHeader').addClass("is-active")
         }
 
         function clearFields() {

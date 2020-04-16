@@ -171,6 +171,13 @@ var updateEventOverview = function (req, res) {
     })
 }
 
+var deleteEvent = function (req, res) {
+    name = req.query.name
+    Event.deleteOne({name: name}, (err, _) => {
+        !err ? res.json("success") : res.json(err)
+    })
+}
+
 var getTicket = function (req, res) {
         var ticketID = req.query.ticketID
         Ticket.findById(ticketID, (err, ticket) => {
@@ -935,5 +942,6 @@ module.exports = {
     notify_event: notifyEvent,
     notify_show: notifyShow,
     get_user_notifications: getUserNotifications,
-    read_all_notifications: readAllNotifications
+    read_all_notifications: readAllNotifications,
+    delete_event: deleteEvent
 }

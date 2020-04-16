@@ -14,12 +14,10 @@ db.once('open', function () {
 var Schema = mongoose.Schema
 
 var changeSchema = new Schema({
-    group_id: String, // this is the group id
-    group_name: String, // name of group
-    event_id: String, // this is the unmodifiable event id that is changed
     field_changed: String,
     prior_value: String,
-    updated_value: String
+    updated_value: String,
+    time: Date
   })
   
   module.exports = mongoose.model('Event', changeSchema)
