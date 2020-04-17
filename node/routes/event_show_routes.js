@@ -273,10 +273,14 @@ var updateEventOverview = function (req, res) {
         })
     }
     if (old.tags != updated.tags) {
+        oldTagsFormatted = ""
+        updatedTagsFormatted = ""
+        old.tags.forEach(tag => oldTagsFormatted += tag + ",")
+        updated.tags.forEach(tag => updatedTagsFormatted += tag + ",")
         changeArr.push({
             fieldChanged: "tags",
-            priorValue: JSON.stringify(old.tags),
-            updatedValue: JSON.stringify(updated.tags)
+            priorValue: oldTagsFormatted.substring(0, oldTagsFormatted.length - 1),
+            updatedValue: updatedTagsFormatted.substring(0, updatedTagsFormatted.length - 1)
         })
     }
     console.log("Found " + changeArr.length + " changes")
