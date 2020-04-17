@@ -13,6 +13,14 @@
     return leftSide + clickPart+">"+buttonText+"</button>";
  }
 
+ // input is like this example 2020-04-17T23:32:49.111+00:00
+ var prettyDateTime = function(dateTime) {
+     dateTimeSplit = dateTime.split("T")
+     date = prettyDate(dateTimeSplit[0])
+     time = prettyTime(dateTimeSplit[1])
+     return date + " @ " + time
+ }
+
  var prettyTime = function(time) {
     var parts = time.split(":");
     var hour = parseInt(parts[0], 10);
