@@ -75,6 +75,17 @@ var getCreateEvent = function (req, res) {
     res.render('create_event.ejs', {"group_email": req.session.user})
 }
 
+var getEditEvent = function (req, res) {
+    if (req.session.user == null) {
+        res.redirect('/login')
+    }
+    res.render('edit_event.ejs', {"name":req.params.event})
+    // Event.findOne({name:req.params.event}, (err, event) => {
+    //     !err && event ? res.render('edit_event.ejs', {"event":event}) : res.json({"err":err})
+    // })
+}
+
+
 // TODO: need to talk to Michael about how adding tags will work
 var addEventTag = function (req, res) {
     //TODO: Implement for real
@@ -99,4 +110,5 @@ module.exports = {
     check_login: checkLogin,
     get_logout: getLogout,
     get_profile: getProfile,
+    get_edit_event: getEditEvent
 }

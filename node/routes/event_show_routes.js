@@ -1,6 +1,7 @@
 var Group = require('../models/group.js');
 var Event = require('../models/event.js')
 var Show = require('../models/show.js')
+var Changes = require('../models/change.js')
 
 var createShows = function (req, res) {
     showSchemaIDs = []
@@ -213,17 +214,6 @@ function getShowWithTickets(req, res) {
     });
 }
 
-
-var editEvent = function (req, res) {
-    if (req.session.user == null) {
-        res.redirect('/login')
-    }
-    res.render('edit_event.ejs', {"name":req.params.event})
-    // Event.findOne({name:req.params.event}, (err, event) => {
-    //     !err && event ? res.render('edit_event.ejs', {"event":event}) : res.json({"err":err})
-    // })
-}
-
 // TODO: Add Change Field
 var updateEventOverview = function (req, res) {
     old = req.body.old
@@ -352,7 +342,6 @@ module.exports = {
     add_event_id_to_show: addEventIdToShow,
     add_event_id_to_group: addEventIdToGroup,
     get_show_with_tickets: getShowWithTickets,
-    edit_event: editEvent,
     update_event_overview: updateEventOverview,
     delete_event: deleteEvent,
     get_search_result_events: getSearchResultEvents

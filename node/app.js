@@ -38,6 +38,7 @@ app.post('/checkLogin', routes.check_login);
 app.get('/logout', routes.get_logout);
 app.get('/create_event', routes.get_create_event)
 app.get('/get_message', routes.get_message)
+app.get('/edit_event/:event', routes.get_edit_event)
 
 // user and group routes
 app.get('/get_group', user_group_routes.get_group)
@@ -64,7 +65,6 @@ app.get('/get_event_by_name', event_show_routes.get_event_by_name)
 app.post('/add_event_id_to_show', event_show_routes.add_event_id_to_show);
 app.post('/add_event_id_to_group', event_show_routes.add_event_id_to_group);
 app.get('/get_show_with_tickets', event_show_routes.get_show_with_tickets);
-app.get('/edit_event/:event', event_show_routes.edit_event)
 app.post('/update_event_overview', event_show_routes.update_event_overview)
 app.get('/delete_event', event_show_routes.delete_event)
 app.get('/get_search_result_events', event_show_routes.get_search_result_events);

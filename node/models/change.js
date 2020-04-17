@@ -20,4 +20,4 @@ var changeSchema = new Schema({
     time: Date
   })
   
-  module.exports = mongoose.model('Event', changeSchema)
+  module.exports = mongoose.model('Change', changeSchema)
