@@ -35,7 +35,7 @@
     "July", "August", "September", "October", "November", "December" ];
     var dateTrim = date.split("T")[0];
     var parts = dateTrim.split("-");
-    parts[1] = monthNames[parseInt(parts[1], 10)]
+    parts[1] = monthNames[parseInt(parts[1], 10) - 1]
     return [parts[1], parts[2] + ",", parts[0]].join(" ");
  }
 
