@@ -3,6 +3,9 @@ var Event = require('../models/event.js')
 var Show = require('../models/show.js')
 var Changes = require('../models/change.js')
 
+var async = require('async')
+
+
 var createShows = function (req, res) {
     showSchemaIDs = []
 

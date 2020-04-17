@@ -4,6 +4,8 @@ var Event = require('../models/event.js')
 var Show = require('../models/show.js')
 var Ticket = require('../models/ticket.js')
 
+var async = require('async')
+
 var getGroup = function (req, res) {
     //req.session.user has the email of the group, so we query for the full object
     Group.findOne({email:req.session.user}, (err, group) => {
