@@ -45,6 +45,51 @@
       $('#msgBlock').addClass('is-hidden')
   }
 
+
+  /**
+   * Helper methods for working with show html
+  */
+ function addShowHTML() {
+    if (currShowNum == 1) {
+        $("#singleShowDetails").removeClass("is-hidden")
+        $("#singleShowDetails").addClass("is-active")
+        $("#nextShowButton").removeClass("is-hidden")
+        $("#nextShowButton").addClass("is-active")
+
+        $("#showName").val($("#eventName").val())
+    }
+    if (currShowNum == $("#showCount").val()) {
+        $("#createEventButton").removeClass("is-hidden")
+        $("#createEventButton").addClass("is-active")
+
+        $("#nextShowButton").removeClass("is-active")
+        $("#nextShowButton").addClass("is-hidden")
+    }
+
+    $("#startDate").val('')
+    $("#startTime").val('')
+    $("#endTime").val('')
+
+    $("#showHeaderInfo").html("Details for show " + currShowNum++)
+}
+
+// currently doesn't check for non-empty values.
+function storeShowInfo() {
+    shows.push({
+        name: $("#showName").val(),
+        capacity: $("#showCapacity").val(),
+        price: $("#ticketPrice").val(),
+        location: $("#showLocation").val(),
+        description: $("#description").val(),
+        date: $("#startDate").val(),
+        startTime: $("#startTime").val(),
+        endTime: $("#endTime").val()
+    })
+    console.log(shows)
+    addShowHTML()
+}
+// --------------
+
  // creates a button that calls the specified function with optional parameter using 
  // optional bulmaClass. Can also set button id. Only buttonText and functionName are required
  var createButton = function(buttonText, functionName, functionParameter, bulmaClass, buttonID) {
