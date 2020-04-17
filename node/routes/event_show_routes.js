@@ -1,7 +1,7 @@
 var Group = require('../models/group.js');
 var Event = require('../models/event.js')
 var Show = require('../models/show.js')
-var Changes = require('../models/change.js')
+var Change = require('../models/change.js')
 
 var async = require('async')
 
@@ -261,11 +261,57 @@ function getAllTickets(ticketIDs, callback) {
 var updateEventOverview = function (req, res) {
     old = req.body.old
     updated = req.body.updated
-    Event.findOneAndUpdate({name: old.name}, {
-        name: updated.name,
-        tags: updated.tags
-    }, (err, _) => {
-        err ? res.json({'err': err}) : res.redirect('/home')
+
+
+    changeArr = []
+    if (old.name != updated.name) {
+        changeArr.push({
+            field_changed: "name",
+            prior_value: old.name,
+            updated_value: updated.name
+        })
+    }
+    if (old.tags != updated.tags) {
+        changeArr.push({
+            fieldChanged: "tags",
+            priorValue: JSON.stringify(old.tags),
+            updatedValue: JSON.stringify(updated.tags)
+        })
+    }
+    console.log("Found " + changeArr.length + " changes")
+
+    changeIDs = []
+    async.forEach(changeArr, (changeObj, done) => {
+        var change = new Change({
+            field_changed: changeObj.fieldChanged,
+            prior_value: changeObj.priorValue,
+            updated_value: changeObj.updatedValue,
+            time: Date.now()
+        })
+    
+        change.save((err, changeSaved) => {
+            if (err) console.log("Error creating change obj. " + err)
+            changeIDs.push(changeSaved._id)
+            done()
+        })
+    }, () => {
+        // all changes processed, changeIDs has full array of obj ids
+        Event.findOne({name: old.name}, (err, event) => {
+            changesToPush = event.changes
+            async.forEach(changeIDs, (id, done) => {
+                changesToPush.push(id)
+                done()
+            }, () => {
+                // changesToPush has the updated array of change obj ids
+                Event.findOneAndUpdate({name: old.name}, {
+                    name: updated.name,
+                    tags: updated.tags,
+                    changes: changesToPush
+                }, (err, _) => {
+                    err ? res.json({'err': err}) : res.redirect('/home')
+                })
+            })
+        })
     })
 }
 
