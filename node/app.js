@@ -67,7 +67,7 @@ app.get('/get_show_with_tickets', event_show_routes.get_show_with_tickets);
 app.get('/edit_event/:event', event_show_routes.edit_event)
 app.post('/update_event_overview', event_show_routes.update_event_overview)
 app.get('/delete_event', event_show_routes.delete_event)
-
+app.get('/get_search_result_events', event_show_routes.get_search_result_events);
 
 //notifications
 app.post('/create_notification', notification_routes.create_notification);
@@ -75,10 +75,6 @@ app.post('/notify_event', notification_routes.notify_event);
 app.post('/notify_show', notification_routes.notify_show);
 app.get('/get_user_notifications', notification_routes.get_user_notifications)
 app.post('/read_all_notifications', notification_routes.read_all_notifications)
-
-
-//searching
-app.get('/get_search_result_events', event_show_routes.get_search_result_events);
 
 // ticket handling
 app.get('/get_ticket', ticket_routes.get_ticket);
