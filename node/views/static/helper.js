@@ -226,6 +226,7 @@ function viewShow(showID) {
             
         } catch(err) {
             // in case no shows
+            console.log("NO SHOWS FOUND IN THE EVENT")
             return 0;
         }
     });

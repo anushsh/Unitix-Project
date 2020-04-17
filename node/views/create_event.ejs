@@ -117,7 +117,6 @@
                 } else {
                     alert("There was an error.")
                 }
-                goHome("Successfully added event " + name + "!")
             })
         }
 
@@ -131,6 +130,7 @@
             }, (data, success) => {
                 console.log(data)
                 console.log(success)
+                goHome("Successfully added event " + name + "!")
              })
 
 

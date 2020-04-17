@@ -52,7 +52,8 @@
 
         function deleteEvent() {
             $.get("/delete_event", {
-                name: event.name
+                name: event.name,
+                eventID: event._id
             }, (data) => {
                 goHome("Event successfully deleted!")
             })

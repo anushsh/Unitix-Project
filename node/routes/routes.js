@@ -111,7 +111,7 @@ var getGroupWithEvents = function (req, res) {
                 getEventWithShows(eventID, (err, event) => {
                     if (!err && event) {
                         currentEvents.push(event);
-                    }
+                    } else console.log("ERROR GETTING SINGLE EVENT. " + err)
                     done();
                 })
             }, () => {
@@ -160,6 +160,8 @@ var editEvent = function (req, res) {
     //     !err && event ? res.render('edit_event.ejs', {"event":event}) : res.json({"err":err})
     // })
 }
+
+// TODO: Add Change Field
 var updateEventOverview = function (req, res) {
     old = req.body.old
     updated = req.body.updated
@@ -171,10 +173,66 @@ var updateEventOverview = function (req, res) {
     })
 }
 
+// deletes all shows and all changes as well. also deletes this event from group array.
 var deleteEvent = function (req, res) {
     name = req.query.name
-    Event.deleteOne({name: name}, (err, _) => {
-        !err ? res.json("success") : res.json(err)
+    Event.findById(req.query.eventID, (err, event) => {
+        if (!event) {
+            console.log("ERROR GETTING EVENT. " + err)
+        }
+        deleteChanges(event.changes)
+        deleteShows(event.shows)
+        deleteEventFromGroup(req.session.user, req.query.eventID)
+        Event.deleteOne({name: name}, (err, _) => {
+            !err ? res.json("success") : res.json(err)
+        })
+    })
+}
+
+var deleteChanges = function(changes) {
+    changes.forEach(change => {
+        Changes.deleteOne({_id: change}, (err, _) => {
+            if (err) console.log(err)
+        })
+    })
+}
+
+var deleteShows = function(shows) {
+    shows.forEach(show => {
+        Show.deleteOne({_id: show}, (err, _) => {
+            if (err) console.log(err)
+        })
+    })
+}
+
+var deleteEventFromGroup = function(email, eventID) {
+    Group.findOne({email: email}, (err, group) => {
+        if (err || !group) console.log("ERROR : " + err)
+        else {
+            events = group.currentEvents
+            modifiedEvents = []
+            async.forEach(events, (event, done) => {
+                console.log("Event: " + event + " and input param " + eventID + " equal with two is " + eventID == event + ", equal with three is " + eventID === event)
+                if (event != eventID) {
+                    modifiedEvents.push(event)
+                }
+                done()
+            }, () => {
+                Group.findOneAndUpdate({email: email}, {currentEvents: modifiedEvents}, (err, _) => {
+                    if (err) console.log("Error deleting event from group: " + err)
+                })
+            })
+            // events.forEach(event => {
+            //     console.log("Event: " + event + " and input param " + eventID + " equal with two is " + eventID == event + ", equal with three is " + eventID === event)
+            //     if (event != eventID) {
+            //         modifiedEvents.push(event)
+            //     }
+            // }, () => {
+            //     Group.findOneAndUpdate({email: email}, {currentEvents: modifiedEvents}, (err, _) => {
+            //         if (err) console.log("Error deleting event from group: " + err)
+            //     })
+            // })
+        }
     })
 }
 
