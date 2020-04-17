@@ -90,6 +90,32 @@ function storeShowInfo() {
 }
 // --------------
 
+/**
+ * Helper method for interacting with validation of input.
+ * If valid, green outline. Else, red outline with message
+ */
+function validateAndSetReactionaryColors(id, valid) {
+    if (!valid) {
+        // make red outline
+        $('#' + id).removeClass('is-success');
+        $('#' + id).addClass('is-danger');
+
+        // error message becomes visible
+        $('#' + id + "Invalid").removeClass('is-hidden')
+        $('#' + id + "Invalid").addClass('is-active')
+    } else {
+        // make green outline
+        $('#' + id).removeClass('is-danger');
+        $('#' + id).addClass('is-success');
+
+        // error message goes away
+        $('#' + id + "Invalid").addClass('is-hidden')
+        $('#' + id + "Invalid").removeClass('is-active')
+    }
+    return valid;
+}
+// ------------
+
  // creates a button that calls the specified function with optional parameter using 
  // optional bulmaClass. Can also set button id. Only buttonText and functionName are required
  var createButton = function(buttonText, functionName, functionParameter, bulmaClass, buttonID) {
