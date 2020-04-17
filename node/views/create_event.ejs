@@ -27,27 +27,6 @@
             }
         }
 
-        function validateAndSetReactionaryColors(id, valid) {
-            if (!valid) {
-                // make red outline
-                $('#' + id).removeClass('is-success');
-                $('#' + id).addClass('is-danger');
-
-                // error message becomes visible
-                $('#' + id + "Invalid").removeClass('is-hidden')
-                $('#' + id + "Invalid").addClass('is-active')
-            } else {
-                // make green outline
-                $('#' + id).removeClass('is-danger');
-                $('#' + id).addClass('is-success');
-
-                // error message goes away
-                $('#' + id + "Invalid").addClass('is-hidden')
-                $('#' + id + "Invalid").removeClass('is-active')
-            }
-            return valid;
-        }
-
 
         function checkShows() {
             // first, add last show info (method in helper.js)
