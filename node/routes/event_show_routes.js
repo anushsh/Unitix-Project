@@ -320,6 +320,12 @@ var updateEventOverview = function (req, res) {
     })
 }
 
+var getChange = function (req, res) {
+    Change.findById(req.query.change, (err, change) => {
+        !err && change ? res.json(change) : res.json({"Error": err})
+    })
+}
+
 
 // deletes all shows and all changes as well. also deletes this event from group array.
 var deleteEvent = function (req, res) {
@@ -438,5 +444,6 @@ module.exports = {
     get_show_with_tickets: getShowWithTickets,
     update_event_overview: updateEventOverview,
     delete_event: deleteEvent,
-    get_search_result_events: getSearchResultEvents
+    get_search_result_events: getSearchResultEvents,
+    get_change: getChange
 }

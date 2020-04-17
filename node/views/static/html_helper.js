@@ -110,15 +110,3 @@ function validateAndSetReactionaryColors(id, valid) {
     }
     return valid;
 }
-// ------------
-
-module.exports = {
-    getGroup: getGroup,
-    greet: greet,
-    goHome: goHome,
-    getMessage: getMessage,
-    deleteMessage: deleteMessage,
-    addShowHTML: addShowHTML,
-    storeShowInfo: storeShowInfo,
-    validateAndSetReactionaryColors: validateAndSetReactionaryColors
-}

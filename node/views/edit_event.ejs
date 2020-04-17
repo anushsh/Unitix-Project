@@ -37,6 +37,8 @@
             $("#eventTags").val(tags)
 
             $("#showCount").val(event.shows.length)
+
+            listChanges()
         }
 
         function getEvent() {
@@ -56,6 +58,18 @@
                 eventID: event._id
             }, (data) => {
                 goHome("Event successfully deleted!")
+            })
+        }
+
+        function listChanges() {
+            event.changes.forEach(change => {
+                $.get("/get_change", {
+                    change: change
+                }, (change) => {
+                    var formatted = "@ " + prettyTime(change.time) + " on " + prettyDate(change.time) + ", changed " + change.field_changed + " from ''" + change.prior_value + "'' to ''" + change.updated_value + "'"
+                    $('#changeList').append(formatted)
+                })
+                
             })
         }
 
@@ -120,11 +134,17 @@
             </div>
         </div>
 
+    <div class="box">
         <h3>Warning Zone</h3>
         <div class = "control">
             <button class="button is-link is-danger" onclick="deleteEvent()">Delete Event</button>
         </div>
+    </div>
 
+    <div class="box">
+        <h3>Your Previous Changes</h3>
+        <ul id="changeList"></ul>
+    </div>
         
     </div>
 </body>
