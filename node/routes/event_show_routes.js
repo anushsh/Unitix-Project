@@ -1,6 +1,7 @@
 var Group = require('../models/group.js');
 var Event = require('../models/event.js')
 var Show = require('../models/show.js')
+var Ticket = require('../models/ticket.js')
 var Change = require('../models/change.js')
 
 var async = require('async')
