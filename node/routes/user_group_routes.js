@@ -86,7 +86,21 @@ var getUserTickets = function(req, res) {
     })
 }
 
-
+function getAllTickets(ticketIDs, callback) {
+    var tickets = []; // array of ticket objects
+    async.forEach(ticketIDs, (ticketID, done) => {
+        Ticket.findById(ticketID, (err, ticket) => {
+            if (!err && ticket) {
+                ticket = ticket.toJSON();
+                tickets.push(ticket);
+            }
+            done();
+        })
+    }, () => {
+        // no error since will always return at least empty array
+        callback(tickets);
+    });
+}
 
 // TODO: is this gonna change to be different from one above?
 var getUserShowInfo = function(req, res) {

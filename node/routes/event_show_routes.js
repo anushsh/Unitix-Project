@@ -110,7 +110,31 @@ var listEventsWithShows = function (_, res) {
     });
 }
 
-
+// helper to find event pre-populated with shows
+var getEventWithShows= function(eventID, callback) {
+    Event.findById(eventID, (err, event) => {
+        if (!err && event) {
+            event = event.toJSON();
+            var shows = [];
+            async.forEach(event.shows, (showID, done) => {
+                Show.findById(showID, (err, show) => {
+                    if (!err && show) {
+                        show = show.toJSON();
+                        shows.push(show);
+                        done();
+                    } else {
+                        done();
+                    }
+                })
+            }, () => {
+                event.shows = shows;
+                callback(null, event);
+            });
+        } else {
+            callback("no such event", null);
+        }
+    })
+}
 
 // use to test db saving
 var listShows = function (req, res) {
@@ -214,6 +238,22 @@ function getShowWithTickets(req, res) {
         } else {
             res.json({"status":"error"})
         }
+    });
+}
+
+function getAllTickets(ticketIDs, callback) {
+    var tickets = []; // array of ticket objects
+    async.forEach(ticketIDs, (ticketID, done) => {
+        Ticket.findById(ticketID, (err, ticket) => {
+            if (!err && ticket) {
+                ticket = ticket.toJSON();
+                tickets.push(ticket);
+            }
+            done();
+        })
+    }, () => {
+        // no error since will always return at least empty array
+        callback(tickets);
     });
 }
 
