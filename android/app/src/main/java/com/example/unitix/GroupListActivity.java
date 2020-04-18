@@ -1,4 +1,4 @@
-package com.example.unitix.activities;
+package com.example.unitix;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;

@@ -1,4 +1,4 @@
-package com.example.unitix.activities;
+package com.example.unitix;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,7 +10,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.unitix.server.DataSource;
-import com.example.unitix.R;
 import com.example.unitix.models.User;
 
 public class MainActivity extends AppCompatActivity {

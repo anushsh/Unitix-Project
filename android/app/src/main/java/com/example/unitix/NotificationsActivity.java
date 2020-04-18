@@ -1,4 +1,4 @@
-package com.example.unitix.activities;
+package com.example.unitix;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -39,7 +39,7 @@ public class NotificationsActivity extends AppCompatActivity  {
 
     private class HandleNotificationsTask extends AsyncTask<Integer, Integer, Notification[]> {
         protected Notification[] doInBackground(Integer... ints) {
-            return ds.getAllNotifications(user.email);
+            return ds.getAllNotifications(user.getId());
         }
         protected void onPostExecute(Notification[] notifications) {
             Log.e("NOAH","notification view received notifications, got" + notifications.length);

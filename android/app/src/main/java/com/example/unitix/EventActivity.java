@@ -1,4 +1,4 @@
-package com.example.unitix.activities;
+package com.example.unitix;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -13,7 +13,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.unitix.server.DataSource;
-import com.example.unitix.R;
 import com.example.unitix.models.Event;
 import com.example.unitix.models.Group;
 import com.example.unitix.models.Show;
@@ -122,7 +121,7 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String showID = show.getId();
-                String email = user.email;
+                String email = user.getId();
                 if (ds.purchaseTicket(email, showID)) {
                     showPurchaseSuccessToast();
                 } else {

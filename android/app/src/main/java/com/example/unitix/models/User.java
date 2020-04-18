@@ -6,9 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class User {
+public class User extends Model {
 
-    public String email;
     public String password;
     public String firstName;
     public String lastName;
@@ -17,11 +16,10 @@ public class User {
     public String[] pastTickets;
     public String[] currTickets;
     public int numNotifications;
-    public boolean isValid;
 
     public User(JSONObject jo) {
         try {
-            this.email = jo.getString("email");
+            this.id = jo.getString("email");
             this.password = jo.getString("password");
             this.firstName = jo.getString("first_name");
             this.lastName = jo.getString("last_name");
@@ -42,7 +40,7 @@ public class User {
     }
 
     public String toString() {
-        return "Email: " + email ;
+        return "Email: " + this.id ;
     }
 
     public static String[] makeStringArray(JSONArray arr) throws JSONException {
@@ -71,10 +69,6 @@ public class User {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    public boolean isValid() {
-        return this.isValid;
     }
 
     // used for testing

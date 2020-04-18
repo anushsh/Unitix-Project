@@ -4,14 +4,12 @@ import android.util.Log;
 
 import org.json.JSONObject;
 
-public class Ticket {
-    String id;
+public class Ticket extends Model {
+
     String showID;
     boolean isRedeemed;
     boolean isRequested;
     String customer;
-
-    boolean isValid;
 
     public Ticket(JSONObject jo) {
         try {
@@ -32,16 +30,8 @@ public class Ticket {
         return "Ticket for " + this.showID + " and has " + (this.isRedeemed ? "" : "not ") + "been redeemed";
     }
 
-    public boolean isValid() {
-        return this.isValid;
-    }
-
     public String getShowId() {
         return this.showID;
-    }
-
-    public String getId() {
-        return this.id;
     }
 
     public boolean isRequested() {

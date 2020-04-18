@@ -8,7 +8,7 @@ import org.json.JSONObject;
  * java representation of show objects. Each show has an event parent
  */
 
-public class Show implements Comparable<Show> {
+public class Show extends Model implements Comparable<Show>  {
 
     Event event;
     String name;
@@ -21,9 +21,6 @@ public class Show implements Comparable<Show> {
     String endDate;
     String description;
     String location;
-    String id;
-
-    boolean isValid;
 
     public Show(Event event, JSONObject jo) {
         try {
@@ -159,16 +156,8 @@ public class Show implements Comparable<Show> {
         return ticketsSold >= capacity;
     }
 
-    public boolean isValid() {
-        return this.isValid;
-    }
-
     public String getStartTime() {
         return this.startTime;
-    }
-
-    public String getId() {
-        return this.id;
     }
 
 

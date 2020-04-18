@@ -4,9 +4,8 @@ import android.util.Log;
 
 import org.json.JSONObject;
 
-public class Group {
+public class Group extends Model {
 
-    String id;
     String[] currentEvents;
     String[] pastEvents;
     String displayName;
@@ -16,11 +15,7 @@ public class Group {
     String bio;
     int followers;
 
-    boolean isValid;
-
     public Group(JSONObject jo) {
-        Log.e("MICHAEL", "In Group Constructor");
-        Log.e("MICHAEL", jo.toString());
         try {
             this.id = jo.getString("_id");
             // TODO - get events
@@ -33,10 +28,6 @@ public class Group {
             Log.e("MICHAEL", "Exception making Group: " + e);
             isValid = false;
         }
-    }
-
-    public boolean isValid() {
-        return this.isValid;
     }
 
     public String getDisplayName() {

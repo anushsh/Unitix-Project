@@ -1,4 +1,4 @@
-package com.example.unitix.activities;
+package com.example.unitix;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -49,7 +49,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void initializeFields() {
-        email.setText(user.email);
+        email.setText(user.getId());
         password.setText(user.password);
         first_name.setText(user.firstName);
         last_name.setText(user.lastName);

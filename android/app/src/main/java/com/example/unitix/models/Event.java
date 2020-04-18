@@ -12,14 +12,12 @@ import java.util.List;
  * Will be used to represent events that can be displayed
  * and interacted with
  */
-public class Event {
+public class Event extends Model {
 
     // instance variables, package protected
     String name;
-    String id;
     List<Show> shows;
     String group;
-    boolean isValid;
 
 
     public String getDescription() {
@@ -75,20 +73,12 @@ public class Event {
         return list.toArray(new Event[0]); // convert list to array
     }
 
-    public boolean isValid() {
-        return this.isValid;
-    }
-
     public List<Show> getShows() {
         return this.shows;
     }
 
     public String getName() {
         return this.name;
-    }
-
-    public String getId() {
-        return this.id;
     }
 
     public String getGroup() {

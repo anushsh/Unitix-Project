@@ -1,4 +1,4 @@
-package com.example.unitix.activities;
+package com.example.unitix;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -13,7 +13,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.unitix.server.DataSource;
-import com.example.unitix.R;
 import com.example.unitix.models.Ticket;
 import com.example.unitix.models.User;
 
@@ -32,7 +31,7 @@ public class ProfileActivity extends AppCompatActivity {
         this.user = this.ds.getUser(email);
         TextView emailProfile = (TextView) findViewById(R.id.profile_email);
 
-        emailProfile.setText(("Email: " + user.email));
+        emailProfile.setText(("Email: " + user.getId()));
 
         showUser();
 //        showTickets();
@@ -69,7 +68,7 @@ public class ProfileActivity extends AppCompatActivity {
     private class LoadTicketsTask extends AsyncTask<String, Integer, Ticket[]> {
         //TODO replace with getUserShowInfo
         protected Ticket[] doInBackground(String... blank) {
-            return ds.getUserTickets(user.email);
+            return ds.getUserTickets(user.getId());
         }
 
         protected void onPostExecute(Ticket[] tickets) {
