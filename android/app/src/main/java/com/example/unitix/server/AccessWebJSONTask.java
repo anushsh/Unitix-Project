@@ -1,4 +1,4 @@
-package com.example.unitix;
+package com.example.unitix.server;
 import android.os.AsyncTask;
 import android.util.Log;
 

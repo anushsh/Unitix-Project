@@ -1,4 +1,8 @@
-package com.example.unitix;
+package com.example.unitix.models;
+
+import android.util.Log;
+
+import com.example.unitix.server.DataSource;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,14 +16,14 @@ import java.util.List;
  * Will be used to represent events that can be displayed
  * and interacted with
  */
-public class Event {
+public class Event extends Model {
 
     // instance variables, package protected
     String name;
-    String id;
     List<Show> shows;
     String group;
-    boolean isValid;
+
+    List<Change> changes;
 
 
     public String getDescription() {
@@ -30,7 +34,8 @@ public class Event {
     }
 
     public Event(JSONObject jo) {
-        this.shows = new ArrayList();
+        this.shows = new ArrayList<>();
+        this.changes = new ArrayList<>();
         try {
             this.name = jo.getString("name");
             this.id = jo.getString("_id");
@@ -43,8 +48,18 @@ public class Event {
                 }
             }
             Collections.sort(this.shows);
+
+            // this is really ugly, sorry in advance
+            JSONArray changes = jo.getJSONArray("changes");
+            DataSource ds = new DataSource();
+            for (int i = 0; i < changes.length(); i++) {
+                Change change = ds.getChangeByID("" + changes.get(i));
+                if (change.isValid()) this.changes.add(change);
+            }
+
             isValid = true;
         } catch (Exception e) {
+            Log.e("MICHAEL, event constructor error", e.toString());
             isValid = false;
         }
     }
@@ -73,5 +88,21 @@ public class Event {
             }
         }
         return list.toArray(new Event[0]); // convert list to array
+    }
+
+    public List<Show> getShows() {
+        return this.shows;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public String getGroup() {
+        return this.group;
+    }
+
+    public List<Change> getChanges() {
+        return this.changes;
     }
 }

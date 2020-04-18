@@ -1,4 +1,4 @@
-package com.example.unitix;
+package com.example.unitix.models;
 
 import android.util.Log;
 
@@ -6,13 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
+public class Group extends Model {
 
-public class Group {
-
-    String id;
     String[] currentEvents;
     String[] pastEvents;
     String displayName;
@@ -22,11 +17,7 @@ public class Group {
     String bio;
     int followers;
 
-    boolean isValid;
-
     public Group(JSONObject jo) {
-        Log.e("MICHAEL", "In Group Constructor");
-        Log.e("MICHAEL", jo.toString());
         try {
             this.id = jo.getString("_id");
             // TODO - get events
@@ -55,4 +46,7 @@ public class Group {
         }
         return list.toArray(new Group[0]); //Return list as an array
     }
-}
+
+    public String getDisplayName() {
+        return this.displayName;
+    }

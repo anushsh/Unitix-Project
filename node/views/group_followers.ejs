@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include head_imports.html %>
+    <script type="text/javascript">
+        // on document start
+        $(document).ready(function () {
+            getFollowers()
+        })
+
+        function getFollowers() {
+            $.get('/get_follower_names', (followers) => {
+                displayFollowers(followers)
+            })
+        }
+
+        function displayFollowers(followers) {
+            var prefix = "<p>"
+            var suffix = "</p>"
+            var displayHTML = ""
+            
+            for (i = 0; i < followers.length; i++) {
+                displayHTML += prefix + followers[i].firstName + " " + followers[i].lastName+ suffix
+            }
+            $("#currentFollowers").append(displayHTML)
+            $("#followerCount").append(followers.length)
+        }
+
+    </script>
+</head>
+
+<body>
+    <% include header.html %>
+
+    <article class="message is-success is-small is-hidden" id="msgBlock">
+        <button class="delete is-small" aria-label="delete" onclick="deleteMessage()"></button>
+        <div class="message-body" id="msg"></div>
+      </article>
+
+    <div class="columns">
+
+        <!-- left margin -->
+        <div class="column is-1">
+        </div>
+
+        <div class="column is-6">
+            <p class="subtitle is-3" id="followerCount">Followers: </p>
+            <p class="subtitle is-5" id="currentFollowers"></p>
+        </div>
+    </div>
+</body>
+
+</html>

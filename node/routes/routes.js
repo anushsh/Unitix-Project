@@ -1,4 +1,6 @@
 var Group = require('../models/group.js');
+var User = require('../models/user.js');
+var async = require('async')
 
 var msg // to send notifications at top of screen when getting to a page
 
@@ -56,11 +58,11 @@ var getProfile = (req, res) => {
     if (req.session.user) {
         Group.findOne({email: req.session.user}, (err, user) => {
             if (err) {
-                res.render({succes: false, error: err})
+                res.json({success: false, error: err})
             } else {
                 res.render('profile.ejs', {email: user.email, password: user.password, 
                     displayName: user.displayName, groupType: user.groupType, 
-                    bio: user.bio})
+                    bio: user.bio, followers: user.followers})
             }
         })
     } else {
@@ -100,6 +102,37 @@ var getLogout = function(req, res) {
     res.redirect('/');
 };
 
+var getFollowerNames = function(req, res) {
+    Group.findOne({email: req.session.user}, (err, group) => {
+        if (err) {
+            res.json({success: false, error: err})
+        } else {
+            var followerObjects = [];
+            async.forEach(group.followers, (followerID, done) => {
+                User.findById(followerID, (err, follower) => {
+                    if (!err && follower) {
+                        //follower = follower.toJSON();
+                        followerObjects.push({firstName: follower.first_name, lastName: follower.last_name});
+                        done();
+                    } else {
+                        done();
+                    }
+                })
+            }, () => {
+                res.json(followerObjects)
+            });
+        }
+    })
+}
+
+var getFollowers = function(req, res) {
+    if (req.session.user) {
+        res.render('group_followers.ejs')
+    } else {
+        res.redirect('/');
+    }
+}
+
 module.exports = {
     get_splash: getSplash,
     get_message: getMessage,
@@ -110,5 +143,7 @@ module.exports = {
     check_login: checkLogin,
     get_logout: getLogout,
     get_profile: getProfile,
-    get_edit_event: getEditEvent
+    get_edit_event: getEditEvent,
+    get_follower_names: getFollowerNames,
+    get_followers: getFollowers
 }

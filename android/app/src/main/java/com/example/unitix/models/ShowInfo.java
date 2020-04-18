@@ -1,10 +1,10 @@
-package com.example.unitix;
+package com.example.unitix.models;
 
 import android.util.Log;
 
 import org.json.JSONObject;
 
-public class ShowInfo {
+public class ShowInfo extends Model {
     Event event;
     String name;
     int capacity;
@@ -16,8 +16,6 @@ public class ShowInfo {
     String endDate;
     String description;
     String location;
-    String id;
-    boolean isValid;
 
     public ShowInfo(JSONObject jo) {
         try {
@@ -151,7 +149,6 @@ public class ShowInfo {
     public boolean isSoldOut() {
         return ticketsSold >= capacity;
     }
-
 
     public String getDescription() {
         return this.description;

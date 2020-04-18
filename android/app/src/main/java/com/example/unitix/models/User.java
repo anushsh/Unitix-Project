@@ -1,39 +1,52 @@
-package com.example.unitix;
+package com.example.unitix.models;
+
+import com.example.unitix.server.DataSource;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+public class User extends Model {
 
-public class User {
-
-    public String email;
     public String password;
     public String firstName;
     public String lastName;
     public String phone;
-    //following
+    public String[] followers;
     public String[] pastTickets;
     public String[] currTickets;
+    public String[] notifications;
+    public String[] readNotifications;
     public int numNotifications;
-    public boolean isValid;
+    public int numReadNotifications;
 
     public User(JSONObject jo) {
         try {
-            this.email = jo.getString("email");
+            this.id = jo.getString("email");
             this.password = jo.getString("password");
             this.firstName = jo.getString("first_name");
             this.lastName = jo.getString("last_name");
             this.phone = jo.getString("phone");
             this.pastTickets = makeStringArray(jo.optJSONArray("past_tickets"));
             this.currTickets = makeStringArray(jo.optJSONArray("curr_tickets"));
+            this.followers = makeStringArray(jo.optJSONArray("followers"));
+
             JSONArray notifications = jo.optJSONArray("notifications");
+            JSONArray readNotifications = jo.optJSONArray("read_notifications");
             if (notifications != null) {
                 this.numNotifications = notifications.length();
             } else {
                 this.numNotifications = 0;
             }
+
+            if (readNotifications != null) {
+                this.numReadNotifications = readNotifications.length();
+            } else {
+                this.numReadNotifications = 0;
+            }
+            this.notifications = makeStringArray(jo.optJSONArray("notifications"));
+            this.readNotifications = makeStringArray(jo.optJSONArray("read_notifications"));
+
             isValid = true;
         } catch (Exception e) {
             isValid = false;
@@ -42,7 +55,7 @@ public class User {
     }
 
     public String toString() {
-        return "Email: " + email ;
+        return "Email: " + this.id ;
     }
 
     public static String[] makeStringArray(JSONArray arr) throws JSONException {

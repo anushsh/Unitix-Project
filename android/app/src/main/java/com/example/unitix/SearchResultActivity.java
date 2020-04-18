@@ -1,23 +1,20 @@
 package com.example.unitix;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.MenuItemCompat;
+
+import com.example.unitix.server.DataSource;
+import com.example.unitix.models.Event;
+import com.example.unitix.models.Show;
 
 import java.util.List;
 
@@ -40,7 +37,7 @@ public class SearchResultActivity extends AppCompatActivity {
         EditText searchQuery = (EditText) findViewById(R.id.search_query_input);
         query = searchQuery.getText().toString();
         // execute in background to keep main thread smooth
-        AsyncTask<Integer,Integer,Event[]> task = new SearchResultActivity.HandleSearch();
+        AsyncTask<Integer,Integer, Event[]> task = new SearchResultActivity.HandleSearch();
         // allow for parallel execution
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
@@ -60,7 +57,7 @@ public class SearchResultActivity extends AppCompatActivity {
         feed = findViewById(R.id.event_feed);
 
         for (Event event : events) {
-            List<Show> shows = event.shows;
+            List<Show> shows = event.getShows();
             if (shows.size() == 0) {
                 continue;
             }
@@ -95,8 +92,8 @@ public class SearchResultActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Event event = (Event) v.getTag();
-                    String eventName = event.name;
-                    String eventID = event.id;
+                    String eventName = event.getName();
+                    String eventID = event.getId();
                     Intent i = new Intent(SearchResultActivity.this, EventActivity.class);
                     i.putExtra("eventName", eventName);
                     i.putExtra("eventID", eventID);

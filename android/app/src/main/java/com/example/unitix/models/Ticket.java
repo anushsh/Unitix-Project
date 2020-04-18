@@ -1,17 +1,15 @@
-package com.example.unitix;
+package com.example.unitix.models;
 
 import android.util.Log;
 
 import org.json.JSONObject;
 
-public class Ticket {
-    String id;
+public class Ticket extends Model {
+
     String showID;
     boolean isRedeemed;
     boolean isRequested;
     String customer;
-
-    boolean isValid;
 
     public Ticket(JSONObject jo) {
         try {
@@ -30,5 +28,17 @@ public class Ticket {
     @Override
     public String toString() {
         return "Ticket for " + this.showID + " and has " + (this.isRedeemed ? "" : "not ") + "been redeemed";
+    }
+
+    public String getShowId() {
+        return this.showID;
+    }
+
+    public boolean isRequested() {
+        return this.isRequested;
+    }
+
+    public boolean isRedeemed() {
+        return this.isRedeemed;
     }
 }

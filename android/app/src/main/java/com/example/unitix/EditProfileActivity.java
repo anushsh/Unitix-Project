@@ -11,6 +11,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.unitix.server.DataSource;
+import com.example.unitix.R;
+import com.example.unitix.models.User;
+
 public class EditProfileActivity extends AppCompatActivity {
 
     TextView email;
@@ -45,7 +49,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void initializeFields() {
-        email.setText(user.email);
+        email.setText(user.getId());
         password.setText(user.password);
         first_name.setText(user.firstName);
         last_name.setText(user.lastName);

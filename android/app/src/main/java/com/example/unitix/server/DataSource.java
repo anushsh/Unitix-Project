@@ -1,14 +1,25 @@
-package com.example.unitix;
+package com.example.unitix.server;
 
 
 import java.net.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
+
 import android.os.AsyncTask;
 import org.json.*;
 import android.util.Log;
+
+import com.example.unitix.models.Change;
+import com.example.unitix.models.Event;
+import com.example.unitix.models.Group;
+import com.example.unitix.models.Notification;
+import com.example.unitix.models.Show;
+import com.example.unitix.models.ShowInfo;
+import com.example.unitix.models.Ticket;
+import com.example.unitix.models.User;
+import com.example.unitix.server.AccessWebJSONPutTask;
+import com.example.unitix.server.AccessWebJSONTask;
 
 
 public class DataSource {
@@ -53,6 +64,23 @@ public class DataSource {
             Log.e("NOAH","exception: " + e);
         }
         return notifications;
+    }
+
+
+    public Notification[] getAllReadNotifications(String email) {
+        Notification[] readNotifications = new Notification[0];
+        try {
+            URL url = new URL(host + ":" + port + "/get_user_read_notifications?email=" + email);
+            AsyncTask<URL, String, JSONObject> task =
+                    new AccessWebJSONTask();
+            task.execute(url);
+            JSONObject jo = task.get();
+
+            readNotifications = Notification.createNotificationList(jo.getJSONArray("read_notifications"));
+        } catch (Exception e) {
+            Log.e("Yash","exception: " + e);
+        }
+        return readNotifications;
     }
 
     public Event[] getAllEvents() {
@@ -120,6 +148,20 @@ public class DataSource {
         }
     }
 
+    public Change getChangeByID(String changeID) {
+        try {
+            URL url = new URL(host + ":" + port + "/get_change?change=" + changeID);
+            AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
+            task.execute(url);
+            JSONObject jo = task.get();
+            Log.e("MICHAEL", "Change json object from ds: " + jo.toString());
+            return new Change(jo);
+        } catch (Exception e) {
+            Log.e("MICAHEL", "Error getting change by id: " + e);
+            return null;
+        }
+    }
+
 
     public Event getEventByID(String eventID) {
         try {
@@ -151,7 +193,7 @@ public class DataSource {
             List<ShowInfo> showInfo = new LinkedList();
             for (int i = 0; i < showInfoArray.length(); i++) {
                 ShowInfo show = new ShowInfo(showInfoArray.getJSONObject(i));
-                if (show.isValid) {
+                if (show.isValid()) {
                     showInfo.add(show);
                 }
             }
@@ -174,7 +216,7 @@ public class DataSource {
             List<Ticket> tickets = new LinkedList();
             for (int i = 0; i < ticketsArray.length(); i++) {
                 Ticket ticket = new Ticket(ticketsArray.getJSONObject(i));
-                if (ticket.isValid) {
+                if (ticket.isValid()) {
                     tickets.add(ticket);
                 }
             }

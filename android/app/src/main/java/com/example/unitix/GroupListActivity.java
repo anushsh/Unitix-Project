@@ -1,7 +1,5 @@
 package com.example.unitix;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +11,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.unitix.server.DataSource;
+import com.example.unitix.R;
 
 public class GroupListActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.example.unitix;
+package com.example.unitix.models;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -6,10 +6,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Notification {
+public class Notification extends Model {
 
     public String content;
-    public boolean isValid;
 
     public Notification(JSONObject jo) {
         try {
