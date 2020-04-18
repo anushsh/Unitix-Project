@@ -7,7 +7,7 @@ var getMessage = function (req, res) {
 }
 
 var getSplash = function (req, res) {
-    res.render('splash.ejs')
+    req.session.user == null ? res.render('splash.ejs') : res.redirect('/home')
 }
 
 var getHome = function (req, res) {

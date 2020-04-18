@@ -66,6 +66,7 @@
     $("#startTime").val('')
     $("#endTime").val('')
 
+    console.log("curr show #" + currShowNum)
     $("#showHeaderInfo").html("Details for show " + currShowNum++)
 }
 
@@ -81,7 +82,6 @@ function storeShowInfo() {
         startTime: $("#startTime").val(),
         endTime: $("#endTime").val()
     })
-    console.log(shows)
     addShowHTML()
 }
 // --------------

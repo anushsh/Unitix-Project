@@ -2,7 +2,7 @@ var User = require('../models/user.js');
 var Event = require('../models/event.js')
 var Show = require('../models/show.js')
 var Ticket = require('../models/ticket.js')
-var Notification = require('../models/show.js')
+var Notification = require('../models/notification.js')
 var Group = require('../models/group.js')
 
 
@@ -173,7 +173,8 @@ var notifyEvent = function(req, res) {
                 res.json({"status":"success"})
             });
         } else {
-
+            console.log(err);
+            res.json({"status":"error"});
         }
     });
 }

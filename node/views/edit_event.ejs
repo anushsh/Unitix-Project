@@ -8,17 +8,27 @@
         var group // populated by getGroup() which is in helper.js
         var event
 
+        // for editing shows
+        var oldShowObjects = [] // these are the actually mongo db collection documents
+
+        var oldShows = []
+        var shows = [] // this is the updated list
+        var currShowNum = 1
 
         function submitChanges() {
             tags = $('#eventTags').val().split(',').sort()
             var editedEvent = {
                 "name": $('#eventName').val(),
-                "tags": tags
+                "tags": tags,
             }
+            
             $.post("/update_event_overview", {
                 old: event,
-                updated: editedEvent
+                updated: editedEvent,
+                oldShows: oldShows,
+                updatedShows: shows
             }, goHome("Successfully updated event!"))
+            
         }
 
         // on document start
@@ -73,6 +83,51 @@
             })
         }
 
+        function showShowInfo() {
+            $.get('/get_shows_for_event', {
+                eventID: event._id
+            }, (showsRes) => {
+                showsRes.forEach(show => {
+                    // add to global array
+                    oldShowObjects.push(show)
+                })
+                addShowHTML()
+                fillShowInfo()
+            })
+        }
+
+        function fillShowInfo() {
+            currShow = oldShowObjects[currShowNum - 2] // i'm really sorry but this is correct
+            $("#showCapacity").val(currShow.capacity)
+            $("#ticketPrice").val(currShow.price.$numberDecimal)
+            $("#showLocation").val(currShow.location)
+            $("#description").val(currShow.description)
+            $("#startDate").val(currShow.start_date.split("T")[0])
+            $("#startTime").val(currShow.start_time)
+            $("#endTime").val(currShow.end_time)
+
+            oldShows.push({
+                name: $("#showName").val(),
+                capacity: $("#showCapacity").val(),
+                price: $("#ticketPrice").val(),
+                location: $("#showLocation").val(),
+                description: $("#description").val(),
+                date: $("#startDate").val(),
+                startTime: $("#startTime").val(),
+                endTime: $("#endTime").val()
+            })
+        }
+
+        function nextOldShow() {
+            storeShowInfo() // propagates existing data to shows array
+            fillShowInfo()
+        }
+
+        function changeShows() {
+            storeShowInfo() // save last show changes
+            submitChanges()
+        }
+
     </script>
 </head>
 
@@ -116,7 +171,7 @@
             </div>
 
             <div class="control">
-                <button class="button is-link" onclick="editShows()">I want to change show information, too</button>
+                <button class="button is-link" onclick="showShowInfo()">I want to change show information, too</button>
             </div>
 
         </div>
@@ -125,11 +180,11 @@
             <div class="column" id="showDetails">
                 <% include static/html/single_show.html %>
                 <div class="control">
-                    <button class="button is-link is-hidden" id="nextShowButton" onclick="storeShowInfo()">Next
+                    <button class="button is-link is-hidden" id="nextShowButton" onclick="nextOldShow()">Next
                         Show...</button>
                 </div>
                 <div class="control">
-                    <button class="button is-link is-hidden" id="createEventButton" onclick="checkShows()">Update Shows and Event!</button>
+                    <button class="button is-link is-hidden" id="createEventButton" onclick="changeShows()">Update Shows and Event!</button>
                 </div>
             </div>
         </div>

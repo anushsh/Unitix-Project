@@ -258,24 +258,21 @@ function getAllTickets(ticketIDs, callback) {
     });
 }
 
-// TODO: Add Change Field
 var updateEventOverview = function (req, res) {
     old = req.body.old
     updated = req.body.updated
-
-
     changeArr = []
+
+    // ---- name change ----
     if (old.name != updated.name) {
-        console.log("NAME CHANGE OCCURRED")
         changeArr.push({
             fieldChanged: "name",
             priorValue: old.name,
             updatedValue: updated.name
         })
-    } else {
-        console.log("NO NAME CHANGE")
     }
 
+    // ---- tag changes ----
     sameTags = true
     for (i = 0; i < old.tags.length; i++) {
         if (old.tags[i] != updated.tags[i]) {
@@ -294,8 +291,23 @@ var updateEventOverview = function (req, res) {
             updatedValue: updatedTagsFormatted.substring(0, updatedTagsFormatted.length - 1)
         })
     }
-    console.log("Found " + changeArr.length + " changes")
 
+
+    // ----- show changes -------
+    // shows should already be sorted in order of show number, so can just compare one by one
+    // format - fieldChanged will by "show X field", whereas event changes are just "field"
+    oldShows = req.body.oldShows
+    updatedShows = req.body.updatedShows
+    if (oldShows && updatedShows) {
+        for (i = 0; i < oldShows.length; i++) {
+            oldShow = oldShows[i]
+            updatedShow = updatedShows[i]
+            markShowChanges(oldShow, updatedShow, changeArr)
+        }
+    }
+
+
+    // create change objects and send to event
     changeIDs = []
     async.forEach(changeArr, (changeObj, done) => {
         var change = new Change({
@@ -330,6 +342,67 @@ var updateEventOverview = function (req, res) {
         })
     })
 }
+
+
+var markShowChanges = function(oldShow, updatedShow, changeArr) {
+    if (oldShow.name != updatedShow.name) {
+        changeArr.push({
+            fieldChanged: "show " + i + " name",
+            priorValue: oldShow.name,
+            updatedValue: updatedShow.name
+        })
+    }
+    if (oldShow.start_date != updatedShow.start_date) {
+        changeArr.push({
+            fieldChanged: "show " + i + " date",
+            priorValue: oldShow.start_date,
+            updatedValue: updatedShow.start_date
+        })
+    }
+    if (oldShow.start_time != updatedShow.start_time) {
+        changeArr.push({
+            fieldChanged: "show " + i + " start time",
+            priorValue: oldShow.start_time,
+            updatedValue: updatedShow.start_time
+        })
+    }
+    if (oldShow.end_time != updatedShow.end_time) {
+        changeArr.push({
+            fieldChanged: "show " + i + " end time",
+            priorValue: oldShow.end_time,
+            updatedValue: updatedShow.end_time
+        })
+    }
+    if (oldShow.capacity != updatedShow.capacity) {
+        changeArr.push({
+            fieldChanged: "show " + i + " capacity",
+            priorValue: oldShow.capacity,
+            updatedValue: updatedShow.capacity
+        })
+    }
+    if (oldShow.location != updatedShow.location) {
+        changeArr.push({
+            fieldChanged: "show " + i + " location",
+            priorValue: oldShow.location,
+            updatedValue: updatedShow.location
+        })
+    }
+    if (oldShow.description != updatedShow.description) {
+        changeArr.push({
+            fieldChanged: "show " + i + " description",
+            priorValue: oldShow.description,
+            updatedValue: updatedShow.description
+        })
+    }
+    if (oldShow.price != updatedShow.price) {
+        changeArr.push({
+            fieldChanged: "show " + i + " price",
+            priorValue: oldShow.price,
+            updatedValue: updatedShow.price
+        })
+    }
+}
+
 
 var getChange = function (req, res) {
     Change.findById(req.query.change, (err, change) => {
@@ -388,6 +461,23 @@ var deleteEventFromGroup = function(email, eventID) {
                 Group.findOneAndUpdate({email: email}, {currentEvents: modifiedEvents}, (err, _) => {
                     if (err) console.log("Error deleting event from group: " + err)
                 })
+            })
+        }
+    })
+}
+
+var getShowsForEvent = function (req, res) {
+    Event.findById(req.query.eventID, (err, event) => {
+        if (err) res.json({"error": err})
+        else {
+            shows = []
+            async.forEach(event.shows, (show, done) => {
+                Show.findById(show, (err, showObj) => {
+                    err ? res.json({"error": err}) : shows.push(showObj)
+                    done()
+                })
+            }, () => {
+                res.json(shows)
             })
         }
     })
@@ -453,6 +543,7 @@ module.exports = {
     add_event_id_to_show: addEventIdToShow,
     add_event_id_to_group: addEventIdToGroup,
     get_show_with_tickets: getShowWithTickets,
+    get_shows_for_event: getShowsForEvent,
     update_event_overview: updateEventOverview,
     delete_event: deleteEvent,
     get_search_result_events: getSearchResultEvents,
