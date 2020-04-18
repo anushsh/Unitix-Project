@@ -12,10 +12,13 @@ public class User extends Model {
     public String firstName;
     public String lastName;
     public String phone;
-    //following
+    public String[] followers;
     public String[] pastTickets;
     public String[] currTickets;
+    public String[] notifications;
+    public String[] readNotifications;
     public int numNotifications;
+    public int numReadNotifications;
 
     public User(JSONObject jo) {
         try {
@@ -26,12 +29,24 @@ public class User extends Model {
             this.phone = jo.getString("phone");
             this.pastTickets = makeStringArray(jo.optJSONArray("past_tickets"));
             this.currTickets = makeStringArray(jo.optJSONArray("curr_tickets"));
+            this.followers = makeStringArray(jo.optJSONArray("followers"));
+
             JSONArray notifications = jo.optJSONArray("notifications");
+            JSONArray readNotifications = jo.optJSONArray("readNotifications");
             if (notifications != null) {
                 this.numNotifications = notifications.length();
             } else {
                 this.numNotifications = 0;
             }
+
+            if (readNotifications != null) {
+                this.numReadNotifications = readNotifications.length();
+            } else {
+                this.numReadNotifications = 0;
+            }
+            this.notifications = makeStringArray(jo.optJSONArray("notifications"));
+            this.readNotifications = makeStringArray(jo.optJSONArray("readNotifications"));
+
             isValid = true;
         } catch (Exception e) {
             isValid = false;
