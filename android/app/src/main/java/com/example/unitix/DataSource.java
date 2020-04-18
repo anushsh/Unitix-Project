@@ -73,6 +73,22 @@ public class DataSource {
         return events;
     }
 
+    public Group[] getAllGroups() {
+        Group[] groups = new Group[0];
+        try {
+            URL url = new URL(host + ":" + port + "/get_all_groups");
+            AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
+            task.execute(url);
+            JSONObject jo = task.get();
+
+            groups = Group.createGroupList(jo.getJSONArray("groups"));
+        } catch (Exception e) {
+            Log.e("ANUSH", "exception: " + e);
+        }
+        Log.e("ANUSH", "Returning events with " + groups.length);
+        return groups;
+    }
+
     public Event[] getEventSearchResults(String searchQuery) {
         Event[] events = new Event[0];
         try {

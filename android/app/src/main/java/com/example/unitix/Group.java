@@ -2,7 +2,13 @@ package com.example.unitix;
 
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Group {
 
@@ -33,5 +39,20 @@ public class Group {
             Log.e("MICHAEL", "Exception making Group: " + e);
             isValid = false;
         }
+    }
+
+    public static Group[] createGroupList(JSONArray jarray) {
+        List<Group> list = new ArrayList<Group>();
+        for (int i = 0; i < jarray.length(); i++){
+            try {
+                Group g = new Group(jarray.getJSONObject(i));
+                if (g.isValid) {
+                    list.add(g);
+                }
+            } catch (JSONException e) {
+                //Catch Exception
+            }
+        }
+        return list.toArray(new Group[0]); //Return list as an array
     }
 }
