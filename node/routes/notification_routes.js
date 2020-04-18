@@ -148,34 +148,14 @@ function readAllNotifications(req, res) {
         if (!err && user) {
             user = user.toJSON();
             var notificationIDs = user.notifications;
-            if (notificationIDs) {
-                async.forEach(notificationIDs, (notificationID, done) => {
-                    readNotification(user._id, notificationID, () => {
-                        done();
-                    })
-                }, () => {
-                    // need to manually clear any remaining notifications
-                    User.findOneAndUpdate({email:email}, {notifications:[]}, (err, _) => {
-                        res.json({"status":"success"});
-                    });
-                    
-                });
-            }
-        }
-    });
-}
+            var readNotificationIDs = user.read_notifications;
+            notificationIDs.forEach(function(notification) {
+                readNotificationIDs.push(notification)
+            });
 
-function readNotification(userID, notificationID, callback) {
-    User.findById(userID, (err, user) => {
-        if (!err && user) {
-            user = user.toJSON();
-            var notifications = user.notifications ? user.notifications : [];
-            var read_notifications = user.read_notifications ? user.read_notifications : [];
-            notifications = notifications.filter((n) => {return n != notificationID});
-            read_notifications.push(notificationID);
-            User.findByIdAndUpdate(userID, {notifications:notifications, read_notifications:read_notifications}, (err, user) => {
-                callback();
-            })
+            User.findOneAndUpdate({email:email}, {notifications:[], read_notifications:readNotificationIDs}, (err, _) => {
+                res.json({"status":"success"});
+            });
         }
     });
 }
