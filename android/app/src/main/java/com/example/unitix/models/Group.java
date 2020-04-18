@@ -6,6 +6,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Group extends Model {
 
     String[] currentEvents;
@@ -34,7 +37,7 @@ public class Group extends Model {
 
     public static Group[] createGroupList(JSONArray jarray) {
         List<Group> list = new ArrayList<Group>();
-        for (int i = 0; i < jarray.length(); i++){
+        for (int i = 0; i < jarray.length(); i++) {
             try {
                 Group g = new Group(jarray.getJSONObject(i));
                 if (g.isValid) {
@@ -50,3 +53,4 @@ public class Group extends Model {
     public String getDisplayName() {
         return this.displayName;
     }
+}

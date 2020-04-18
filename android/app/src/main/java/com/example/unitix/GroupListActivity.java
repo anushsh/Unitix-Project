@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.os.AsyncTask;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,8 +15,10 @@ import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.unitix.models.Event;
 import com.example.unitix.server.DataSource;
 import com.example.unitix.R;
+import com.example.unitix.models.Group;
 
 public class GroupListActivity extends AppCompatActivity {
 
@@ -39,11 +42,11 @@ public class GroupListActivity extends AppCompatActivity {
     }
 
     private class HandleGroupsTask extends AsyncTask<Integer, Integer, Group[]> {
-        @Override
-        protected Group[] doInBackground(Integer... integers) { return ds.getAllGroups(); }
+        protected Group[] doInBackground(Integer... integers) {
+            return ds.getAllGroups();
+        }
         protected void onPostExecute(Group[] groups) {
             Log.e("ANUSH", "group listings received groups got " + groups.length);
-            
             addGroupsToPage(groups);
         }
     }
@@ -57,12 +60,32 @@ public class GroupListActivity extends AppCompatActivity {
 
             //Group display name
             TextView groupText = new TextView(getApplicationContext());
-            groupText.setText(g.displayName);
+            groupText.setText(g.getDisplayName());
             groupView.addView(groupText);
 
-            LinearLayout allGroupView = new LinearLayout(getApplicationContext());
-            allGroupView.setOrientation(LinearLayout.VERTICAL);
-            groupView.addView(allGroupView);
+//            LinearLayout allGroupView = new LinearLayout(getApplicationContext());
+//            allGroupView.setOrientation(LinearLayout.VERTICAL);
+//            groupView.addView(allGroupView);
+
+            Button viewDetailsButton = new Button(getApplicationContext());
+            viewDetailsButton.setText("View Details");
+            viewDetailsButton.setTag(g);
+            groupView.addView(viewDetailsButton);
+            viewDetailsButton.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    Group group = (Group) v.getTag();
+                    String groupName = group.getDisplayName();
+//                    String eventID = event.getId();
+                    Intent i = new Intent(GroupListActivity.this, EventActivity.class);
+                    i.putExtra("eventName", groupName);
+//                    i.putExtra("eventID", eventID);
+                    i.putExtra("EMAIL", getIntent().getStringExtra("EMAIL"));
+                    startActivityForResult(i, 1);
+
+                }
+            });
 
             feed.addView(groupView);
         }
