@@ -65,8 +65,22 @@ public class NotificationsActivity extends AppCompatActivity  {
         button.setVisibility(View.INVISIBLE);
         LinearLayout feed = findViewById(R.id.notification_list);
         TextView notificationText = new TextView(getApplicationContext());
-        notificationText.setText("No notifications");
-        notificationText.setTextSize(30);
+        notificationText.setText("No new notifications");
+        notificationText.setTextSize(18);
+        feed.addView(notificationText);
+    }
+    void updateNotificationsButton() {
+        Button button = findViewById(R.id.readnotificationsbtn);
+        button.setVisibility(View.INVISIBLE);
+        TextView header1 = findViewById(R.id.headerUnread);
+        TextView header2 = findViewById(R.id.headerRead);
+        header1.setVisibility(View.INVISIBLE);
+        header2.setVisibility(View.INVISIBLE);
+
+        LinearLayout feed = findViewById(R.id.notification_list);
+        TextView notificationText = new TextView(getApplicationContext());
+        notificationText.setText("Please reload page to get updated view of notifications");
+        notificationText.setTextSize(18);
         feed.addView(notificationText);
     }
 
@@ -74,7 +88,7 @@ public class NotificationsActivity extends AppCompatActivity  {
         ds.readNotifications(email);
         LinearLayout feed = findViewById(R.id.notification_list);
         feed.removeAllViews();
-        hideReadNotificationsButton();
+        updateNotificationsButton();
     }
 
 

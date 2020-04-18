@@ -28,11 +28,40 @@
             android:text="Mark All As Read"
             android:onClick="onReadNotificationButtonClick"/>
 
+
+        <TextView
+            android:id="@+id/headerUnread"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="10pt"
+            android:text="Unread Notifications" />
+
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <LinearLayout
                 android:id="@+id/notification_list"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </LinearLayout>
+        </ScrollView>
+
+        <TextView
+            android:id="@+id/headerRead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="10pt"
+            android:text="Read Notifications" />
+
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/read_notification_list"
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
