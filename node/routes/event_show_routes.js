@@ -405,8 +405,13 @@ var markShowChanges = function(oldShow, updatedShow, changeArr) {
 
 
 var getChange = function (req, res) {
-    Change.findById(req.query.change, (err, change) => {
-        !err && change ? res.json(change) : res.json({"Error": err})
+    getChangeHelper(req.query.change, (change) => {
+        res.json(change)
+    })
+}
+var getChangeHelper = function(changeInput, cb) {
+    Change.findById(changeInput, (_, change) => {
+        cb(change)
     })
 }
 

@@ -1,5 +1,9 @@
 package com.example.unitix.models;
 
+import android.util.Log;
+
+import com.example.unitix.server.DataSource;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -19,6 +23,8 @@ public class Event extends Model {
     List<Show> shows;
     String group;
 
+    List<Change> changes;
+
 
     public String getDescription() {
         if (shows.size() > 0) {
@@ -28,7 +34,8 @@ public class Event extends Model {
     }
 
     public Event(JSONObject jo) {
-        this.shows = new ArrayList();
+        this.shows = new ArrayList<>();
+        this.changes = new ArrayList<>();
         try {
             this.name = jo.getString("name");
             this.id = jo.getString("_id");
@@ -41,8 +48,18 @@ public class Event extends Model {
                 }
             }
             Collections.sort(this.shows);
+
+            // this is really ugly, sorry in advance
+            JSONArray changes = jo.getJSONArray("changes");
+            DataSource ds = new DataSource();
+            for (int i = 0; i < changes.length(); i++) {
+                Change change = ds.getChangeByID("" + changes.get(i));
+                if (change.isValid()) this.changes.add(change);
+            }
+
             isValid = true;
         } catch (Exception e) {
+            Log.e("MICHAEL, event constructor error", e.toString());
             isValid = false;
         }
     }
@@ -83,5 +100,9 @@ public class Event extends Model {
 
     public String getGroup() {
         return this.group;
+    }
+
+    public List<Change> getChanges() {
+        return this.changes;
     }
 }

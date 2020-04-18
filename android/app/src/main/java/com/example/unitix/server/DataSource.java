@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import org.json.*;
 import android.util.Log;
 
+import com.example.unitix.models.Change;
 import com.example.unitix.models.Event;
 import com.example.unitix.models.Group;
 import com.example.unitix.models.Notification;
@@ -127,6 +128,20 @@ public class DataSource {
             return new Group(jo.getJSONObject("group"));
         } catch (Exception e) {
             Log.e("MICHAEL", "Error getting group by id: " + e);
+            return null;
+        }
+    }
+
+    public Change getChangeByID(String changeID) {
+        try {
+            URL url = new URL(host + ":" + port + "/get_change?change=" + changeID);
+            AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
+            task.execute(url);
+            JSONObject jo = task.get();
+            Log.e("MICHAEL", "Change json object from ds: " + jo.toString());
+            return new Change(jo);
+        } catch (Exception e) {
+            Log.e("MICAHEL", "Error getting change by id: " + e);
             return null;
         }
     }

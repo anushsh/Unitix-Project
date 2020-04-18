@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.unitix.models.Change;
 import com.example.unitix.server.DataSource;
 import com.example.unitix.models.Event;
 import com.example.unitix.models.Group;
@@ -167,6 +168,14 @@ public class EventActivity extends AppCompatActivity {
             EventActivity.this.event = event;
             EventActivity.this.group = EventActivity.this.ds.getGroupByID(EventActivity.this.event.getGroup()); // TODO - need to move async
             if (event != null) {
+                if (event.getChanges() != null) {
+                    for (Change change : event.getChanges()) {
+                        Log.e("MICHAEL", change.toString());
+                    }
+                } else {
+                    Log.e("MICHAEL", "Event has no changes." + event);
+                }
+
                 handleValidEvent();
                 Log.e("NOAH", "got valid event " + event.getName());
             } else {
