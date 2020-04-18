@@ -152,7 +152,7 @@ var createGroup = (req, res) => {
         pastEvents: [],
         groupType: req.body.groupType,
         bio: req.body.groupBio,
-        followers: 0
+        followers: []
     })
     Group.findOne({email: req.body.email}, (err, user) => {
         if (err) {
