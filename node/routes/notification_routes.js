@@ -100,6 +100,48 @@ function getAllNotifications(email, callback) {
     })
 }
 
+function getUserReadNotifications(req, res) {
+    var email = req.query.email;
+    getAllReadNotifications(email, (err, read_notifications) => {
+        if (err) {
+            res.json({"status":"error"})
+        } else {
+            res.json({
+                "status":"success","read_notifications":read_notifications
+            })
+        }
+    })
+}
+
+function getAllReadNotifications(email, callback) {
+    User.findOne({email:email}, (err, user) => {
+        if (err || !user) {
+            callback("error", null);
+        } else {
+            user = user.toJSON();
+            var notificationIDs = user.read_notifications;
+            if (!notificationIDs) {
+                notificationIDs = [];
+            }
+            var notifications = [];
+            async.forEach(notificationIDs, (notificationID, done) => {
+                Notification.findById(notificationID, (err, notification) => {
+                    if (!err && notification) {
+                        // notification = notification.toJSON();
+                        notifications.push(notification);
+                    }
+                    done();
+                })
+            }, () => {
+
+                notifications = sortNotifications(notifications);
+                callback(null, notifications);
+            });
+
+        }
+    })
+}
+
 function readAllNotifications(req, res) {
     var email = req.body.email;
     User.findOne({email:email}, (err, user) => {
@@ -129,10 +171,10 @@ function readNotification(userID, notificationID, callback) {
             if (!err && user) {
                 user = user.toJSON();
                 var notifications = user.notifications ? user.notifications : [];
-                var readNotifications = user.readNotifications ? user.readNotifications : [];
+                var read_notifications = user.read_notifications ? user.read_notifications : [];
                 notifications = notifications.filter((n) => {return n != notificationID});
-                readNotifications.push(notificationID);
-                User.findByIdAndUpdate(userID, {notifications:notifications, readNotifications:readNotifications}, (err, user) => {
+                read_notifications.push(notificationID);
+                User.findByIdAndUpdate(userID, {notifications:notifications, read_notifications:read_notifications}, (err, user) => {
                     callback();
                 })
             }
@@ -279,6 +321,7 @@ var notifyAllFollowers = function(groupID, content, callback) {
 module.exports = {
     create_notification: createNotification,
     get_user_notifications: getUserNotifications,
+    get_user_read_notifications: getUserReadNotifications,
     read_all_notifications: readAllNotifications,
     notify_event: notifyEvent,
     notify_show: notifyShow,

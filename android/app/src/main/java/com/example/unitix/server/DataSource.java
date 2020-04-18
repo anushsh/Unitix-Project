@@ -65,6 +65,23 @@ public class DataSource {
         return notifications;
     }
 
+
+    public Notification[] getAllReadNotifications(String email) {
+        Notification[] readNotifications = new Notification[0];
+        try {
+            URL url = new URL(host + ":" + port + "/get_user_read_notifications?email=" + email);
+            AsyncTask<URL, String, JSONObject> task =
+                    new AccessWebJSONTask();
+            task.execute(url);
+            JSONObject jo = task.get();
+
+            readNotifications = Notification.createNotificationList(jo.getJSONArray("readNotifications"));
+        } catch (Exception e) {
+            Log.e("Yash","exception: " + e);
+        }
+        return readNotifications;
+    }
+
     public Event[] getAllEvents() {
         Event[] events = new Event[0];
         try {
