@@ -39,6 +39,7 @@ app.get('/logout', routes.get_logout);
 app.get('/create_event', routes.get_create_event)
 app.get('/get_message', routes.get_message)
 app.get('/edit_event/:event', routes.get_edit_event)
+app.get('/followers', routes.get_followers)
 
 // user and group routes
 app.get('/get_group', user_group_routes.get_group)

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include head_imports.html %>
+    <script type="text/javascript">
+       
+        // on document start
+        $(document).ready(function () {
+            // NOTE: this method is in static/helper.js
+            //TODO: DO I NEED THESE
+            loadEvents()
+            getMessage()
+        })
+        function displayFollowerCount() {
+            document.getElementById("test").innerHTML = "NEW TEST TEXT <%= followers.length%>";
+        }
+    </script>
+</head>
+
+<body>
+    <% include header.html %>
+
+    <article class="message is-success is-small is-hidden" id="msgBlock">
+        <button class="delete is-small" aria-label="delete" onclick="deleteMessage()"></button>
+        <div class="message-body" id="msg"></div>
+      </article>
+
+    <div class="columns">
+
+        <!-- left margin -->
+        <div class="column is-1">
+        </div>
+
+        <div class="column is-6">
+            <p class="subtitle is-3">Followers:</p>
+            <br><br>
+            <p id="test">test</p>
+        </div>
+    </div>
+</body>
+
+</html>

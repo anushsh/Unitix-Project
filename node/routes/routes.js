@@ -1,4 +1,6 @@
 var Group = require('../models/group.js');
+var User = require('../models/user.js');
+var async = require('async')
 
 var msg // to send notifications at top of screen when getting to a page
 
@@ -100,6 +102,68 @@ var getLogout = function(req, res) {
     res.redirect('/');
 };
 
+var getFollowerNames = function(req, res) {
+    if (req.session.user) {
+        Group.findOne({email: req.session.user}, (err, group) => {
+            if (err) {
+                res.render({succes: false, error: err})
+            } else {
+                var followerObjects = [];
+                async.forEach(group.followers, (followerID, done) => {
+                    User.findById(followerID, (err, follower) => {
+                        if (!err && follower) {
+                            //follower = follower.toJSON();
+                            followerObjects.push({FirstName: follower.first_name, LastName: follower.last_name});
+                            done();
+                        } else {
+                            done();
+                        }
+                    })
+                }, () => {
+                    console.log("****************" + followerObjects.length)
+                    console.log(followerObjects[0])
+                    console.log(followerObjects[1])
+                    res.render('group_followers.ejs', {followers: followerObjects})
+                    //res.json({'status':'success',"group":group});
+                });
+            }
+        })
+    } else {
+        res.redirect('/');
+    }
+
+    // event = event.toJSON();
+    //         var shows = [];
+    //         async.forEach(event.shows, (showID, done) => {
+    //             Show.findById(showID, (err, show) => {
+    //                 if (!err && show) {
+    //                     show = show.toJSON();
+    //                     shows.push(show);
+    //                     done();
+    //                 } else {
+    //                     done();
+    //                 }
+    //             })
+    //         }, () => {
+    //             event.shows = shows;
+    //             callback(null, event);
+    //         });
+
+    // // var currentEvents = [];
+    // async.forEach(group.currentEvents, (eventID, done) => {
+    //     getEventWithShows(eventID, (err, event) => {
+    //         if (!err && event) {
+    //             currentEvents.push(event);
+    //         } else console.log("ERROR GETTING SINGLE EVENT. " + err)
+    //         done();
+    //     })
+    // }, () => {
+    //     group.currentEvents = currentEvents;
+    //     res.json({'status':'success',"group":group});
+    // });
+
+}
+
 module.exports = {
     get_splash: getSplash,
     get_message: getMessage,
@@ -110,5 +174,6 @@ module.exports = {
     check_login: checkLogin,
     get_logout: getLogout,
     get_profile: getProfile,
-    get_edit_event: getEditEvent
+    get_edit_event: getEditEvent,
+    get_followers: getFollowerNames
 }
