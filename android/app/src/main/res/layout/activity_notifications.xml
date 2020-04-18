@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="10pt"
+            android:textSize="15pt"
             android:text="Unread Notifications" />
 
         <ScrollView
@@ -54,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="10pt"
+            android:textSize="15pt"
             android:text="Read Notifications" />
 
         <ScrollView
@@ -64,10 +64,13 @@
                 android:id="@+id/read_notification_list"
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:textSize="10pt">
+
 
             </LinearLayout>
         </ScrollView>
+
 
     </LinearLayout>
 
