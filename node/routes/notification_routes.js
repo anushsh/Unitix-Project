@@ -166,20 +166,18 @@ function readAllNotifications(req, res) {
 }
 
 function readNotification(userID, notificationID, callback) {
-    Notification.findById(notificationID, (err, notification) => {
-        User.findById(userID, (err, user) => {
-            if (!err && user) {
-                user = user.toJSON();
-                var notifications = user.notifications ? user.notifications : [];
-                var read_notifications = user.read_notifications ? user.read_notifications : [];
-                notifications = notifications.filter((n) => {return n != notificationID});
-                read_notifications.push(notificationID);
-                User.findByIdAndUpdate(userID, {notifications:notifications, read_notifications:read_notifications}, (err, user) => {
-                    callback();
-                })
-            }
-        });
-    })
+    User.findById(userID, (err, user) => {
+        if (!err && user) {
+            user = user.toJSON();
+            var notifications = user.notifications ? user.notifications : [];
+            var read_notifications = user.read_notifications ? user.read_notifications : [];
+            notifications = notifications.filter((n) => {return n != notificationID});
+            read_notifications.push(notificationID);
+            User.findByIdAndUpdate(userID, {notifications:notifications, read_notifications:read_notifications}, (err, user) => {
+                callback();
+            })
+        }
+    });
 }
 
 
