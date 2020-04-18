@@ -121,6 +121,19 @@ function notifyShow(showID) {
     })
 }
 
+function notifyGroupFollowers(groupID, groupName) {
+
+    console.log("ENTERED notifyGroupFollowers")
+    console.log("GROUPID" + groupID)
+    console.log("GROUPNAME" + groupName)
+
+    var content = groupName + " have created a new event - be sure to check it out!"
+    $.post('/notify_followers',{"groupID":groupID,"content":content}, (res) => {
+        console.log(res);
+    })
+}
+
+
 // loads events into ul with id 'currentEvents'
 function loadEvents() {
     $.getJSON('/get_group_with_events', (res) => {

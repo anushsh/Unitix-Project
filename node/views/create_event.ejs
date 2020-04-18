@@ -38,6 +38,7 @@
             }, function (showIDs, status) {
                 if (status == "success") {
                     postEvent($("#eventName").val(), $("#eventTags").val().split(",").sort(), showIDs)
+                    notifyGroupFollowers(group._id, group.displayName)
                 }
                 else alert("Internal server error." + status)
             })

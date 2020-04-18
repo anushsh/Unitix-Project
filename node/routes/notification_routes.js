@@ -3,6 +3,8 @@ var Event = require('../models/event.js')
 var Show = require('../models/show.js')
 var Ticket = require('../models/ticket.js')
 var Notification = require('../models/show.js')
+var Group = require('../models/group.js')
+
 
 var async = require('async')
 
@@ -228,10 +230,54 @@ var notifyAllShowTicketHolders = function(showID, content, callback) {
     });
 } 
 
+
+var notifyFollowers = function(req, res) {
+    
+    var content = req.body.content;
+    var groupID = req.body.groupID;
+
+    console.log("ENTERED NOTIFY FOLLOWERS")
+    console.log("GROUPID" + groupID)
+    console.log("CONTENT" + content)
+    notifyAllFollowers(groupID, content, (err) => {
+        if (err) {
+            res.json({"status":"error"});
+        } else {
+            res.json({"status":"success"})
+        }
+    });
+}
+
+
+var notifyAllFollowers = function(groupID, content, callback) {
+    console.log("ENTERED NOTIFY ALL FOLLOWERS")
+    console.log("GROUPID" + groupID)
+    console.log("CONTENT" + content)
+    Group.findById(groupID, (err, group) => {
+        if (!err && group) {
+            var followers = group.followers;
+                async.forEach(followers, (follower, done) => {
+                var userID = follower;
+                if (userID) {
+                    addNotification(userID, content, (err, _) => {
+                        done();
+                    })
+                } else {
+                    done();
+                }
+
+            })
+        } else {
+            callback(err);
+        }
+    });
+} 
+
 module.exports = {
     create_notification: createNotification,
     get_user_notifications: getUserNotifications,
     read_all_notifications: readAllNotifications,
     notify_event: notifyEvent,
-    notify_show: notifyShow
+    notify_show: notifyShow,
+    notify_followers: notifyFollowers
 }
