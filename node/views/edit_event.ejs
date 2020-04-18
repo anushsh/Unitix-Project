@@ -61,14 +61,31 @@
             })
             
         }
+        
+        function promptDelete() {
+            $("#dangerAgreementLabel").removeClass("is-hidden")
+            $("#dangerAgreementLabel").addClass("is-active")
+            $("#dangerAgreementAnswer").removeClass("is-hidden")
+            $("#dangerAgreementAnswer").addClass("is-active")
+            $("#showDeleteMatch").val("")
+            $("#dangerAgreementButton").removeClass("is-hidden")
+            $("#dangerAgreementButton").addClass("is-active")
+        }
 
         function deleteEvent() {
-            $.get("/delete_event", {
+            if ($("#showDeleteMatch").val() == event.name) {
+                $.get("/delete_event", {
                 name: event.name,
                 eventID: event._id
             }, (data) => {
                 goHome("Event successfully deleted!")
             })
+            } else {
+                $("#dangerFailureMessage").addClass("is-active")
+                $("#dangerFailureMessage").removeClass("is-hidden")
+            }
+
+
         }
 
         function listChanges() {
@@ -191,9 +208,27 @@
 
     <div class="box">
         <h3>Warning Zone</h3>
+    </br>
         <div class = "control">
-            <button class="button is-link is-danger" onclick="deleteEvent()">Delete Event</button>
+            <button class="button is-link is-danger" onclick="promptDelete()">Delete Event</button>
         </div>
+
+        <div class="field is-hidden" id="dangerAgreementLabel">
+            <div class="input is-danger">
+                <div class="label">If you are sure you want to delete this event, please type the name of the event into this box below and hit I'm Sure</div>
+            </div>
+        </div>
+
+        <div class="field is-hidden" id="dangerAgreementAnswer">
+            <div class="control has-icons-left">
+                <input class="input is-danger" type="text" id="showDeleteMatch">
+            </div>
+        </div>
+
+        <div class="control">
+            <button class="button is-link is-danger is-hidden" id ="dangerAgreementButton" onclick="deleteEvent()">I'm Sure</button>
+        </div>
+
     </div>
 
     <div class="box">

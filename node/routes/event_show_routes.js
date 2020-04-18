@@ -431,7 +431,7 @@ var deleteEvent = function (req, res) {
 
 var deleteChanges = function(changes) {
     changes.forEach(change => {
-        Changes.deleteOne({_id: change}, (err, _) => {
+        Change.deleteOne({_id: change}, (err, _) => {
             if (err) console.log(err)
         })
     })
