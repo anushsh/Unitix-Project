@@ -97,6 +97,14 @@ public class EventActivity extends AppCompatActivity {
             showList.addView(showView);
         }
 
+        // changes
+        LinearLayout changeList = findViewById(R.id.change_list);
+        for (Change change : event.getChanges()) {
+            TextView changeDescription = new TextView(getApplicationContext());
+            changeDescription.setText(change.toString());
+            changeList.addView(changeDescription);
+        }
+
         description.setText(descriptionText);
         Log.e("NOAH", "start time " + event.getShows().get(0).getStartTime());
 
