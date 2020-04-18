@@ -190,7 +190,9 @@ var createUser = function (req, res) {
         following: [],
         past_tickets: [],
         curr_tickets: [],
-        saved_tickets: []
+        saved_tickets: [],
+        notifications: [],
+        readNotifications: []
 
     })
     newUser.save((err) => {
