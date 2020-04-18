@@ -32,7 +32,7 @@ public class User extends Model {
             this.followers = makeStringArray(jo.optJSONArray("followers"));
 
             JSONArray notifications = jo.optJSONArray("notifications");
-            JSONArray readNotifications = jo.optJSONArray("readNotifications");
+            JSONArray readNotifications = jo.optJSONArray("read_notifications");
             if (notifications != null) {
                 this.numNotifications = notifications.length();
             } else {
@@ -45,7 +45,7 @@ public class User extends Model {
                 this.numReadNotifications = 0;
             }
             this.notifications = makeStringArray(jo.optJSONArray("notifications"));
-            this.readNotifications = makeStringArray(jo.optJSONArray("readNotifications"));
+            this.readNotifications = makeStringArray(jo.optJSONArray("read_notifications"));
 
             isValid = true;
         } catch (Exception e) {

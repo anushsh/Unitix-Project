@@ -75,7 +75,7 @@ public class DataSource {
             task.execute(url);
             JSONObject jo = task.get();
 
-            readNotifications = Notification.createNotificationList(jo.getJSONArray("readNotifications"));
+            readNotifications = Notification.createNotificationList(jo.getJSONArray("read_notifications"));
         } catch (Exception e) {
             Log.e("Yash","exception: " + e);
         }
