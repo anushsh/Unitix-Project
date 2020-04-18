@@ -1,10 +1,10 @@
-package com.example.unitix;
+package com.example.unitix.models;
+
+import com.example.unitix.server.DataSource;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 public class User {
 
@@ -71,6 +71,10 @@ public class User {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public boolean isValid() {
+        return this.isValid;
     }
 
     // used for testing

@@ -1,4 +1,4 @@
-package com.example.unitix;
+package com.example.unitix.activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -6,13 +6,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.w3c.dom.Text;
+import com.example.unitix.server.DataSource;
+import com.example.unitix.R;
+import com.example.unitix.models.Notification;
+import com.example.unitix.models.User;
 
 public class NotificationsActivity extends AppCompatActivity  {
 
@@ -30,7 +32,7 @@ public class NotificationsActivity extends AppCompatActivity  {
         this.user = this.ds.getUser(email);
 
         // execute in background to keep main thread smooth
-        AsyncTask<Integer,Integer,Notification[]> task = new HandleNotificationsTask();
+        AsyncTask<Integer,Integer, Notification[]> task = new HandleNotificationsTask();
         // allow for parallel execution
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }

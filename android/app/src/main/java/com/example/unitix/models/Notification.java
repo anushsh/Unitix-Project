@@ -1,4 +1,4 @@
-package com.example.unitix;
+package com.example.unitix.models;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,6 +34,10 @@ public class Notification {
             }
         }
         return list.toArray(new Notification[0]); // convert list to array
+    }
+
+    public boolean isValid() {
+        return this.isValid;
     }
 
 }

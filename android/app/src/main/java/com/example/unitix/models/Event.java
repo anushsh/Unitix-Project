@@ -1,4 +1,4 @@
-package com.example.unitix;
+package com.example.unitix.models;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -73,5 +73,25 @@ public class Event {
             }
         }
         return list.toArray(new Event[0]); // convert list to array
+    }
+
+    public boolean isValid() {
+        return this.isValid;
+    }
+
+    public List<Show> getShows() {
+        return this.shows;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public String getGroup() {
+        return this.group;
     }
 }

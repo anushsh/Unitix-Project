@@ -1,10 +1,15 @@
-package com.example.unitix;
+package com.example.unitix.models;
 
 import android.util.Log;
 
 import org.json.JSONObject;
 
-public class ShowInfo {
+/**
+ * java representation of show objects. Each show has an event parent
+ */
+
+public class Show implements Comparable<Show> {
+
     Event event;
     String name;
     int capacity;
@@ -17,11 +22,13 @@ public class ShowInfo {
     String description;
     String location;
     String id;
+
     boolean isValid;
 
-    public ShowInfo(JSONObject jo) {
+    public Show(Event event, JSONObject jo) {
         try {
             // TODO: fix parsing
+            this.event = event;
             this.name = (String) jo.get("name");
             this.capacity = (Integer) jo.get("capacity");
             this.ticketsSold = jo.optInt("ticketsSold", 0);
@@ -150,6 +157,18 @@ public class ShowInfo {
 
     public boolean isSoldOut() {
         return ticketsSold >= capacity;
+    }
+
+    public boolean isValid() {
+        return this.isValid;
+    }
+
+    public String getStartTime() {
+        return this.startTime;
+    }
+
+    public String getId() {
+        return this.id;
     }
 
 

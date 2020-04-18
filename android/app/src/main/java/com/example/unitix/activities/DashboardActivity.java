@@ -1,4 +1,4 @@
-package com.example.unitix;
+package com.example.unitix.activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -10,6 +10,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.example.unitix.server.DataSource;
+import com.example.unitix.R;
+import com.example.unitix.models.Event;
+import com.example.unitix.models.Show;
+import com.example.unitix.models.User;
 
 import java.util.List;
 
@@ -32,7 +38,7 @@ public class DashboardActivity extends AppCompatActivity {
 
 
         // execute in background to keep main thread smooth
-        AsyncTask<Integer,Integer,Event[]> task = new HandleEventsTask();
+        AsyncTask<Integer,Integer, Event[]> task = new HandleEventsTask();
         // allow for parallel execution
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
@@ -57,7 +63,7 @@ public class DashboardActivity extends AppCompatActivity {
         LinearLayout feed = findViewById(R.id.event_feed);
 
         for (Event event : events) {
-            List<Show> shows = event.shows;
+            List<Show> shows = event.getShows();
             if (shows.size() == 0) {
                 continue;
             }
@@ -92,8 +98,8 @@ public class DashboardActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Event event = (Event) v.getTag();
-                    String eventName = event.name;
-                    String eventID = event.id;
+                    String eventName = event.getName();
+                    String eventID = event.getId();
                     Intent i = new Intent(DashboardActivity.this, EventActivity.class);
                     i.putExtra("eventName", eventName);
                     i.putExtra("eventID", eventID);

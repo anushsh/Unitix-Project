@@ -1,15 +1,12 @@
-package com.example.unitix;
+package com.example.unitix.activities;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.unitix.server.DataSource;
+import com.example.unitix.R;
 
 public class GroupListActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.example.unitix;
+package com.example.unitix.models;
 
 import android.util.Log;
 
@@ -30,5 +30,25 @@ public class Ticket {
     @Override
     public String toString() {
         return "Ticket for " + this.showID + " and has " + (this.isRedeemed ? "" : "not ") + "been redeemed";
+    }
+
+    public boolean isValid() {
+        return this.isValid;
+    }
+
+    public String getShowId() {
+        return this.showID;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public boolean isRequested() {
+        return this.isRequested;
+    }
+
+    public boolean isRedeemed() {
+        return this.isRedeemed;
     }
 }

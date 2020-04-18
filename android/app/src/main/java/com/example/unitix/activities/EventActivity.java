@@ -1,4 +1,4 @@
-package com.example.unitix;
+package com.example.unitix.activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -7,11 +7,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.unitix.server.DataSource;
+import com.example.unitix.R;
+import com.example.unitix.models.Event;
+import com.example.unitix.models.Group;
+import com.example.unitix.models.Show;
+import com.example.unitix.models.Ticket;
+import com.example.unitix.models.User;
 
 import java.util.List;
 
@@ -46,7 +53,7 @@ public class EventActivity extends AppCompatActivity {
 
     void findShow() {
         try {
-            this.show = this.event.shows.get(0);
+            this.show = this.event.getShows().get(0);
         } catch (Exception e) {
             // event with no shows
             finish();
@@ -59,12 +66,12 @@ public class EventActivity extends AppCompatActivity {
 
 
         TextView description = findViewById(R.id.event_description);
-        String descriptionText = (this.group != null ? this.group.displayName + " presents: " : "") +
+        String descriptionText = (this.group != null ? this.group.getDisplayName() + " presents: " : "") +
                 this.show.getDescription() + "\n\n";
 
         LinearLayout showList = findViewById(R.id.show_list);
-        for (int i = 0; i < event.shows.size(); i++) {
-            final Show show = event.shows.get(i);
+        for (int i = 0; i < event.getShows().size(); i++) {
+            final Show show = event.getShows().get(i);
             LinearLayout showView = new LinearLayout(getApplicationContext());
             showView.setPadding(0, 0, 0, 50);
             showView.setOrientation(LinearLayout.VERTICAL);
@@ -91,7 +98,7 @@ public class EventActivity extends AppCompatActivity {
         }
 
         description.setText(descriptionText);
-        Log.e("NOAH", "start time " + event.shows.get(0).startTime);
+        Log.e("NOAH", "start time " + event.getShows().get(0).getStartTime());
 
         // TODO: display each show with purchase link (port code from other page?)
     }
@@ -100,7 +107,7 @@ public class EventActivity extends AppCompatActivity {
     boolean hasTicket(Show show) {
         for (Ticket ticket : userTickets) {
             Log.e("MICHAEL", ticket.toString());
-            if (ticket.showID.equals(show.id)) {
+            if (ticket.getShowId().equals(show.getId())) {
                 Log.e("MICHAEL", "TICKET MATCHES EVENT");
                 return true;
             }
@@ -114,7 +121,7 @@ public class EventActivity extends AppCompatActivity {
         purchaseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String showID = show.id;
+                String showID = show.getId();
                 String email = user.email;
                 if (ds.purchaseTicket(email, showID)) {
                     showPurchaseSuccessToast();
@@ -159,10 +166,10 @@ public class EventActivity extends AppCompatActivity {
 
         protected void onPostExecute(Event event) {
             EventActivity.this.event = event;
-            EventActivity.this.group = EventActivity.this.ds.getGroupByID(EventActivity.this.event.group); // TODO - need to move async
+            EventActivity.this.group = EventActivity.this.ds.getGroupByID(EventActivity.this.event.getGroup()); // TODO - need to move async
             if (event != null) {
                 handleValidEvent();
-                Log.e("NOAH", "got valid event " + event.name);
+                Log.e("NOAH", "got valid event " + event.getName());
             } else {
 
                 Log.e("NOAH", "got null event");

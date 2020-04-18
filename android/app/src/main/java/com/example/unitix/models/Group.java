@@ -1,4 +1,4 @@
-package com.example.unitix;
+package com.example.unitix.models;
 
 import android.util.Log;
 
@@ -33,5 +33,13 @@ public class Group {
             Log.e("MICHAEL", "Exception making Group: " + e);
             isValid = false;
         }
+    }
+
+    public boolean isValid() {
+        return this.isValid;
+    }
+
+    public String getDisplayName() {
+        return this.displayName;
     }
 }

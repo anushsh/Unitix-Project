@@ -1,14 +1,24 @@
-package com.example.unitix;
+package com.example.unitix.server;
 
 
 import java.net.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
+
 import android.os.AsyncTask;
 import org.json.*;
 import android.util.Log;
+
+import com.example.unitix.models.Event;
+import com.example.unitix.models.Group;
+import com.example.unitix.models.Notification;
+import com.example.unitix.models.Show;
+import com.example.unitix.models.ShowInfo;
+import com.example.unitix.models.Ticket;
+import com.example.unitix.models.User;
+import com.example.unitix.server.AccessWebJSONPutTask;
+import com.example.unitix.server.AccessWebJSONTask;
 
 
 public class DataSource {
@@ -135,7 +145,7 @@ public class DataSource {
             List<ShowInfo> showInfo = new LinkedList();
             for (int i = 0; i < showInfoArray.length(); i++) {
                 ShowInfo show = new ShowInfo(showInfoArray.getJSONObject(i));
-                if (show.isValid) {
+                if (show.isValid()) {
                     showInfo.add(show);
                 }
             }
@@ -158,7 +168,7 @@ public class DataSource {
             List<Ticket> tickets = new LinkedList();
             for (int i = 0; i < ticketsArray.length(); i++) {
                 Ticket ticket = new Ticket(ticketsArray.getJSONObject(i));
-                if (ticket.isValid) {
+                if (ticket.isValid()) {
                     tickets.add(ticket);
                 }
             }

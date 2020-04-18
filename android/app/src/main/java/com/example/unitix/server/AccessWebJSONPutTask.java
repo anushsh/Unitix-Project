@@ -1,14 +1,11 @@
-package com.example.unitix;
+package com.example.unitix.server;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.*;
-import java.util.Iterator;
-import java.util.Scanner;
 
 import org.json.*;
 

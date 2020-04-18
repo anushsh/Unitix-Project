@@ -1,4 +1,4 @@
-package com.example.unitix;
+package com.example.unitix.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.unitix.server.DataSource;
+import com.example.unitix.R;
+import com.example.unitix.models.User;
 
 public class EditProfileActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.example.unitix;
+package com.example.unitix.activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -12,7 +12,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.w3c.dom.Text;
+import com.example.unitix.server.DataSource;
+import com.example.unitix.R;
+import com.example.unitix.models.Ticket;
+import com.example.unitix.models.User;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -81,10 +84,10 @@ public class ProfileActivity extends AppCompatActivity {
                 redeemButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ds.redeemTicket(ticket.id);
+                        ds.redeemTicket(ticket.getId());
                     }
                 });
-                if (ticket.isRequested && !ticket.isRedeemed) {
+                if (ticket.isRequested() && !ticket.isRedeemed()) {
                     ticketList.addView(redeemButton);
                 }
             }
