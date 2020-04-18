@@ -10,7 +10,7 @@
 
 
         function submitChanges() {
-            tags = $('#eventTags').val().split(',')
+            tags = $('#eventTags').val().split(',').sort()
             var editedEvent = {
                 "name": $('#eventName').val(),
                 "tags": tags
@@ -67,7 +67,7 @@
                     change: change
                 }, (change) => {
                     var formatted =  prettyDateTime(change.time) + ", changed " + change.field_changed + " from ''" + change.prior_value + "'' to ''" + change.updated_value + "'"
-                    $('#changeList').append(formatted)
+                    $('#changeList').append(formatted).append("<br>")
                 })
                 
             })

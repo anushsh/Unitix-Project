@@ -37,7 +37,7 @@
                 shows: shows
             }, function (showIDs, status) {
                 if (status == "success") {
-                    postEvent($("#eventName").val(), $("#eventTags").val().split(","), showIDs)
+                    postEvent($("#eventName").val(), $("#eventTags").val().split(",").sort(), showIDs)
                 }
                 else alert("Internal server error." + status)
             })

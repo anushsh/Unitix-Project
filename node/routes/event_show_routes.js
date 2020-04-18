@@ -266,13 +266,24 @@ var updateEventOverview = function (req, res) {
 
     changeArr = []
     if (old.name != updated.name) {
+        console.log("NAME CHANGE OCCURRED")
         changeArr.push({
-            field_changed: "name",
-            prior_value: old.name,
-            updated_value: updated.name
+            fieldChanged: "name",
+            priorValue: old.name,
+            updatedValue: updated.name
         })
+    } else {
+        console.log("NO NAME CHANGE")
     }
-    if (old.tags != updated.tags) {
+
+    sameTags = true
+    for (i = 0; i < old.tags.length; i++) {
+        if (old.tags[i] != updated.tags[i]) {
+            sameTags = false
+        }
+    }
+
+    if (!sameTags) {
         oldTagsFormatted = ""
         updatedTagsFormatted = ""
         old.tags.forEach(tag => oldTagsFormatted += tag + ",")

@@ -179,8 +179,6 @@ function viewShow(showID) {
 }
 
 
-
-
  var sortEvents = function(events) {
     events.forEach(event => {sortShows(event.shows)});
     events = events.sort((eventA, eventB) => {
