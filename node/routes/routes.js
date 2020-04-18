@@ -60,7 +60,7 @@ var getProfile = (req, res) => {
             } else {
                 res.render('profile.ejs', {email: user.email, password: user.password, 
                     displayName: user.displayName, groupType: user.groupType, 
-                    bio: user.bio})
+                    bio: user.bio, followers: user.followers})
             }
         })
     } else {
