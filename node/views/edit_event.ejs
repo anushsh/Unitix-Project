@@ -8,6 +8,9 @@
         var group // populated by getGroup() which is in helper.js
         var event
 
+        // for editing shows
+        var shows = []
+        var currShowNum = 1
 
         function submitChanges() {
             tags = $('#eventTags').val().split(',').sort()
@@ -73,6 +76,35 @@
             })
         }
 
+        function showShowInfo() {
+            $.get('/get_shows_for_event', {
+                eventID: event._id
+            }, (showsRes) => {
+                showsRes.forEach(show => {
+                    // add to global array
+                    shows.push(show)
+                })
+                addShowHTML()
+                currShowNum = 1 // don't worry about why this is needed, but it is
+                fillShowInfo()
+            })
+        }
+
+        function fillShowInfo() {
+            console.log(currShowNum - 1)
+            console.log(shows)
+            console.log(shows[currShowNum - 1])
+            currShow = shows[currShowNum - 1]
+            console.log(currShow.price)
+            $("#showCapacity").val(currShow.capacity)
+            $("#ticketPrice").val(currShow.price.$numberDecimal)
+            $("#showLocation").val(currShow.location)
+            $("#description").val(currShow.description)
+            $("#startDate").val(currShow.start_date.split("T")[0])
+            $("#startTime").val(currShow.start_time)
+            $("#endTime").val(currShow.end_time)
+        }
+
     </script>
 </head>
 
@@ -116,7 +148,7 @@
             </div>
 
             <div class="control">
-                <button class="button is-link" onclick="editShows()">I want to change show information, too</button>
+                <button class="button is-link" onclick="showShowInfo()">I want to change show information, too</button>
             </div>
 
         </div>

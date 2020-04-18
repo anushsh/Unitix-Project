@@ -393,6 +393,23 @@ var deleteEventFromGroup = function(email, eventID) {
     })
 }
 
+var getShowsForEvent = function (req, res) {
+    Event.findById(req.query.eventID, (err, event) => {
+        if (err) res.json({"error": err})
+        else {
+            shows = []
+            async.forEach(event.shows, (show, done) => {
+                Show.findById(show, (err, showObj) => {
+                    err ? res.json({"error": err}) : shows.push(showObj)
+                    done()
+                })
+            }, () => {
+                res.json(shows)
+            })
+        }
+    })
+}
+
 
 var getSearchResultEvents = function (req, res) {
     var query = req.query.searchQuery;
@@ -453,6 +470,7 @@ module.exports = {
     add_event_id_to_show: addEventIdToShow,
     add_event_id_to_group: addEventIdToGroup,
     get_show_with_tickets: getShowWithTickets,
+    get_shows_for_event: getShowsForEvent,
     update_event_overview: updateEventOverview,
     delete_event: deleteEvent,
     get_search_result_events: getSearchResultEvents,
