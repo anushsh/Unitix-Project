@@ -58,7 +58,7 @@ var getProfile = (req, res) => {
     if (req.session.user) {
         Group.findOne({email: req.session.user}, (err, user) => {
             if (err) {
-                res.render({succes: false, error: err})
+                res.json({success: false, error: err})
             } else {
                 res.render('profile.ejs', {email: user.email, password: user.password, 
                     displayName: user.displayName, groupType: user.groupType, 
@@ -103,65 +103,34 @@ var getLogout = function(req, res) {
 };
 
 var getFollowerNames = function(req, res) {
+    Group.findOne({email: req.session.user}, (err, group) => {
+        if (err) {
+            res.json({success: false, error: err})
+        } else {
+            var followerObjects = [];
+            async.forEach(group.followers, (followerID, done) => {
+                User.findById(followerID, (err, follower) => {
+                    if (!err && follower) {
+                        //follower = follower.toJSON();
+                        followerObjects.push({firstName: follower.first_name, lastName: follower.last_name});
+                        done();
+                    } else {
+                        done();
+                    }
+                })
+            }, () => {
+                res.json(followerObjects)
+            });
+        }
+    })
+}
+
+var getFollowers = function(req, res) {
     if (req.session.user) {
-        Group.findOne({email: req.session.user}, (err, group) => {
-            if (err) {
-                res.render({succes: false, error: err})
-            } else {
-                var followerObjects = [];
-                async.forEach(group.followers, (followerID, done) => {
-                    User.findById(followerID, (err, follower) => {
-                        if (!err && follower) {
-                            //follower = follower.toJSON();
-                            followerObjects.push({FirstName: follower.first_name, LastName: follower.last_name});
-                            done();
-                        } else {
-                            done();
-                        }
-                    })
-                }, () => {
-                    console.log("****************" + followerObjects.length)
-                    console.log(followerObjects[0])
-                    console.log(followerObjects[1])
-                    res.render('group_followers.ejs', {followers: followerObjects})
-                    //res.json({'status':'success',"group":group});
-                });
-            }
-        })
+        res.render('group_followers.ejs')
     } else {
         res.redirect('/');
     }
-
-    // event = event.toJSON();
-    //         var shows = [];
-    //         async.forEach(event.shows, (showID, done) => {
-    //             Show.findById(showID, (err, show) => {
-    //                 if (!err && show) {
-    //                     show = show.toJSON();
-    //                     shows.push(show);
-    //                     done();
-    //                 } else {
-    //                     done();
-    //                 }
-    //             })
-    //         }, () => {
-    //             event.shows = shows;
-    //             callback(null, event);
-    //         });
-
-    // // var currentEvents = [];
-    // async.forEach(group.currentEvents, (eventID, done) => {
-    //     getEventWithShows(eventID, (err, event) => {
-    //         if (!err && event) {
-    //             currentEvents.push(event);
-    //         } else console.log("ERROR GETTING SINGLE EVENT. " + err)
-    //         done();
-    //     })
-    // }, () => {
-    //     group.currentEvents = currentEvents;
-    //     res.json({'status':'success',"group":group});
-    // });
-
 }
 
 module.exports = {
@@ -175,5 +144,6 @@ module.exports = {
     get_logout: getLogout,
     get_profile: getProfile,
     get_edit_event: getEditEvent,
-    get_followers: getFollowerNames
+    get_follower_names: getFollowerNames,
+    get_followers: getFollowers
 }

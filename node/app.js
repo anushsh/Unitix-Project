@@ -40,6 +40,7 @@ app.get('/create_event', routes.get_create_event)
 app.get('/get_message', routes.get_message)
 app.get('/edit_event/:event', routes.get_edit_event)
 app.get('/followers', routes.get_followers)
+app.get('/get_follower_names', routes.get_follower_names)
 
 // user and group routes
 app.get('/get_group', user_group_routes.get_group)

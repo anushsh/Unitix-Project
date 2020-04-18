@@ -4,17 +4,72 @@
 <head>
     <% include head_imports.html %>
     <script type="text/javascript">
-       
         // on document start
         $(document).ready(function () {
-            // NOTE: this method is in static/helper.js
-            //TODO: DO I NEED THESE
-            loadEvents()
-            getMessage()
+            getFollowers()
         })
-        function displayFollowerCount() {
-            document.getElementById("test").innerHTML = "NEW TEST TEXT <%= followers.length%>";
+
+        function getFollowers() {
+            $.get('/get_follower_names', (followers) => {
+                displayFollowers(followers)
+            })
         }
+
+        function displayFollowers(followers) {
+            var prefix = "<p>"
+            var suffix = "</p>"
+            var displayHTML = ""
+            
+            for (i = 0; i < followers.length; i++) {
+                displayHTML += prefix + followers[i].firstName + " " + followers[i].lastName+ suffix
+            }
+            $("#currentFollowers").append(displayHTML)
+            $("#followerCount").append(followers.length)
+        }
+
+
+
+// // loads events into ul with id 'currentEvents'
+// function loadEvents() {
+//     $.getJSON('/get_group_with_events', (res) => {
+//         var group = res.group;
+        
+//         if (group) {
+//             var currentEvents = sortEvents(group.currentEvents);
+//             currentEvents.forEach(event => {     
+//                 $("#currentEvents").append(displayEvent(event));
+//             });
+//         }
+//     })
+// }
+
+// function displayEvent(event) {
+//     var display = '<div class="box">';
+//     display += "<p class=\"subtitle is-5\">" + event.name + "</p>";
+//     display += createButton("Notify all ticket holders", "showNotifyEvent", event._id, "button is-small",
+//         "event_notification_button"+event._id);
+//     display += '<div id="eventNotifyText' + event._id + '"></div>'
+//     display += "<br>"
+//     var showNumber = 1;
+//     event.shows.forEach((show) => {
+//         var list = "<ul id=\"" + show._id + "\"></ul>";
+//         var name = "Show #" + showNumber + " on " + prettyDate(show.start_date) + " at " + prettyTime(show.start_time);
+//         var tickets = "<br>Tickets sold: " + show.tickets_sold;
+//         var btn1 = createButton("View Attendees", "viewShow", show._id, "button is-small","show_button"+show._id);
+//         var btn2 = createButton("Notify Ticket Holders (this show only)", "showNotifyShow", show._id, "button is-small",
+//         "show_notification_button" + show._id);
+//         var notificationBox = '<div id="showNotifyText' + show._id + '"></div>';
+//         display +=  name + tickets + "<br>" + 
+//             btn1 + btn2 + notificationBox + list + "<br>";
+//         showNumber += 1;
+//     });            
+//     var footer =   '<footer class="card-footer">'+
+//     '<a href="/edit_event/'+encodeURI(event.name)+'" class="card-footer-item">Edit Event</a></footer>';
+//     display += footer;
+//     display += ' </div>'
+//     return display;
+// }
+
     </script>
 </head>
 
@@ -33,9 +88,8 @@
         </div>
 
         <div class="column is-6">
-            <p class="subtitle is-3">Followers:</p>
-            <br><br>
-            <p id="test">test</p>
+            <p class="subtitle is-3" id="followerCount">Followers: </p>
+            <p class="subtitle is-5" id="currentFollowers"></p>
         </div>
     </div>
 </body>
