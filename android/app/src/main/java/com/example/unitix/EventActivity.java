@@ -20,6 +20,7 @@ public class EventActivity extends AppCompatActivity {
     DataSource ds;
     Event event;
     Show show;
+    Group group;
     User user;
     String eventID;
     List<Ticket> userTickets;
@@ -35,7 +36,6 @@ public class EventActivity extends AppCompatActivity {
         String name = intent.getStringExtra("eventName");
         this.eventID = intent.getStringExtra("eventID");
         this.user = this.ds.getUser(getIntent().getStringExtra("EMAIL"));
-
         TextView eventName = findViewById(R.id.event_name);
         eventName.setText(name);
 
@@ -59,7 +59,8 @@ public class EventActivity extends AppCompatActivity {
 
 
         TextView description = findViewById(R.id.event_description);
-        String descriptionText = this.show.getDescription() + "\n\n";
+        String descriptionText = (this.group != null ? this.group.displayName + " presents: " : "") +
+                this.show.getDescription() + "\n\n";
 
         LinearLayout showList = findViewById(R.id.show_list);
         for (int i = 0; i < event.shows.size(); i++) {
@@ -158,6 +159,7 @@ public class EventActivity extends AppCompatActivity {
 
         protected void onPostExecute(Event event) {
             EventActivity.this.event = event;
+            EventActivity.this.group = EventActivity.this.ds.getGroupByID(EventActivity.this.event.group); // TODO - need to move async
             if (event != null) {
                 handleValidEvent();
                 Log.e("NOAH", "got valid event " + event.name);

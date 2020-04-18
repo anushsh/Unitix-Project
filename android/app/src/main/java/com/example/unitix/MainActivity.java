@@ -69,18 +69,18 @@ public class MainActivity extends AppCompatActivity {
 
         startActivityForResult(i, 1);
     }
-
-    // this is simply a temporary button to get to skip login
-    public void onEventsListButtonClick(View v) {
-        Intent i = new Intent(this, DashboardActivity.class);
-
-        startActivityForResult(i, 1);
-    }
-
-    // this is simply a temporary button to get to skip login
-    public void onProfileButtonClick(View v) {
-        Intent i = new Intent(this, ProfileActivity.class);
-
-        startActivityForResult(i, 1);
-    }
+//
+//    // this is simply a temporary button to get to skip login
+//    public void onEventsListButtonClick(View v) {
+//        Intent i = new Intent(this, DashboardActivity.class);
+//
+//        startActivityForResult(i, 1);
+//    }
+//
+//    // this is simply a temporary button to get to skip login
+//    public void onProfileButtonClick(View v) {
+//        Intent i = new Intent(this, ProfileActivity.class);
+//
+//        startActivityForResult(i, 1);
+//    }
 }

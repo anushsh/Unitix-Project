@@ -13,12 +13,11 @@ db.once('open', function () {
 
 var Schema = mongoose.Schema
 
-var ticketSchema = new Schema({
-  show: String, // showID
-  redeemed: Boolean,
-  requested: Boolean,
-  customer: String, // whose name is the ticket under?
-  user: String // id of ticket holder
-})
-
-module.exports = mongoose.model('Ticket', ticketSchema)
+var changeSchema = new Schema({
+    field_changed: String,
+    prior_value: String,
+    updated_value: String,
+    time: Date
+  })
+  
+  module.exports = mongoose.model('Change', changeSchema)

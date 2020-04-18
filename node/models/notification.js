@@ -13,12 +13,9 @@ db.once('open', function () {
 
 var Schema = mongoose.Schema
 
-var ticketSchema = new Schema({
-  show: String, // showID
-  redeemed: Boolean,
-  requested: Boolean,
-  customer: String, // whose name is the ticket under?
-  user: String // id of ticket holder
+// since notification id's are stored and managed in userDB, all we need is notification content
+var notificationSchema = new Schema({
+  content: String
 })
 
-module.exports = mongoose.model('Ticket', ticketSchema)
+module.exports = mongoose.model('Notification', notificationSchema)

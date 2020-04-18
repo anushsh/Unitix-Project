@@ -7,14 +7,7 @@
     <script type="text/javascript">
         var shows = []
         var currShowNum = 1
-        var group
-
-        function getGroup() {
-            $.get('/get_group', (data) => {
-                group = data.group
-                greet()
-            })
-        }
+        var group // populated by getGroup() which is in helper.js
 
         function checkEvent() {
 
@@ -30,73 +23,13 @@
             var showCountValid = validateAndSetReactionaryColors("showCount", showCount != "" && showCount > 0)
 
             if (nameValid && tagsValid && groupValid && showCountValid) {
-                addShowHTML()
+                addShowHTML() // in helper.js
             }
         }
 
-        function validateAndSetReactionaryColors(id, valid) {
-            if (!valid) {
-                // make red outline
-                $('#' + id).removeClass('is-success');
-                $('#' + id).addClass('is-danger');
-
-                // error message becomes visible
-                $('#' + id + "Invalid").removeClass('is-hidden')
-                $('#' + id + "Invalid").addClass('is-active')
-            } else {
-                // make green outline
-                $('#' + id).removeClass('is-danger');
-                $('#' + id).addClass('is-success');
-
-                // error message goes away
-                $('#' + id + "Invalid").addClass('is-hidden')
-                $('#' + id + "Invalid").removeClass('is-active')
-            }
-            return valid;
-        }
-
-        function addShowHTML() {
-            if (currShowNum == 1) {
-                $("#singleShowDetails").removeClass("is-hidden")
-                $("#singleShowDetails").addClass("is-active")
-                $("#nextShowButton").removeClass("is-hidden")
-                $("#nextShowButton").addClass("is-active")
-
-                $("#showName").val($("#eventName").val())
-            }
-            if (currShowNum == $("#showCount").val()) {
-                $("#createEventButton").removeClass("is-hidden")
-                $("#createEventButton").addClass("is-active")
-
-                $("#nextShowButton").removeClass("is-active")
-                $("#nextShowButton").addClass("is-hidden")
-            }
-
-            $("#startDate").val('')
-            $("#startTime").val('')
-            $("#endTime").val('')
-
-            $("#showHeaderInfo").html("Details for show " + currShowNum++)
-        }
-
-        // currently doesn't check for non-empty values.
-        function storeShowInfo() {
-            shows.push({
-                name: $("#showName").val(),
-                capacity: $("#showCapacity").val(),
-                price: $("#ticketPrice").val(),
-                location: $("#showLocation").val(),
-                description: $("#description").val(),
-                date: $("#startDate").val(),
-                startTime: $("#startTime").val(),
-                endTime: $("#endTime").val()
-            })
-            console.log(shows)
-            addShowHTML()
-        }
 
         function checkShows() {
-            // first, add last show info
+            // first, add last show info (method in helper.js)
             storeShowInfo()
 
             // next, make show objects and give to event creation
@@ -104,7 +37,8 @@
                 shows: shows
             }, function (showIDs, status) {
                 if (status == "success") {
-                    postEvent($("#eventName").val(), $("#eventTags").val().split(","), showIDs)
+                    postEvent($("#eventName").val(), $("#eventTags").val().split(",").sort(), showIDs)
+                    notifyGroupFollowers(group._id, group.displayName)
                 }
                 else alert("Internal server error." + status)
             })
@@ -124,8 +58,6 @@
                 } else {
                     alert("There was an error.")
                 }
-                clearFields()
-                addSuccessfulNotif()
             })
         }
 
@@ -139,6 +71,7 @@
             }, (data, success) => {
                 console.log(data)
                 console.log(success)
+                goHome("Successfully added event " + name + "!")
              })
 
 
@@ -158,18 +91,11 @@
             })
         }
 
-        function addSuccessfulNotif() {
-            $('#successHeader').removeClass("is-hidden")
-            $('#successHeader').addClass("is-active")
-        }
-
         function clearFields() {
             $("#eventName").val("")
             $('#eventName').addClass('is-info');
             $("#eventTags").val("")
             $('#eventTags').addClass('is-info');
-            // $("#eventGroup").val("")
-            // $('#eventGroup').addClass('is-info');
             $("#showCount").val("")
             $('#showCount').addClass('is-info');
 
@@ -184,12 +110,6 @@
 
         }
 
-        function greet() {
-            console.log(group)
-            console.log(group.displayName)
-            $('#greeting').append(group.displayName)
-        }
-
         $(document).ready(function () {
             clearFields()
             getGroup()
@@ -201,10 +121,6 @@
     <% include header.html %>
     <div class="container has-text-centered">
         <h2 class="subtitle" id="greeting">Create Your Event, </h2>
-    </div>
-
-    <div class="container has-text-centered">
-        <h2 class="subtitle is-hidden" id="successHeader">We've added your event successsfully. Either return home or make another event.</h2>
     </div>
 
     <div class="container">
@@ -247,63 +163,7 @@
                     </div>
                 </div>
                 <div class="column" id="showDetails">
-                    <div id="singleShowDetails" class="is-hidden">
-                        <h3 id="showHeaderInfo"></h3>
-                        <div class="field">
-                            <label class="label">Show Name (if same as event, leave empty)</label>
-                            <div class="control has-icons-left">
-                                <input class="input" type="text" placeholder="Show Name" id="showName">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label">Show Capacity</label>
-                            <div class="control has-icons-left">
-                                <p class="help is-danger is-hidden" id="showCapacityInvalid">Please input a positive
-                                    integer</p>
-                                <input class="input" type="text" placeholder="#" id="showCapacity">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label">Ticket Price</label>
-                            <div class="control has-icons-left">
-                                <p class="help is-danger is-hidden" id="ticketPriceInvalid">Please input a positive
-                                    value of the form x.yz</p>
-                                <input class="input" type="text" placeholder="$x.yz" id="ticketPrice">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label">Location</label>
-                            <div class="control has-icons-left">
-                                <p class="help is-danger is-hidden" id="showLocationInvalid">Please input a non-empty
-                                    value</p>
-                                <input class="input" type="text" placeholder="Location" id="showLocation">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label">Description (optional)</label>
-                            <div class="control has-icons-left">
-                                <input class="input" type="text" placeholder="Description" id="description">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label">Date</label>
-                            <div class="control has-icons-left">
-                                <input type="date" id="startDate">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label">Start Time</label>
-                            <div class="control has-icons-left">
-                                <input type="time" id="startTime">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label">End Time</label>
-                            <div class="control has-icons-left">
-                                <input type="time" id="endTime">
-                            </div>
-                        </div>
-                    </div>
+                    <% include static/html/single_show.html %>
                     <div class="control">
                         <button class="button is-link is-hidden" id="nextShowButton" onclick="storeShowInfo()">Next
                             Show...</button>

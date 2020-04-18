@@ -43,6 +43,11 @@ public class ProfileActivity extends AppCompatActivity {
             userName.setText("Name: " + user.firstName + " " + user.lastName);
             TextView phoneNumber = findViewById(R.id.profile_phone_number);
             phoneNumber.setText("Phone Number: " + user.phone);
+
+            Button notificationsButton = findViewById(R.id.notificationbtn);
+            notificationsButton.setText(notificationsButton.getText() +
+                    " (" + user.numNotifications + ")");
+
         }
     }
 
@@ -59,6 +64,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private class LoadTicketsTask extends AsyncTask<String, Integer, Ticket[]> {
+        //TODO replace with getUserShowInfo
         protected Ticket[] doInBackground(String... blank) {
             return ds.getUserTickets(user.email);
         }
@@ -88,6 +94,14 @@ public class ProfileActivity extends AppCompatActivity {
     public void onEditProfileButtonClick(View v) {
 
         Intent i = new Intent(this, EditProfileActivity.class);
+        i.putExtra("EMAIL", email);
+
+        startActivityForResult(i, 1);
+    }
+
+    public void onNotificationButtonClick(View v) {
+
+        Intent i = new Intent(this, NotificationsActivity.class);
         i.putExtra("EMAIL", email);
 
         startActivityForResult(i, 1);

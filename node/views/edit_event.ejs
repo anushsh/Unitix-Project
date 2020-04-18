@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include head_imports.html %>
+    <script type="text/javascript">
+
+        var group // populated by getGroup() which is in helper.js
+        var event
+
+
+        function submitChanges() {
+            tags = $('#eventTags').val().split(',').sort()
+            var editedEvent = {
+                "name": $('#eventName').val(),
+                "tags": tags
+            }
+            $.post("/update_event_overview", {
+                old: event,
+                updated: editedEvent
+            }, goHome("Successfully updated event!"))
+        }
+
+        // on document start
+        $(document).ready(function () {
+            getGroup()
+            getEvent()
+        })
+
+        function fillFields() {
+            console.log(event)
+            tags = ""
+            event.tags.forEach(tag => {
+                tags += tag + ","
+            })
+            tags = tags.substring(0, tags.length - 1)
+            $("#eventTags").val(tags)
+
+            $("#showCount").val(event.shows.length)
+
+            listChanges()
+        }
+
+        function getEvent() {
+            $.get("/get_event_by_name", {
+                eventName: $("#eventName").val()
+            }, (data) => {
+                event = data.event
+                console.log(event)
+                fillFields()
+            })
+            
+        }
+
+        function deleteEvent() {
+            $.get("/delete_event", {
+                name: event.name,
+                eventID: event._id
+            }, (data) => {
+                goHome("Event successfully deleted!")
+            })
+        }
+
+        function listChanges() {
+            event.changes.forEach(change => {
+                $.get("/get_change", {
+                    change: change
+                }, (change) => {
+                    var formatted =  prettyDateTime(change.time) + ", changed " + change.field_changed + " from ''" + change.prior_value + "'' to ''" + change.updated_value + "'"
+                    $('#changeList').append(formatted).append("<br>")
+                })
+                
+            })
+        }
+
+    </script>
+</head>
+
+<body>
+    <% include header.html %>
+
+    <div class="container has-text-centered">
+        <h2 class="subtitle" id="greeting">Edit Your Event, </h2>
+    </div>
+
+    <div class="container">
+        <div class="box">
+            <h3> Event Details </h3>
+            <div class="field">
+                <label class="label">Event Name</label>
+                <div class="control has-icons-left">
+                    <p class="help is-danger is-hidden" id="eventNameInvalid">Please input a non-empty value</p>
+                    <input class="input" type="text" id="eventName" value="<%= name%>">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Tags (enter as comma separated values)</label>
+                <div class="control has-icons-left">
+                    <p class="help is-danger is-hidden" id="eventTagsInvalid">Please input a non-empty value</p>
+                    <input class="input" type="text" id="eventTags">
+                </div>
+            </div>
+
+            <div class="field is-hidden">
+                <label class="label">Number of Shows</label>
+                <div class="control has-icons-left">
+                    <p class="help is-danger is-hidden" id="showCountInvalid">Please input a positive integer
+                    </p>
+                    <input class="input" type="text" id="showCount">
+                </div>
+            </div>
+
+            <div class="control">
+                <button class="button is-link" onclick="submitChanges()">Edit Event</button>
+            </div>
+
+            <div class="control">
+                <button class="button is-link" onclick="editShows()">I want to change show information, too</button>
+            </div>
+
+        </div>
+
+        <div class="box">
+            <div class="column" id="showDetails">
+                <% include static/html/single_show.html %>
+                <div class="control">
+                    <button class="button is-link is-hidden" id="nextShowButton" onclick="storeShowInfo()">Next
+                        Show...</button>
+                </div>
+                <div class="control">
+                    <button class="button is-link is-hidden" id="createEventButton" onclick="checkShows()">Update Shows and Event!</button>
+                </div>
+            </div>
+        </div>
+
+    <div class="box">
+        <h3>Warning Zone</h3>
+        <div class = "control">
+            <button class="button is-link is-danger" onclick="deleteEvent()">Delete Event</button>
+        </div>
+    </div>
+
+    <div class="box">
+        <h3>Your Previous Changes</h3>
+        <ul id="changeList"></ul>
+    </div>
+        
+    </div>
+</body>
+
+</html>

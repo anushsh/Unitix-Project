@@ -1,6 +1,4 @@
 // initialization from mongoosejs documentation
-var Show = require('./show.js')
-
 var mongoose = require('mongoose')
 
 // need to use "test" (for example) and not "admin" bc admin won't allow for raw queries
@@ -20,7 +18,8 @@ var eventSchema = new Schema({
   group: String, // this is the actual object ID
   group_name: String, // this is display name of the group
   shows: [String], // these are uuids of Show objs
-  tags: [String]
+  tags: [String],
+  changes: [String]
 })
 
 module.exports = mongoose.model('Event', eventSchema)

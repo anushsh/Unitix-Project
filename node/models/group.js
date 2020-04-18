@@ -21,7 +21,7 @@ var groupSchema = new Schema ({
     pastEvents: [String], // Event ID
     groupType: String,
     bio: String,
-    followers: Number
+    followers: [String]
 })
 
 module.exports = mongoose.model('Group', groupSchema)

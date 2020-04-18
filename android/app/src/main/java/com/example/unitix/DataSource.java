@@ -39,7 +39,22 @@ public class DataSource {
         }
     }
 
-    // for testing purposes
+    public Notification[] getAllNotifications(String email) {
+        Notification[] notifications = new Notification[0];
+        try {
+            URL url = new URL(host + ":" + port + "/get_user_notifications?email=" + email);
+            AsyncTask<URL, String, JSONObject> task =
+                    new AccessWebJSONTask();
+            task.execute(url);
+            JSONObject jo = task.get();
+
+            notifications = Notification.createNotificationList(jo.getJSONArray("notifications"));
+        } catch (Exception e) {
+            Log.e("NOAH","exception: " + e);
+        }
+        return notifications;
+    }
+
     public Event[] getAllEvents() {
         Event[] events = new Event[0];
         try {
@@ -76,6 +91,19 @@ public class DataSource {
         return events;
     }
 
+    public Group getGroupByID(String groupID) {
+        try {
+            URL url = new URL(host + ":" + port + "/get_group_by_id?groupID=" + groupID);
+            AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
+            task.execute(url);
+            JSONObject jo = task.get();
+            return new Group(jo.getJSONObject("group"));
+        } catch (Exception e) {
+            Log.e("MICHAEL", "Error getting group by id: " + e);
+            return null;
+        }
+    }
+
 
     public Event getEventByID(String eventID) {
         try {
@@ -93,6 +121,29 @@ public class DataSource {
         } catch (Exception e) {
             Log.e("NOAH","getEventByID exception " + e);
             return null;
+        }
+    }
+
+    public Show[] getUserShowInfo(String email) {
+        try {
+            AccessWebJSONTask task = new AccessWebJSONTask();
+            String urlString = host + ":" + port + "/get_user_show_info?email=" + email;
+            URL url = new URL(urlString);
+            task.execute(url);
+            JSONObject jo = task.get();
+            JSONArray showInfoArray = jo.getJSONArray("shows");
+            List<ShowInfo> showInfo = new LinkedList();
+            for (int i = 0; i < showInfoArray.length(); i++) {
+                ShowInfo show = new ShowInfo(showInfoArray.getJSONObject(i));
+                if (show.isValid) {
+                    showInfo.add(show);
+                }
+            }
+            //TODO figure this out
+            return showInfo.toArray(new Show[0]);
+
+        } catch (Exception e) {
+            return new Show[0];
         }
     }
 
@@ -115,6 +166,21 @@ public class DataSource {
 
         } catch (Exception e) {
             return new Ticket[0];
+        }
+    }
+
+    public void readNotifications(String email) {
+        try {
+            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
+            JSONObject jo = new JSONObject();
+            jo.put("email", email);
+            String url = host + ":" + port + "/read_all_notifications";
+            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(url, jo);
+            task.execute(req);
+            JSONObject res = task.get();
+            Log.e("NOAH","res is " + res);
+        } catch (Exception e) {
+            Log.e("NOAH","failed to purchase");
         }
     }
 
