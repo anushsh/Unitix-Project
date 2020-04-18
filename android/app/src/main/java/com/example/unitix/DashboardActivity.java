@@ -39,7 +39,7 @@ public class DashboardActivity extends AppCompatActivity {
 
 
 
-//        Log.e("NOAH", "here?");
+        Log.e("NOAH", "here?");
 
     }
 
@@ -119,6 +119,14 @@ public class DashboardActivity extends AppCompatActivity {
 
     public void onSearchButtonClick(View v) {
         Intent i = new Intent(this, SearchResultActivity.class);
+
+        i.putExtra("EMAIL", email);
+
+        startActivityForResult(i, 1);
+    }
+
+    public void onGroupButtonClick(View v) {
+        Intent i = new Intent(this, GroupListActivity.class);
 
         i.putExtra("EMAIL", email);
 

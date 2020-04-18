@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DashboardActivity">
-
+    tools:context=".GroupListActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,40 +12,15 @@
         android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="-100dp">
-
-        <!--        TODO: replace text with @String resource-->
+        tools:layout_editor_absoluteX="-100dp">>
 
         <TextView
-            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="30dp"
             android:gravity="center_horizontal"
-            android:text="Events Feed"
             android:textColor="@android:color/holo_purple"
-            android:textSize="36dp" />
-
-
-<!--        temporarily at this location the page - need to fix UI/UX-->
-        <Button
-            android:id="@+id/profilebtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onProfileButtonClick"
-            android:text="View Profile" />
-        <Button
-            android:id="@+id/searchbtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onSearchButtonClick"
-            android:text="Search for Events" />
-
-        <Button
-            android:id="@+id/groupsbtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onGroupButtonClick"
-            android:text="View all Groups" />
+            android:text="Groups"/>
 
         <ScrollView
             android:layout_width="wrap_content"
@@ -68,5 +42,4 @@
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

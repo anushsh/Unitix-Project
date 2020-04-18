@@ -29,6 +29,7 @@
         <activity android:name=".EventActivity"/>
         <activity android:name=".NotificationsActivity"/>
         <activity android:name=".EditProfileActivity"/>
+        <activity android:name=".GroupListActivity"/>
         <activity android:name=".SearchResultActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
