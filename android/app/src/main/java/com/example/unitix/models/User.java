@@ -29,7 +29,7 @@ public class User extends Model {
             this.phone = jo.getString("phone");
             this.pastTickets = makeStringArray(jo.optJSONArray("past_tickets"));
             this.currTickets = makeStringArray(jo.optJSONArray("curr_tickets"));
-            this.followers = makeStringArray(jo.optJSONArray("followers"));
+            this.followers = makeStringArray(jo.optJSONArray("following"));
 
             JSONArray notifications = jo.optJSONArray("notifications");
             JSONArray readNotifications = jo.optJSONArray("read_notifications");

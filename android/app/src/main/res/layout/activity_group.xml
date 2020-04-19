@@ -8,7 +8,7 @@
     tools:context=".GroupPageActivity">
 
     <LinearLayout
-        android:id="@+id/event_info"
+        android:id="@+id/group_feed"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -32,10 +32,10 @@
             android:id="@+id/following_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="25dp"
+            android:gravity="center"
+            android:text="Following Status"
             android:textColor="@color/colorPrimary"
-            android:text="FOLLOWING STATUS" />
+            android:textSize="25dp" />
         <LinearLayout
             android:id="@+id/event_list"
             android:orientation="vertical"
