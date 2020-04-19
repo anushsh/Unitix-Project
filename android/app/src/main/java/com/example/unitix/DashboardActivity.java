@@ -11,11 +11,14 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.unitix.models.Group;
 import com.example.unitix.server.DataSource;
 import com.example.unitix.models.Event;
 import com.example.unitix.models.Show;
 import com.example.unitix.models.User;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -27,6 +30,8 @@ public class DashboardActivity extends AppCompatActivity {
     User user;
     private String email;
 
+    List<Group> following;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,17 +40,13 @@ public class DashboardActivity extends AppCompatActivity {
         email = intent.getStringExtra("EMAIL");
         this.ds = new DataSource();
 
+        this.user = ds.getUser(email);
+        this.following = Arrays.asList(ds.getFollowedGroups(email));
 
         // execute in background to keep main thread smooth
         AsyncTask<Integer,Integer, Event[]> task = new HandleEventsTask();
         // allow for parallel execution
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-
-
-
-        Log.e("NOAH", "here?");
-
     }
 
     private class HandleEventsTask extends AsyncTask<Integer, Integer, Event[]> {
@@ -58,10 +59,33 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
+    private Event[] sortEvents(Event[] events) {
+        Arrays.sort(events, new Comparator<Event>() {
+            @Override
+            public int compare(Event one, Event two) {
+                boolean followingOne = following.contains(ds.getGroupByID(one.getGroup()));
+                boolean followingTwo = following.contains(ds.getGroupByID(two.getGroup()));
+                
+                if (followingOne && !followingTwo) {
+                    return -1;
+                } else if (!followingOne && followingTwo) {
+                    return 1;
+                } else {
+                    return one.getName().compareTo(two.getName());
+                }
+            }
+        });
+        return events;
+    }
+
     void addEventsToPage(Event[] events) {
         LinearLayout feed = findViewById(R.id.event_feed);
 
+        events = sortEvents(events);
+
+
         for (Event event : events) {
+            Log.e("MICHAEL", event.toString());
             List<Show> shows = event.getShows();
             if (shows.size() == 0) {
                 continue;

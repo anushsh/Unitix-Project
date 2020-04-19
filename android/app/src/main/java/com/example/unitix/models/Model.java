@@ -21,4 +21,18 @@ public abstract class Model {
         return MONTHS[month - 1];
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (o == this) {
+            return true;
+        }
+        if (o instanceof Model) {
+            return this.id.equals(((Model) o).id);
+        }
+        return false;
+    }
+
 }

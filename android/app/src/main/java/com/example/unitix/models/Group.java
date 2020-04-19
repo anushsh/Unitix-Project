@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Group extends Model {
@@ -30,7 +31,6 @@ public class Group extends Model {
             this.bio = jo.getString("bio");
 //            this.followers = jo.getJSONArray("followers");
             JSONArray arr = jo.getJSONArray("followers");
-//            Log.e("ANUSH", "TIS WHAT WE WANT " + arr.get(0).toString());
             List<String> list = new ArrayList<String>();
             for(int i = 0; i < arr.length(); i++){
                 list.add(arr.get(i).toString());
@@ -68,5 +68,10 @@ public class Group extends Model {
 
     public String getID() {
         return this.id;
+    }
+    
+    @Override
+    public String toString() {
+        return this.displayName + " has " + this.followers.length + " followers.";
     }
 }

@@ -19,6 +19,33 @@ var getGroupByID = function (req, res) {
     })
 }
 
+var getFollowedGroups = function (req, res) {
+    User.findOne({email: req.query.email}, (err, user) => {
+        if (err) {
+            console.log("Error getting user by email." + err)
+            res.json([])
+        }
+        else {
+            groups = []
+            async.forEach(user.following, (groupID, done) => {
+                Group.findById(groupID, (err, group) => {
+                    if (err) console.log("error getting group by id." + err)
+                    else {
+                        groups.push(group)
+                    }
+                    done()
+                })
+            }, () => {
+                console.log("COLLECTED FOLLOWING GROUPS:")
+                console.log(groups)
+                res.json({
+                    "status":"success","following":groups
+                })
+            })
+        }
+    })
+}
+
 
 // TODO: make into helper
 var getGroupWithEvents = function (req, res) {
@@ -268,6 +295,7 @@ module.exports = {
     get_group: getGroup,
     get_group_by_id: getGroupByID,
     get_group_with_events: getGroupWithEvents,
+    get_followed_groups: getFollowedGroups,
     get_user_tickets: getUserTickets,
     get_user_show_info: getUserShowInfo,
     update_group: updateGroup,

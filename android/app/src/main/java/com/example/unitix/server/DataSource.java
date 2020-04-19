@@ -50,6 +50,21 @@ public class DataSource {
         }
     }
 
+    public Group[] getFollowedGroups(String email) {
+        Group[] groups = new Group[0];
+        try {
+            URL url = new URL(host + ":" + port + "/get_followed_groups?email=" + email);
+            AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
+            task.execute(url);
+            JSONObject jo = task.get();
+            Log.e("MICHAEL", "received groups: " + jo);
+            groups = Group.createGroupList(jo.getJSONArray("following"));
+        } catch (Exception e) {
+            Log.e("MICHAEL", "exception getting followed groups");
+        }
+        return groups;
+    }
+
     public Notification[] getAllNotifications(String email) {
         Notification[] notifications = new Notification[0];
         try {
@@ -154,7 +169,6 @@ public class DataSource {
             AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
             task.execute(url);
             JSONObject jo = task.get();
-            Log.e("MICHAEL", "Change json object from ds: " + jo.toString());
             return new Change(jo);
         } catch (Exception e) {
             Log.e("MICAHEL", "Error getting change by id: " + e);

@@ -54,6 +54,7 @@ app.get('/find_user', user_group_routes.find_user);
 app.post('/update_user', user_group_routes.update_user);
 app.post('/creategroup', user_group_routes.create_group);
 app.get('/get_all_groups',user_group_routes.get_all_groups);
+app.get('/get_followed_groups', user_group_routes.get_followed_groups)
 
 // event and show routes
 app.post('/create_shows', event_show_routes.create_shows)
