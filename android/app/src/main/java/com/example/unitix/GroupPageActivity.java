@@ -26,7 +26,7 @@ import org.w3c.dom.Text;
 
 public class GroupPageActivity extends AppCompatActivity {
 
-    DataSource ds;
+    DataSource ds = new DataSource();
     Event event;
     Group group;
     User user;
@@ -47,19 +47,21 @@ public class GroupPageActivity extends AppCompatActivity {
         groupName.setText(name);
         groupBio.setText(bio);
 
-        this.ds = new DataSource();
         email = intent.getStringExtra("EMAIL");
         this.user = this.ds.getUser(email);
 
         TextView followingStatus = findViewById(R.id.following_status);
-        Log.e("KARA", "Before checking following status");
+        //Log.e("KARA", "Before checking following status");
         if (checkFollowingStatus()) {
-            Log.e("KARA", "following is true");
-            followingStatus.setText("Following " + name);
+            //Log.e("KARA", "following is true");
+            followingStatus.setText("Following " + groupID);
+            Button followButton = findViewById(R.id.followbtn);
+            followButton.setVisibility(View.INVISIBLE);
         } else {
-            Log.e("KARA", "following is false");
-            followingStatus.setText("");
-            addFollowButton();
+            //Log.e("KARA", "following is false");
+            followingStatus.setText("Not Following " + groupID);
+            Button followButton = findViewById(R.id.followbtn);
+            followButton.setVisibility(View.VISIBLE);
         }
     }
 
@@ -68,28 +70,48 @@ public class GroupPageActivity extends AppCompatActivity {
 //    TextView followingStatusText = new TextView(getApplicationContext());
 //            followingStatusText.setText("Following " + name);
 //            feed.addView(followingStatusText);
-
-    void addFollowButton() {
-        LinearLayout feed = findViewById(R.id.group_feed);
-        final Button followButton = new Button(getApplicationContext());
-        followButton.setText("Follow");
-        followButton.setTag(groupID);
-        feed.addView(followButton);
-        followButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //TODO: DATABASE STUFF TO ADD GROUP TO FOLLOWING
-                followButton.setVisibility(View.GONE);
-                TextView followingStatus = findViewById(R.id.following_status);
-                followingStatus.setText("Following " + name);
-            }
-        });
+    public void onFollowButtonClick(View v) {
+//        Log.e("KARA", "before ds.follow group groupID: " + groupID);
+//        if (ds.followGroup(email, groupID)) {
+//            showFollowSuccessToast();
+//        } else {
+//            showFollowFailureToast();
+//        }
+        Button followButton = findViewById(R.id.followbtn);
+        followButton.setVisibility(View.GONE);
+        TextView followingStatus = findViewById(R.id.following_status);
+        followingStatus.setText("Following " + name);
     }
+
+//    void addFollowButton() {
+//        LinearLayout feed = findViewById(R.id.group_feed);
+//        final Button followButton = new Button(getApplicationContext());
+//        followButton.setText("Follow");
+//        //followButton.setTag(groupID);
+//        Log.e("KARA", "in addFollowButton groupID: " + groupID);
+//        feed.addView(followButton);
+//        followButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //TODO: DATABASE STUFF TO ADD GROUP TO FOLLOWING
+//                Log.e("KARA", "before ds.follow group groupID: " + groupID);
+//                if (ds.followGroup(email, groupID)) {
+//                    showFollowSuccessToast();
+//                } else {
+//                    showFollowFailureToast();
+//                }
+//                followButton.setVisibility(View.GONE);
+//                TextView followingStatus = findViewById(R.id.following_status);
+//                followingStatus.setText("Following " + name);
+//            }
+//        });
+//    }
 
 
     boolean checkFollowingStatus() {
        String[] following = user.followers;
-        Log.e("KARA", "entered checkFollowingStatus");
-        Log.e("KARA", "followers length: " + following.length);
+        //Log.e("KARA", "entered checkFollowingStatus");
+        //Log.e("KARA", "followers length: " + following.length);
        for (int i = 0; i < following.length; i++) {
 
            if (following[i].equals(groupID)) {
@@ -97,6 +119,14 @@ public class GroupPageActivity extends AppCompatActivity {
            }
        }
        return false;
+    }
+
+    void showFollowSuccessToast() {
+        Toast.makeText(getApplicationContext(), "group followed!", Toast.LENGTH_LONG).show();
+    }
+
+    void showFollowFailureToast() {
+        Toast.makeText(getApplicationContext(), "an error has occurred...", Toast.LENGTH_LONG).show();
     }
 
 }

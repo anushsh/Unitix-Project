@@ -36,6 +36,12 @@
             android:text="Following Status"
             android:textColor="@color/colorPrimary"
             android:textSize="25dp" />
+        <Button
+            android:id="@+id/followbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onFollowButtonClick"
+            android:text="Follow" />
         <LinearLayout
             android:id="@+id/event_list"
             android:orientation="vertical"

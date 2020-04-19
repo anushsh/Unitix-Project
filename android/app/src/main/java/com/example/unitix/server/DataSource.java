@@ -359,4 +359,24 @@ public class DataSource {
         }
     }
 
+    public boolean followGroup(String email, String groupID) {
+        try {
+            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
+            JSONObject jo = new JSONObject();
+            jo.put("email", email);
+            jo.put("groupID", groupID);
+            String url = host + ":" + port + "/follow_group";
+            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(url, jo);
+            task.execute(req);
+            JSONObject res = task.get();
+            Log.e("KARA","res is " + res);
+            if (res.getString("status").equals("success")) {
+                return true;
+            }
+        } catch (Exception e) {
+            Log.e("KARA","failed to follow");
+        }
+        return false;
+    }
+
 }

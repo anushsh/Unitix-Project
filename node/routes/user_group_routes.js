@@ -291,6 +291,40 @@ var updateUser = function (req, res) {
     })
 }
 
+var followGroup = function (req, res) {
+    var groupID = req.body.groupID
+    var queryEmail = req.body.email;
+    console.log("***********groupID: " + groupID)
+    console.log("******************queryEmail: " + queryEmail)
+
+    User.findOne({ email: queryEmail }, (err, user) => {
+        if (err) {
+            res.json({ "status": err })
+        } else if (!user) {
+            res.json({ 'status': 'user not found' })
+        } else {
+            var userID = user.id;
+            console.log("******************userID: " + userID)
+            Group.update(
+                {_id : groupID},
+                {
+                    $push: {followers: userID}
+                }
+            )
+
+            User.update(
+                {_id: userID},
+                {
+                    $push: {following: groupID}
+                }
+            
+            )
+            res.json({ "status": "success" });
+        }
+    })
+
+}
+
 module.exports = {
     get_group: getGroup,
     get_group_by_id: getGroupByID,
@@ -303,5 +337,6 @@ module.exports = {
     create_user: createUser,
     find_user: findUser,
     update_user: updateUser,
-    get_all_groups: getAllGroups
+    get_all_groups: getAllGroups,
+    follow_group: followGroup
 }
