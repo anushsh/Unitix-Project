@@ -102,8 +102,8 @@ public class EventActivity extends AppCompatActivity {
                     String price = show.getPrettyPrice().toString();
                     Intent i = new Intent(EventActivity.this, PaymentActivity.class);
 //                    i.putExtra("eventName", eventName);
-//                    i.putExtra("eventID", eventID);
-//                    i.putExtra("EMAIL", getIntent().getStringExtra("EMAIL"));
+                    i.putExtra("showID", show.getId());
+                    i.putExtra("EMAIL", getIntent().getStringExtra("EMAIL"));
                     i.putExtra("price", price);
                     startActivityForResult(i, 1);
 
@@ -145,18 +145,18 @@ public class EventActivity extends AppCompatActivity {
     Button addPurchaseButton(String text) {
         Button purchaseButton = new Button(getApplicationContext());
         purchaseButton.setText(text);
-        purchaseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String showID = show.getId();
-                String email = user.getId();
-                if (ds.purchaseTicket(email, showID)) {
-                    showPurchaseSuccessToast();
-                } else {
-                    showPurchaseFailureToast();
-                }
-            }
-        });
+//        purchaseButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String showID = show.getId();
+//                String email = user.getId();
+//                if (ds.purchaseTicket(email, showID)) {
+//                    showPurchaseSuccessToast();
+//                } else {
+//                    showPurchaseFailureToast();
+//                }
+//            }
+//        });
         return purchaseButton;
     }
 

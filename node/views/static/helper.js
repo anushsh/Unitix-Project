@@ -188,8 +188,8 @@ function viewShow(showID) {
             //$("#" + show._id).empty();
             var searchBar = '<div class="field"><label class="label">Search for Attendees</label>'
             searchBar += '<div class="control"><input class="input" id="searchBar" type="text" placeholder="Attendee Name">'
-            searchBar += '</div></div><div class="control"><button class="button is-link" onclick="searchAttendees()">Search</button></div>'
-            searchBar += '<div class="control"><button class="button is-link" onclick="clearAttendeeSearch()">Clear</button></div>'
+            searchBar += '</div></div><div class="control"><button class="button is-link is-small" onclick="searchAttendees()">Search</button></div>'
+            searchBar += '<div class="control"><button class="button is-link is-small" onclick="clearAttendeeSearch()">Clear</button></div>'
             var tickets = show.tickets;
             
             $("#" + show._id).append(searchBar + "<br>");

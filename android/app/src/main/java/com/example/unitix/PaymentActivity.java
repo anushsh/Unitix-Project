@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.unitix.server.DataSource;
 import com.stripe.android.ApiResultCallback;
@@ -22,6 +23,8 @@ import java.lang.ref.WeakReference;
 public class PaymentActivity extends AppCompatActivity {
     private Stripe stripe;
     DataSource ds;
+    String email;
+    String showID;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,8 @@ public class PaymentActivity extends AppCompatActivity {
 //        pricePrelim = (Integer.parseInt(pricePrelim) * 100) + "";
         final String price = pricePrelim;
         ds = new DataSource();
+        email = intent.getStringExtra("EMAIL");
+        showID = intent.getStringExtra("showID");
 
         // Hook up the pay button to the card widget and Stripe instance
         Button payButton = findViewById(R.id.payButton);
@@ -65,6 +70,10 @@ public class PaymentActivity extends AppCompatActivity {
                         ds.createCharge(tokenID);
                         Log.e("ANUSH", "Token: " + tokenID);
                         Log.e("ANUSH", "Price: " + price);
+                        ds.purchaseTicket(email, showID);
+                        Toast.makeText(getApplicationContext(),
+                                "Payment Successful! Ticket purchased.", Toast.LENGTH_LONG).show();
+                        finish();
 
                     }
 

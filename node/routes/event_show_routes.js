@@ -347,56 +347,56 @@ var updateEventOverview = function (req, res) {
 var markShowChanges = function(oldShow, updatedShow, changeArr) {
     if (oldShow.name != updatedShow.name) {
         changeArr.push({
-            fieldChanged: "show " + i + " name",
+            fieldChanged: "show #" + (i+1) + " name",
             priorValue: oldShow.name,
             updatedValue: updatedShow.name
         })
     }
     if (oldShow.start_date != updatedShow.start_date) {
         changeArr.push({
-            fieldChanged: "show " + i + " date",
+            fieldChanged: "show #" + (i+1) + " date",
             priorValue: oldShow.start_date,
             updatedValue: updatedShow.start_date
         })
     }
     if (oldShow.start_time != updatedShow.start_time) {
         changeArr.push({
-            fieldChanged: "show " + i + " start time",
+            fieldChanged: "show #" + (i+1) + " start time",
             priorValue: oldShow.start_time,
             updatedValue: updatedShow.start_time
         })
     }
     if (oldShow.end_time != updatedShow.end_time) {
         changeArr.push({
-            fieldChanged: "show " + i + " end time",
+            fieldChanged: "show #" + (i+1) + " end time",
             priorValue: oldShow.end_time,
             updatedValue: updatedShow.end_time
         })
     }
     if (oldShow.capacity != updatedShow.capacity) {
         changeArr.push({
-            fieldChanged: "show " + i + " capacity",
+            fieldChanged: "show #" + (i+1) + " capacity",
             priorValue: oldShow.capacity,
             updatedValue: updatedShow.capacity
         })
     }
     if (oldShow.location != updatedShow.location) {
         changeArr.push({
-            fieldChanged: "show " + i + " location",
+            fieldChanged: "show #" + (i+1) + " location",
             priorValue: oldShow.location,
             updatedValue: updatedShow.location
         })
     }
     if (oldShow.description != updatedShow.description) {
         changeArr.push({
-            fieldChanged: "show " + i + " description",
+            fieldChanged: "show #" + (i+1) + " description",
             priorValue: oldShow.description,
             updatedValue: updatedShow.description
         })
     }
     if (oldShow.price != updatedShow.price) {
         changeArr.push({
-            fieldChanged: "show " + i + " price",
+            fieldChanged: "show #" + (i+1) + " price",
             priorValue: oldShow.price,
             updatedValue: updatedShow.price
         })

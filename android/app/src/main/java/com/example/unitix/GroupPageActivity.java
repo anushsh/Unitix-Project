@@ -54,12 +54,12 @@ public class GroupPageActivity extends AppCompatActivity {
         //Log.e("KARA", "Before checking following status");
         if (checkFollowingStatus()) {
             //Log.e("KARA", "following is true");
-            followingStatus.setText("Following " + groupID);
+            followingStatus.setText("Following " + name);
             Button followButton = findViewById(R.id.followbtn);
             followButton.setVisibility(View.INVISIBLE);
         } else {
             //Log.e("KARA", "following is false");
-            followingStatus.setText("Not Following " + groupID);
+            followingStatus.setText("Not Following " + name);
             Button followButton = findViewById(R.id.followbtn);
             followButton.setVisibility(View.VISIBLE);
         }
