@@ -28,6 +28,14 @@
             android:text="Description"
             android:textColor="@color/colorPrimary"
             android:textSize="25dp" />
+        <TextView
+            android:id="@+id/following_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textSize="25dp"
+            android:textColor="@color/colorPrimary"
+            android:text="FOLLOWING STATUS" />
         <LinearLayout
             android:id="@+id/event_list"
             android:orientation="vertical"
