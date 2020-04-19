@@ -28,6 +28,11 @@ public class Change extends Model {
 
     @Override
     public String toString() {
+        if (this.fieldChanged.contains("tickets available")) {
+            return "Sold out of tickets for " + this.fieldChanged.split("for")[1] + " at " + prettyTime();
+        } else {
+
+        }
         return prettyTime() + ", changed " + fieldChanged + " from " + priorValue + " to " + updatedValue;
     }
 
