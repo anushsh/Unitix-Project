@@ -126,6 +126,7 @@ public class DataSource {
         return Event.createEventList(getJSONArray(jo, "events"));
     }
 
+
     public Group[] getAllGroups() {
         JSONObject jo = getRoute("get_all_groups");
         return Group.createGroupList(getJSONArray(jo, "groups"));

@@ -19,7 +19,8 @@ var eventSchema = new Schema({
   group_name: String, // this is display name of the group
   shows: [String], // these are uuids of Show objs
   tags: [String],
-  changes: [String]
+  changes: [String],
+  favoritedBy: [String] //list of user IDs
 })
 
 module.exports = mongoose.model('Event', eventSchema)

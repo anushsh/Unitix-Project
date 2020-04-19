@@ -26,8 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
-public class DashboardActivity extends AppCompatActivity {
+public class FavoriteEventsActivity extends AppCompatActivity {
 
     protected DataSource ds;
 
@@ -36,13 +35,13 @@ public class DashboardActivity extends AppCompatActivity {
     private String email;
     UserManager manager;
 
-//    Set<Group> following;
+    //    Set<Group> following;
     Set<String> followingGroupIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);
+        setContentView(R.layout.activity_favorites);
 //        Intent intent = getIntent();
         manager = UserManager.getManager(getApplicationContext());
 //        email = intent.getStringExtra("EMAIL");
@@ -58,7 +57,7 @@ public class DashboardActivity extends AppCompatActivity {
         this.email = user.getId();
 
         // execute in background to keep main thread smooth
-        AsyncTask<Integer,Integer, Event[]> task = new HandleEventsTask();
+        AsyncTask<Integer,Integer, Event[]> task = new FavoriteEventsActivity.HandleEventsTask();
         // allow for parallel execution
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -67,9 +66,9 @@ public class DashboardActivity extends AppCompatActivity {
         protected Event[] doInBackground(Integer... ints) {
 //            DashboardActivity.this.following = new HashSet<>(Arrays.asList(ds.getFollowedGroups(email)));
             Set<Group> tempGroups = new HashSet<>(Arrays.asList(ds.getFollowedGroups(email)));
-            DashboardActivity.this.followingGroupIds = new HashSet<>();
+            FavoriteEventsActivity.this.followingGroupIds = new HashSet<>();
             for (Group group : tempGroups) {
-                DashboardActivity.this.followingGroupIds.add(group.getID());
+                FavoriteEventsActivity.this.followingGroupIds.add(group.getID());
             }
             return ds.getAllEvents();
         }
@@ -150,7 +149,7 @@ public class DashboardActivity extends AppCompatActivity {
                     Event event = (Event) v.getTag();
                     String eventName = event.getName();
                     String eventID = event.getId();
-                    Intent i = new Intent(DashboardActivity.this, EventActivity.class);
+                    Intent i = new Intent(FavoriteEventsActivity.this, EventActivity.class);
                     i.putExtra("eventName", eventName);
                     i.putExtra("eventID", eventID);
                     i.putExtra("EMAIL", getIntent().getStringExtra("EMAIL"));
@@ -164,36 +163,4 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
-    public void onProfileButtonClick(View v) {
-
-        Intent i = new Intent(this, ProfileActivity.class);
-
-        i.putExtra("EMAIL", email);
-
-        startActivityForResult(i, 1);
-    }
-
-    public void onSearchButtonClick(View v) {
-        Intent i = new Intent(this, SearchResultActivity.class);
-
-        i.putExtra("EMAIL", email);
-
-        startActivityForResult(i, 1);
-    }
-
-    public void onGroupButtonClick(View v) {
-        Intent i = new Intent(this, GroupListActivity.class);
-
-        i.putExtra("EMAIL", email);
-
-        startActivityForResult(i, 1);
-    }
-
-    public void onFavoriteButtonClick(View v) {
-        Intent i = new Intent(this, FavoriteEventsActivity.class);
-
-        i.putExtra("EMAIL", email);
-
-        startActivityForResult(i, 1);
-    }
 }

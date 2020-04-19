@@ -48,6 +48,13 @@
             android:onClick="onGroupButtonClick"
             android:text="View all Groups" />
 
+        <Button
+            android:id="@+id/favoritebtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onFavoriteButtonClick"
+            android:text="View Favorite Events" />
+
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

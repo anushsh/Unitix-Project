@@ -17,6 +17,7 @@ public class User extends Model {
     public String[] currTickets;
     public String[] notifications;
     public String[] readNotifications;
+    public String[] favoriteEvents;
     public int numNotifications;
     public int numReadNotifications;
 
@@ -30,6 +31,7 @@ public class User extends Model {
             this.pastTickets = makeStringArray(jo.optJSONArray("past_tickets"));
             this.currTickets = makeStringArray(jo.optJSONArray("curr_tickets"));
             this.followers = makeStringArray(jo.optJSONArray("following"));
+            this.favoriteEvents = makeStringArray(jo.optJSONArray("favorite_events"));
 
             JSONArray notifications = jo.optJSONArray("notifications");
             JSONArray readNotifications = jo.optJSONArray("read_notifications");
@@ -90,4 +92,5 @@ public class User extends Model {
     public static User getNoah() {
         return DataSource.getInstance().getUser("noahsylv@gmail.com");
     }
+
 }

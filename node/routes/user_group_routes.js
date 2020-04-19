@@ -8,21 +8,21 @@ var async = require('async')
 
 var getGroup = function (req, res) {
     //req.session.user has the email of the group, so we query for the full object
-    Group.findOne({email:req.session.user}, (err, group) => {
-        !err && group ? res.send({'status': 'success', 'group': group}) : res.send({'status':err})
+    Group.findOne({ email: req.session.user }, (err, group) => {
+        !err && group ? res.send({ 'status': 'success', 'group': group }) : res.send({ 'status': err })
     })
 }
 
 var getGroupByID = function (req, res) {
     Group.findById(req.query.groupID, (err, group) => {
-        !err && group ? res.json({"group":group}) : res.json({"err":err})
+        !err && group ? res.json({ "group": group }) : res.json({ "err": err })
     })
 }
 
 
 // TODO: make into helper
 var getGroupWithEvents = function (req, res) {
-    Group.findOne({email:req.session.user}, (err, group) => {
+    Group.findOne({ email: req.session.user }, (err, group) => {
         if (!err && group) {
             group = group.toJSON();
             var currentEvents = [];
@@ -35,16 +35,16 @@ var getGroupWithEvents = function (req, res) {
                 })
             }, () => {
                 group.currentEvents = currentEvents;
-                res.json({'status':'success',"group":group});
+                res.json({ 'status': 'success', "group": group });
             });
         } else {
-            res.json({'status':err});
+            res.json({ 'status': err });
         }
     });
 }
 
 // helper to find event pre-populated with shows
-var getEventWithShows= function(eventID, callback) {
+var getEventWithShows = function (eventID, callback) {
     Event.findById(eventID, (err, event) => {
         if (!err && event) {
             event = event.toJSON();
@@ -130,17 +130,17 @@ var getFollowedGroups = function (req, res) {
 
 
 
-var getUserTickets = function(req, res) {
+var getUserTickets = function (req, res) {
     var email = req.query.email;
-    User.findOne({"email":email}, (err, user) => {
+    User.findOne({ "email": email }, (err, user) => {
         user = user.toJSON();
         if (!err && user) {
             var ticketIDs = user.curr_tickets ? user.curr_tickets : [];
             getAllTickets(ticketIDs, (tickets) => {
-                res.json({"status":"success","tickets":tickets})
+                res.json({ "status": "success", "tickets": tickets })
             });
         } else {
-            res.json({"status":"error"})
+            res.json({ "status": "error" })
         }
     })
 }
@@ -161,15 +161,15 @@ function getAllTickets(ticketIDs, callback) {
     });
 }
 
-function getAllGroups (_, res) {
+function getAllGroups(_, res) {
     var groups = [];
     Group.find((err, allGroups) => {
         if (err) {
-            res.json({"status" : err })
+            res.json({ "status": err })
         } else {
             res.json({
-                'status' : 'success',
-                'groups' : allGroups
+                'status': 'success',
+                'groups': allGroups
             })
         }
         console.log("GROUPS ARRAY");
@@ -192,9 +192,9 @@ function getAllGroups (_, res) {
 // })
 
 // TODO: is this gonna change to be different from one above?
-var getUserShowInfo = function(req, res) {
+var getUserShowInfo = function (req, res) {
     var email = req.query.email;
-    User.findOne({"email":email}, (err, user) => {
+    User.findOne({ "email": email }, (err, user) => {
         user = user.toJSON();
         if (!err && user) {
             var tickets = [];
@@ -207,23 +207,38 @@ var getUserShowInfo = function(req, res) {
                     done();
                 })
             }, () => {
-                res.json({"status":"success","tickets":tickets})
+                res.json({ "status": "success", "tickets": tickets })
             });
         } else {
-            res.json({"status":"error"})
+            res.json({ "status": "error" })
         }
     })
 }
 
+const crypto = require('crypto');
+const algorithm = 'aes-256-cbc';
+// const key = crypto.randomBytes(32); 
+// const iv = crypto.randomBytes(16); 
+
+function encrypt(text) {
+    if (text !== undefined) {
+        let cipher = crypto.createCipher(algorithm, 'randomkey');
+        let encrypted = cipher.update(text, 'utf8', 'hex');
+        encrypted += cipher.final('hex');
+        return encrypted;
+    }
+}
 
 var updateGroup = (req, res) => {
     // console.log("REQ");
     // console.log(req.body);
     // console.log(req.session.user);
-    Group.findOneAndUpdate({email: req.session.user}, {password: req.body.password,
-    displayName: req.body.groupName, groupType: req.body.groupType, bio: req.body.bio, stripe: req.body.stripe}, {new: true}, (err, user) => {
+    Group.findOneAndUpdate({ email: req.session.user }, {
+        password: req.body.password,
+        displayName: req.body.groupName, groupType: req.body.groupType, bio: req.body.bio, stripe: encrypt(req.body.stripe)
+    }, { new: true }, (err, user) => {
         if (err) {
-            res.json({'status': err})
+            res.json({ 'status': err })
         } else {
             res.redirect('/profile');
         }
@@ -243,23 +258,23 @@ var createGroup = (req, res) => {
         bio: req.body.groupBio,
         followers: []
     })
-    Group.findOne({email: req.body.email}, (err, user) => {
+    Group.findOne({ email: req.body.email }, (err, user) => {
         if (err) {
             console.log(err);
-            res.json({'status': err})
+            res.json({ 'status': err })
         } else {
-            if (!user){
+            if (!user) {
                 console.log("No user exists!");
                 newUser.save((err) => {
                     if (err) {
-                        res.json({'status': err})
+                        res.json({ 'status': err })
                     } else {
                         res.redirect('/home');
                     }
                 })
             } else {
                 console.log('Group already exists!');
-                res.render('register.ejs', {message: 'Group already exists!'});
+                res.render('register.ejs', { message: 'Group already exists!' });
             }
         }
     })
@@ -313,12 +328,29 @@ var findUser = function (req, res) {
 
 var updateUser = function (req, res) {
 
-    User.findOneAndUpdate({email: req.body.email}, {$set: {password: req.body.password,
-         first_name: req.body.first_name, last_name: req.body.last_name, phone: req.body.phone}}, (err, user) => {
+    User.findOneAndUpdate({ email: req.body.email }, {
+        $set: {
+            password: req.body.password,
+            first_name: req.body.first_name, last_name: req.body.last_name, phone: req.body.phone
+        }
+    }, (err, user) => {
         if (err) {
-            res.json({'status': err})
+            res.json({ 'status': err })
         } else {
             res.json({ 'status': 'success' })
+        }
+    })
+}
+
+var getFavoritedEvents = (req, res) => {
+    User.findOne({ email: req.body.email}, (err, user) => {
+        if (err) {
+            res.json({'status': err});
+        } else {
+            var favorites = [];
+            async.forEach(user.favorite_events, (eventID, done) => {
+                
+            })
         }
     })
 }

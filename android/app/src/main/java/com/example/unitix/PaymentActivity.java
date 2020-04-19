@@ -70,9 +70,7 @@ public class PaymentActivity extends AppCompatActivity {
                         ds.createCharge(tokenID);
                         Log.e("ANUSH", "Token: " + tokenID);
                         Log.e("ANUSH", "Price: " + price);
-                        ds.purchaseTicket(email, showID);
-                        Toast.makeText(getApplicationContext(),
-                                "Payment Successful! Ticket purchased.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),"Payment Successful!",Toast.LENGTH_SHORT).show();
                         finish();
 
                     }
