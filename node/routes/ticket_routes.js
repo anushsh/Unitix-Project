@@ -1,6 +1,8 @@
 var User = require('../models/user.js');
 var Show = require('../models/show.js')
 var Ticket = require('../models/ticket.js')
+var Change = require('../models/change.js')
+var Event = require('../models/event.js')
 
 var async = require('async')
 
@@ -48,6 +50,9 @@ var purchaseTicket = function (req, res) {
                                         var newTickets = show.tickets ? show.tickets : [];
                                         newTickets.push(ticket._id);
                                         show.update({ tickets_sold: tickets_sold + 1, tickets: newTickets }, (err) => {
+                                            if (tickets_sold + 1 == show.capacity) {
+                                                sellOut(show)
+                                            }
                                             res.json({ "status": "success" });
                                         });
                                     }
@@ -94,6 +99,33 @@ var redeemTicket = function(req, res) {
         }
         res.json({"status":(!err ? "success":"error")});
     });
+}
+
+var sellOut = function(show) {
+    var change = new Change({
+        field_changed: "tickets available for " + show.name,
+        previous_value: 1,
+        updated_value: 0,
+        time: Date.now()
+    })
+
+    console.log(show)
+    console.log(JSON.stringify(show))
+
+    change.save((err, changeSaved) => {
+        if (err) console.log("Error creating change obj. " + err)
+        else {
+            Event.findById(show.event, (err, event) => {
+                if (err) console.log("Error finding event when selling out")
+                else {
+                    console.log(event)
+                    updatedChanges = event.changes
+                    updatedChanges.push(changeSaved._id)
+                    Event.findByIdAndUpdate(show.event, {changes: updatedChanges}, () => {})
+                }
+            })
+        }
+    })
 }
 
 

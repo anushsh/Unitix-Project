@@ -108,6 +108,7 @@ var getFollowerNames = function(req, res) {
             res.json({success: false, error: err})
         } else {
             var followerObjects = [];
+            
             async.forEach(group.followers, (followerID, done) => {
                 User.findById(followerID, (err, follower) => {
                     if (!err && follower) {
@@ -115,6 +116,7 @@ var getFollowerNames = function(req, res) {
                         followerObjects.push({firstName: follower.first_name, lastName: follower.last_name});
                         done();
                     } else {
+                        followerObjects = [] // something went wrong, just return empty array
                         done();
                     }
                 })

@@ -36,10 +36,12 @@ public class NotificationsActivity extends AppCompatActivity  {
         AsyncTask<Integer,Integer, Notification[]> task = new HandleNotificationsTask();
         // allow for parallel execution
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        Log.d("YASH","Unread are shown");
 
-        displayReadNotifications();
-        Log.d("YASH","Here 10 - Displayed read");
+        //displayReadNotifications();
+
+        Notification[] allReadNotifications = ds.getAllReadNotifications(user.getId());
+
+        addReadNotificationsToPage(allReadNotifications);
 
     }
 
@@ -55,15 +57,11 @@ public class NotificationsActivity extends AppCompatActivity  {
 
     private class HandleReadNotificationsTask extends AsyncTask<Integer, Integer, Notification[]> {
         protected Notification[] doInBackground(Integer... ints) {
-            Log.d("YASH","Inside handlereadnotifications doinbackground");
             Notification[] allReadNotifications = ds.getAllReadNotifications(user.getId());
             Log.d("YASH","read notif length = " + allReadNotifications.length);
             return allReadNotifications;
         }
         protected void onPostExecute(Notification[] notifications) {
-            Log.d("YASH","on postexecute for handlereadnotif");
-
-            Log.d("YASH","read notification view received notifications, got" + notifications.length);
             addReadNotificationsToPage(notifications);
         }
     }
@@ -73,28 +71,26 @@ public class NotificationsActivity extends AppCompatActivity  {
         for (Notification notification : notifications) {
             TextView notificationText = new TextView(getApplicationContext());
             notificationText.setText(notification.content);
-            notificationText.setTextSize(30);
+            notificationText.setTextSize(15);
             feed.addView(notificationText);
         }
-//        if (notifications.length == 0) {
-//            Log.d("YASH","Come here only if no unread");
-//            hideReadNotificationsButton();
-//        }
+        if (notifications.length == 0) {
+            hideReadNotificationsButton();
+        }
     }
 
     void addReadNotificationsToPage(Notification[] notifications) {
-        Log.d("YASH","Here 5 - adding read notifications");
         LinearLayout feed = findViewById(R.id.read_notification_list);
         for (Notification notification : notifications) {
             TextView notificationText = new TextView(getApplicationContext());
             notificationText.setText(notification.content);
-            notificationText.setTextSize(30);
+            notificationText.setTextSize(15);
             feed.addView(notificationText);
         }
     }
 
     void hideReadNotificationsButton() {
-        Log.d("YASH","Come here only if no unread 2");
+        Log.d("YASH","Come here only if no unread");
         Button button = findViewById(R.id.readnotificationsbtn);
         button.setVisibility(View.INVISIBLE);
         LinearLayout feed = findViewById(R.id.notification_list);
@@ -130,11 +126,9 @@ public class NotificationsActivity extends AppCompatActivity  {
     }
     
     public void displayReadNotifications() {
-        Log.d("YASH","Here 7 - in display function");
 
         AsyncTask<Integer,Integer, Notification[]> taskRead = new HandleReadNotificationsTask();
         taskRead.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        Log.d("YASH","Here 9 - after executing readnotification async task");
 
     }
 

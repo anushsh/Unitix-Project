@@ -50,10 +50,11 @@ public class Show extends Model implements Comparable<Show>  {
     public String getPrettyPrice() {
         try {
             String[] parts = ("" + price).split("\\.");
-            if (parts[1].length() < 2) {
-                parts[1] = parts[1] + "0";
-            }
-            return "$" + parts[0] + "." + parts[1];
+            return "$" + parts[0] + "." + (parts[1].length() < 2 ? parts[1] + "0" : parts[1]);
+//            if (parts[1].length() < 2) {
+//                parts[1] = parts[1] + "0";
+//            }
+//            return "$" + parts[0] + "." + parts[1];
         } catch (Exception e) {
             return "$" + price;
         }
