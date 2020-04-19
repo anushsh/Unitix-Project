@@ -69,6 +69,65 @@ var getEventWithShows= function(eventID, callback) {
     })
 }
 
+var followGroup = function (req, res) {
+    var groupID = req.body.groupID
+    var queryEmail = req.body.email;
+
+    User.findOne({ email: queryEmail }, (err, user) => {
+        if (err) {
+            res.json({ "status": err })
+        } else if (!user) {
+            res.json({ 'status': 'user not found' })
+        } else {
+            user = user.toJSON();
+            var userID = user._id;
+            var following = user.following ? user.following : [];
+            following.push(groupID);
+            User.findOneAndUpdate({_id: userID}, {following: following}, (err, _) => {
+                Group.findById(groupID, (err, group) => {
+                    if (!group || err) {
+                        res.json({ "status": err })
+                    } else {
+                        group = group.toJSON();
+                        var followers = group.followers ? group.followers : []
+                        followers.push(userID)
+                        Group.findByIdAndUpdate(groupID, {followers: followers}, (err, _) => {
+                            res.json({ "status": "success" });
+                        })
+                    }
+                })
+            })
+        }
+    })
+}
+
+var getFollowedGroups = function (req, res) {
+    User.findOne({email: req.query.email}, (err, user) => {
+        if (err) {
+            console.log("Error getting user by email." + err)
+            res.json([])
+        }
+        else {
+            groups = []
+            async.forEach(user.following, (groupID, done) => {
+                Group.findById(groupID, (err, group) => {
+                    if (err) console.log("error getting group by id." + err)
+                    else {
+                        groups.push(group)
+                    }
+                    done()
+                })
+            }, () => {
+                console.log("COLLECTED FOLLOWING GROUPS:")
+                console.log(groups)
+                res.json({
+                    "status":"success","following":groups
+                })
+            })
+        }
+    })
+}
+
 
 
 var getUserTickets = function(req, res) {
@@ -275,5 +334,7 @@ module.exports = {
     create_user: createUser,
     find_user: findUser,
     update_user: updateUser,
-    get_all_groups: getAllGroups
+    get_all_groups: getAllGroups,
+    get_followed_groups: getFollowedGroups,
+    follow_group: followGroup
 }
