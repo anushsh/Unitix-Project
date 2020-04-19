@@ -34,6 +34,9 @@ public class PaymentActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String pricePrelim = intent.getStringExtra("price");
         pricePrelim = pricePrelim.substring(1, pricePrelim.length());
+        String[] arr = pricePrelim.split(".");
+        Log.e("ANUSH", "Arr length: " + pricePrelim);
+//        pricePrelim = arr[0] + arr[1];
 
 //        pricePrelim = (Integer.parseInt(pricePrelim) * 100) + "";
         final String price = pricePrelim;
