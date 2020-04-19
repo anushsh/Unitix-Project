@@ -55,6 +55,7 @@
     display += '<div id="eventNotifyText' + event._id + '"></div>'
     display += "<br>"
     var showNumber = 1;
+    //display = displayShowsForEvent(event, display)
     event.shows.forEach((show) => {
         var list = "<ul id=\"" + show._id + "\"></ul>";
         var name = "Show #" + showNumber + " on " + prettyDate(show.start_date) + " at " + prettyTime(show.start_time);
@@ -73,6 +74,22 @@
     display += ' </div>'
     return display;
 }
+
+// function displayShowsForEvent(event, display) {
+//     event.shows.forEach((show) => {
+//         var list = "<ul id=\"" + show._id + "\"></ul>";
+//         var name = "Show #" + showNumber + " on " + prettyDate(show.start_date) + " at " + prettyTime(show.start_time);
+//         var tickets = "<br>Tickets sold: " + show.tickets_sold;
+//         var btn1 = createButton("View Attendees", "viewShow", show._id, "button is-small","show_button"+show._id);
+//         var btn2 = createButton("Notify Ticket Holders (this show only)", "showNotifyShow", show._id, "button is-small",
+//         "show_notification_button" + show._id);
+//         var notificationBox = '<div id="showNotifyText' + show._id + '"></div>';
+//         display +=  name + tickets + "<br>" + 
+//             btn1 + btn2 + notificationBox + list + "<br>";
+//         showNumber += 1;
+//     });  
+//     return display
+// }
 
 function showNotify(id, isShow) {
     // determine if handling show or event notifications
@@ -168,27 +185,97 @@ function viewShow(showID) {
         btn.html("Hide attendees");
         $.getJSON("/get_show_with_tickets", {"showID":showID}, (data) => {
             var show = data.show;
+            //$("#" + show._id).empty();
+            var searchBar = '<div class="field"><label class="label">Search for Attendees</label>'
+            searchBar += '<div class="control"><input class="input" id="searchBar" type="text" placeholder="Attendee Name">'
+            searchBar += '</div></div><div class="control"><button class="button is-link" onclick="searchAttendees()">Search</button></div>'
+            searchBar += '<div class="control"><button class="button is-link" onclick="clearAttendeeSearch()">Clear</button></div>'
             var tickets = show.tickets;
-            tickets.forEach((ticket) => {
-                var attendee = ticket.customer ? ticket.customer : "NAME N/A (id=" +ticket._id+")";
-                var status = "";
-                if (ticket.requested == false) {
-                    var btn = createButton("Check in", "requestTicket", ticket._id, "button is-small");
-                    status += btn;
-                } else if (ticket.redeemed == false) {
-                    status += " (Pending)"
-                } else {
-                    status += " (Checked in)"
-                }
-                status += " </div>"
-                attendee += status;
+            
+            $("#" + show._id).append(searchBar + "<br>");
+            viewAllShowAttendees(show, tickets)
+            // tickets.forEach((ticket) => {
+            //     var attendee = ticket.customer ? ticket.customer : "NAME N/A (id=" +ticket._id+")";
+            //     var status = "";
+            //     if (ticket.requested == false) {
+            //         var btn = createButton("Check in", "requestTicket", ticket._id, "button is-small");
+            //         status += btn;
+            //     } else if (ticket.redeemed == false) {
+            //         status += " (Pending)"
+            //     } else {
+            //         status += " (Checked in)"
+            //     }
+            //     status += " </div>"
+            //     attendee += status;
 
-                $("#" + show._id).append(attendee + "<br>");                                        
-            })
-            // $("#" + show._id).append(closeButton);
+            //     $("#" + show._id).append(attendee + "<br>");                                        
+            // })
+            // // $("#" + show._id).append(closeButton);
             
         });
     }
+}
+
+function clearAttendeeSearch() {
+    $("#searchBar").val("")
+    $("span").show()
+}
+
+function searchAttendees() {
+    var query = $("#searchBar").val().toString().toLowerCase()
+    console.log("query: " + query)
+    $("span").show()
+    if (!(query == "")) {
+        var queryArray = query.split(" ")
+        if (!query.includes(" ")) { //one word query
+            console.log("query: " + query)
+            console.log("length 1")
+            $("span").filter(function() { 
+                console.log($(this).attr("id").toString())
+                console.log($(this).attr("id").toString().includes(query))
+                return !($(this).attr("id").toString().includes(query))
+              }).hide()
+        } else if (query.split(" ").length == 2) { //two word query
+            console.log("length 2")
+            var first = queryArray[0]
+            var second = queryArray[1]
+            console.log("first: " + first)
+            console.log("second: " + second)
+            $("span").filter(function() { 
+                //console.log((this).attr("id"))
+                return !$(this).attr("id").includes(first) && !$(this).attr("id").includes(second);
+              }).hide()
+        } 
+    } 
+}
+
+function containsNameSubstring(query) {
+    var queryArray = query.split(" ")
+    //$('span:not(:contains('+ userString +'))').hide; 
+    //$("span:contains('FIND ME')")
+    
+    
+}
+
+function viewAllShowAttendees(show, tickets) {
+    tickets.forEach((ticket) => {
+        var customerFirstName = ticket.customer.split(" ")[0].toLowerCase()
+        var customerLastName = ticket.customer.split(" ")[1].toLowerCase()
+        var attendee = ticket.customer ? '<span id=' +customerFirstName+customerLastName+'>'+ticket.customer : "NAME N/A (id=" +ticket._id+")";
+        var status = "";
+        if (ticket.requested == false) {
+            var btn = createButton("Check in", "requestTicket", ticket._id, "button is-small");
+            status += btn;
+        } else if (ticket.redeemed == false) {
+            status += " (Pending)"
+        } else {
+            status += " (Checked in)"
+        }
+        status += " </div>"
+        attendee += status + '</span>';
+
+        $("#" + show._id).append(attendee + "<br>");                                        
+    })
 }
 
 
