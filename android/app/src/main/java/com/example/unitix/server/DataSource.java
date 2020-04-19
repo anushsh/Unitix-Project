@@ -108,7 +108,7 @@ public class DataSource {
             AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
             task.execute(url);
             JSONObject jo = task.get();
-
+            Log.i("ANUSH", jo.toString());
             groups = Group.createGroupList(jo.getJSONArray("groups"));
         } catch (Exception e) {
             Log.e("ANUSH", "exception: " + e);

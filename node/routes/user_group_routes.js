@@ -102,6 +102,36 @@ function getAllTickets(ticketIDs, callback) {
     });
 }
 
+function getAllGroups (_, res) {
+    var groups = [];
+    Group.find((err, allGroups) => {
+        if (err) {
+            res.json({"status" : err })
+        } else {
+            res.json({
+                'status' : 'success',
+                'groups' : allGroups
+            })
+        }
+        console.log("GROUPS ARRAY");
+        console.log(allGroups.length);
+        console.log(allGroups[0]);
+    });
+}
+
+// Event.find((err, allEvents) => {
+//     if (err) {
+//         res.json({ 'status': err })
+//     } else if (allEvents.length == 0) {
+//         res.json({ 'status': 'no events' })
+//     } else {
+//         res.json({
+//             'status': 'success',
+//             'events': allEvents
+//         })
+//     }
+// })
+
 // TODO: is this gonna change to be different from one above?
 var getUserShowInfo = function(req, res) {
     var email = req.query.email;
@@ -245,4 +275,5 @@ module.exports = {
     create_user: createUser,
     find_user: findUser,
     update_user: updateUser,
+    get_all_groups: getAllGroups
 }

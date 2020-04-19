@@ -18,7 +18,7 @@ public class Group extends Model {
     String password; // might delete
     String groupType;
     String bio;
-    int followers;
+    String[] followers;
 
     public Group(JSONObject jo) {
         try {
@@ -28,7 +28,15 @@ public class Group extends Model {
             this.email = jo.getString("email");
             this.groupType = jo.getString("groupType");
             this.bio = jo.getString("bio");
-            this.followers = jo.getInt("followers");
+//            this.followers = jo.getJSONArray("followers");
+            JSONArray arr = jo.getJSONArray("followers");
+            Log.e("ANUSH", "TIS WHAT WE WANT " + arr.get(0).toString());
+            List<String> list = new ArrayList<String>();
+            for(int i = 0; i < arr.length(); i++){
+                list.add(arr.get(i).toString());
+            }
+            this.followers = list.toArray(new String[0]);
+            this.isValid = true;
         } catch (Exception e) {
             Log.e("MICHAEL", "Exception making Group: " + e);
             isValid = false;

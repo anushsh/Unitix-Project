@@ -23,6 +23,7 @@ import com.example.unitix.models.Group;
 public class GroupListActivity extends AppCompatActivity {
 
     protected DataSource ds;
+
     private String email;
 
     @Override
@@ -32,17 +33,17 @@ public class GroupListActivity extends AppCompatActivity {
         Intent intent = getIntent();
         email = intent.getStringExtra("EMAIL");
         this.ds = new DataSource();
-
+        Log.e("ANUSH", "Wassup*********************************");
         // execute in background to keep main thread smooth
-        AsyncTask<Integer,Integer,Group[]> task = new HandleGroupsTask();
+        AsyncTask<String,Integer,Group[]> task = new HandleGroupsTask();
         // allow for parallel execution
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         Log.e("ANUSH", "HERE");
     }
 
-    private class HandleGroupsTask extends AsyncTask<Integer, Integer, Group[]> {
-        protected Group[] doInBackground(Integer... integers) {
+    private class HandleGroupsTask extends AsyncTask<String, Integer, Group[]> {
+        protected Group[] doInBackground(String... ids) {
             return ds.getAllGroups();
         }
         protected void onPostExecute(Group[] groups) {
@@ -63,12 +64,8 @@ public class GroupListActivity extends AppCompatActivity {
             groupText.setText(g.getDisplayName());
             groupView.addView(groupText);
 
-//            LinearLayout allGroupView = new LinearLayout(getApplicationContext());
-//            allGroupView.setOrientation(LinearLayout.VERTICAL);
-//            groupView.addView(allGroupView);
-
             Button viewDetailsButton = new Button(getApplicationContext());
-            viewDetailsButton.setText("View Details");
+            viewDetailsButton.setText("View Group Page");
             viewDetailsButton.setTag(g);
             groupView.addView(viewDetailsButton);
             viewDetailsButton.setOnClickListener(new View.OnClickListener() {
