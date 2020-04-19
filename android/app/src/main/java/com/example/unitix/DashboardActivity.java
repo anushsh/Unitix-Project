@@ -29,6 +29,7 @@ public class DashboardActivity extends AppCompatActivity {
     // track session user
     User user;
     private String email;
+    UserManager manager;
 
     List<Group> following;
 
@@ -36,11 +37,19 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        Intent intent = getIntent();
-        email = intent.getStringExtra("EMAIL");
+//        Intent intent = getIntent();
+        manager = UserManager.getManager(getApplicationContext());
+//        email = intent.getStringExtra("EMAIL");
+
         this.ds = new DataSource();
 
-        this.user = ds.getUser(email);
+//        this.user = ds.getUser(email);
+        this.user = manager.getUser();
+        manager.handleSession(this);
+        if (this.user == null) {
+            finish();
+        }
+        this.email = user.getId();
         this.following = Arrays.asList(ds.getFollowedGroups(email));
 
         // execute in background to keep main thread smooth

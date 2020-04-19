@@ -21,11 +21,13 @@ public class ProfileActivity extends AppCompatActivity {
     DataSource ds = new DataSource();
     User user;
     private String email;
+    UserManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        manager = UserManager.getManager(getApplicationContext());
         Intent intent = getIntent();
         email = intent.getStringExtra("EMAIL");
         this.user = this.ds.getUser(email);
@@ -122,6 +124,7 @@ public class ProfileActivity extends AppCompatActivity {
         startActivityForResult(i, 1);
 
         Log.d("Yash", "User logged out");
+        manager.logOut();
 
         Toast.makeText(getApplicationContext(), "Successfully logged out", Toast.LENGTH_LONG).show();
         finish();

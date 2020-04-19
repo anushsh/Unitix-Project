@@ -3,7 +3,9 @@ package com.example.unitix;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     EditText email,password;
     Button login, register;
     DataSource ds;
+    UserManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +31,19 @@ public class MainActivity extends AppCompatActivity {
         login = (Button)findViewById(R.id.loginbtn);
         register = (Button)findViewById(R.id.registerbtn);
         ds = new DataSource();
+
+        manager = UserManager.getManager(getApplicationContext());
+        Log.e("NOAH","is manager null: " + (manager == null));
+        Log.e("NOAH","is user null: " + (manager.getUser() == null));
+
+        if (manager.loggedIn()) {
+            Log.e("NOAH","user is logged in");
+            Intent i = new Intent(this, DashboardActivity.class);
+
+            // pass along current user email
+            i.putExtra("EMAIL", manager.getUser().getId());
+            startActivityForResult(i, 1);
+        }
 
     }
 
@@ -43,10 +59,11 @@ public class MainActivity extends AppCompatActivity {
                 String currPassword = u.password;
 
                 if (currPassword.equals(passwordText)) {
+                    manager.logIn(emailText);
                     Intent i = new Intent(this, DashboardActivity.class);
 
                     // pass along current user email
-                    i.putExtra("EMAIL", emailText);
+//                    i.putExtra("EMAIL", emailText);
                     startActivityForResult(i, 1);
                 } else {
                     Toast.makeText(getApplicationContext(), "Password is incorrect", Toast.LENGTH_LONG).show();
