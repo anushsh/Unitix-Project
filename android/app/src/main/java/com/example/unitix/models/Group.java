@@ -30,7 +30,7 @@ public class Group extends Model {
             this.bio = jo.getString("bio");
 //            this.followers = jo.getJSONArray("followers");
             JSONArray arr = jo.getJSONArray("followers");
-            Log.e("ANUSH", "TIS WHAT WE WANT " + arr.get(0).toString());
+//            Log.e("ANUSH", "TIS WHAT WE WANT " + arr.get(0).toString());
             List<String> list = new ArrayList<String>();
             for(int i = 0; i < arr.length(); i++){
                 list.add(arr.get(i).toString());

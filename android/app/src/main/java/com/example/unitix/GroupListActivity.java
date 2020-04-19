@@ -75,8 +75,8 @@ public class GroupListActivity extends AppCompatActivity {
                     Group group = (Group) v.getTag();
                     String groupName = group.getDisplayName();
 //                    String eventID = event.getId();
-                    Intent i = new Intent(GroupListActivity.this, EventActivity.class);
-                    i.putExtra("eventName", groupName);
+                    Intent i = new Intent(GroupListActivity.this, GroupPageActivity.class);
+                    i.putExtra("groupName", groupName);
 //                    i.putExtra("eventID", eventID);
                     i.putExtra("EMAIL", getIntent().getStringExtra("EMAIL"));
                     startActivityForResult(i, 1);
