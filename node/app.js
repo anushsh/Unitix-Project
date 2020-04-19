@@ -93,6 +93,9 @@ app.post('/purchase_ticket', ticket_routes.purchase_ticket);
 app.post('/request_ticket', ticket_routes.request_ticket);
 app.post('/redeem_ticket', ticket_routes.redeem_ticket);
 
+//payments
+app.post('/api/stripe', routes.payment);
+
 
 // run server - we use the http server we made so that express doesn't make a new one and ignore socket.io
 http.listen(port)

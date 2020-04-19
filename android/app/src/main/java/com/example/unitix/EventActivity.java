@@ -99,10 +99,12 @@ public class EventActivity extends AppCompatActivity {
 //                    Event event = (Event) v.getTag();
 //                    String eventName = event.getName();
 //                    String eventID = event.getId();
+                    String price = show.getPrettyPrice().toString();
                     Intent i = new Intent(EventActivity.this, PaymentActivity.class);
 //                    i.putExtra("eventName", eventName);
 //                    i.putExtra("eventID", eventID);
 //                    i.putExtra("EMAIL", getIntent().getStringExtra("EMAIL"));
+                    i.putExtra("price", price);
                     startActivityForResult(i, 1);
 
                 }

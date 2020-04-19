@@ -1,7 +1,7 @@
 var Group = require('../models/group.js');
 var User = require('../models/user.js');
 var async = require('async')
-
+const stripe = require('stripe')('sk_test_pncnbwipRx15OxjiYD92tQgM');
 var msg // to send notifications at top of screen when getting to a page
 
 var getMessage = function (req, res) {
@@ -135,6 +135,26 @@ var getFollowers = function(req, res) {
     }
 }
 
+var getPayment = async (req, res) => {
+    console.log(req.body);
+    const stripeToken = req.body.token;
+    const charge = await stripe.charges.create({
+        amount: 1000,
+        currency: 'usd',
+        description: 'Demo charge',
+        source: stripeToken,
+      }, async function (err, charge) {
+          if (err) {
+              res.json({
+                  success: false,
+                  message: "Error"
+              });
+          } else {
+              res.json(charge);
+          }
+      });
+}
+
 module.exports = {
     get_splash: getSplash,
     get_message: getMessage,
@@ -147,5 +167,6 @@ module.exports = {
     get_profile: getProfile,
     get_edit_event: getEditEvent,
     get_follower_names: getFollowerNames,
-    get_followers: getFollowers
+    get_followers: getFollowers,
+    payment: getPayment
 }

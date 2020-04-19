@@ -354,6 +354,23 @@ public class DataSource {
         }
     }
 
+    public boolean createCharge(String token) {
+        try {
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put("token", token);
+            String urlString = "http://10.0.2.2:3000/api/stripe";
+
+            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(urlString, jsonParam);
+            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
+            task.execute(req);
+            return true;
+
+        } catch (JSONException e) {
+            Log.e("ANUSH", "Create Charge Exception: " + e);
+            return false;
+        }
+    }
+
     public boolean updateUser(String email, String password, String firstName, String lastName, String phone) {
         try {
 
