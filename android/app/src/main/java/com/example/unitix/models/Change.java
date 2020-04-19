@@ -11,8 +11,7 @@ public class Change extends Model {
     String updatedValue;
     String time;
 
-    private static final String[] MONTHS = {"January", "Febraury", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"};
+
 
     public Change(JSONObject jo) {
         try {
@@ -33,8 +32,8 @@ public class Change extends Model {
     }
 
     private String prettyTime() {
-        // remove the ampersand and split on the date and time
-        String[] dt = time.substring(1).split("T");
+        // split on the date and time
+        String[] dt = time.split("T");
         String[] ymd = dt[0].split("-");
         String[] hms = dt[1].split(":");
 
@@ -45,7 +44,5 @@ public class Change extends Model {
         return date + " at " + time;
     }
 
-    private String getMonth(int month) {
-        return MONTHS[month - 1];
-    }
+
 }
