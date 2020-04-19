@@ -61,4 +61,12 @@ public class Group extends Model {
     public String getDisplayName() {
         return this.displayName;
     }
+
+    public String getBio() {
+        return this.bio;
+    }
+
+    public String getID() {
+        return this.id;
+    }
 }

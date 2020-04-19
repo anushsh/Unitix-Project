@@ -74,10 +74,13 @@ public class GroupListActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Group group = (Group) v.getTag();
                     String groupName = group.getDisplayName();
-//                    String eventID = event.getId();
+                    String groupID = group.getId();
+                    String groupDescription = group.getBio();
                     Intent i = new Intent(GroupListActivity.this, GroupPageActivity.class);
                     i.putExtra("groupName", groupName);
 //                    i.putExtra("eventID", eventID);
+                    i.putExtra("bio", groupDescription);
+                    i.putExtra("groupID", groupID);
                     i.putExtra("EMAIL", getIntent().getStringExtra("EMAIL"));
                     startActivityForResult(i, 1);
 

@@ -36,9 +36,12 @@ public class GroupPageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String name = intent.getStringExtra("groupName");
+        String bio = intent.getStringExtra("bio");
 //        this.user = this.ds.getUser(getIntent().getStringExtra("EMAIL"));
         TextView groupName = findViewById(R.id.group_name);
+        TextView groupBio = findViewById(R.id.group_description);
         groupName.setText(name);
+        groupBio.setText(bio);
 
     }
 
