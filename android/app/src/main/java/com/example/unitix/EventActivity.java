@@ -91,6 +91,23 @@ public class EventActivity extends AppCompatActivity {
             } else {
                 purchaseButton = addPurchaseButton("Purchase Another Ticket");
             }
+
+            purchaseButton.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+//                    Event event = (Event) v.getTag();
+//                    String eventName = event.getName();
+//                    String eventID = event.getId();
+                    Intent i = new Intent(EventActivity.this, PaymentActivity.class);
+//                    i.putExtra("eventName", eventName);
+//                    i.putExtra("eventID", eventID);
+//                    i.putExtra("EMAIL", getIntent().getStringExtra("EMAIL"));
+                    startActivityForResult(i, 1);
+
+                }
+            });
+
             showView.addView(purchaseButton);
 
 

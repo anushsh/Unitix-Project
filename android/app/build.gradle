@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -21,6 +22,14 @@ android {
         }
     }
 
+    packagingOptions {
+        exclude 'META-INF/proguard/coroutines.pro'
+    }
+//    compileOptions {
+//        sourceCompatibility = 1.8
+//        targetCompatibility = 1.8
+//    }
+
 }
 
 dependencies {
@@ -32,4 +41,5 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation files('Macintosh HD/Users/yashkilla/Desktop/json-simple-1.1.1')
+    implementation 'com.stripe:stripe-android:14.2.1'
 }
