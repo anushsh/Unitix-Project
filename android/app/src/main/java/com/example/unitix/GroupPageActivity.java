@@ -65,14 +65,11 @@ public class GroupPageActivity extends AppCompatActivity {
         }
     }
 
-
-//    LinearLayout feed = findViewById(R.id.group_feed);
-//    TextView followingStatusText = new TextView(getApplicationContext());
-//            followingStatusText.setText("Following " + name);
-//            feed.addView(followingStatusText);
     public void onFollowButtonClick(View v) {
+        //TODO: THIS PART COMMENTED OUT DOENS'T WORK AND THROWS FILENOTFOUND EXCEPTION?!?!?!
 //        Log.e("KARA", "before ds.follow group groupID: " + groupID);
-//        if (ds.followGroup(email, groupID)) {
+//        boolean success = ds.followGroup(email, groupID);
+//        if (success) {
 //            showFollowSuccessToast();
 //        } else {
 //            showFollowFailureToast();
@@ -82,31 +79,6 @@ public class GroupPageActivity extends AppCompatActivity {
         TextView followingStatus = findViewById(R.id.following_status);
         followingStatus.setText("Following " + name);
     }
-
-//    void addFollowButton() {
-//        LinearLayout feed = findViewById(R.id.group_feed);
-//        final Button followButton = new Button(getApplicationContext());
-//        followButton.setText("Follow");
-//        //followButton.setTag(groupID);
-//        Log.e("KARA", "in addFollowButton groupID: " + groupID);
-//        feed.addView(followButton);
-//        followButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //TODO: DATABASE STUFF TO ADD GROUP TO FOLLOWING
-//                Log.e("KARA", "before ds.follow group groupID: " + groupID);
-//                if (ds.followGroup(email, groupID)) {
-//                    showFollowSuccessToast();
-//                } else {
-//                    showFollowFailureToast();
-//                }
-//                followButton.setVisibility(View.GONE);
-//                TextView followingStatus = findViewById(R.id.following_status);
-//                followingStatus.setText("Following " + name);
-//            }
-//        });
-//    }
-
 
     boolean checkFollowingStatus() {
        String[] following = user.followers;

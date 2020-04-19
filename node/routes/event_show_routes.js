@@ -529,8 +529,6 @@ var getSearchResultEvents = function (req, res) {
         }
 
     });
-    // Event.find({ $or: [ { "name":{$regex:".*" + query + ".*"} }, 
-    // { "group_name":{$regex:".*" + query + ".*"} } ] }, (err, allEvents) => {
         
 }
 
@@ -575,8 +573,6 @@ var getSearchResultEventsByTag = function (req, res) {
         }
 
     });
-    // Event.find({ $or: [ { "name":{$regex:".*" + query + ".*"} }, 
-    // { "group_name":{$regex:".*" + query + ".*"} } ] }, (err, allEvents) => {
         
 }
 
