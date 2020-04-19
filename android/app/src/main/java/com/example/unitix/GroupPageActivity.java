@@ -67,13 +67,13 @@ public class GroupPageActivity extends AppCompatActivity {
 
     public void onFollowButtonClick(View v) {
         //TODO: THIS PART COMMENTED OUT DOENS'T WORK AND THROWS FILENOTFOUND EXCEPTION?!?!?!
-//        Log.e("KARA", "before ds.follow group groupID: " + groupID);
-//        boolean success = ds.followGroup(email, groupID);
-//        if (success) {
-//            showFollowSuccessToast();
-//        } else {
-//            showFollowFailureToast();
-//        }
+        Log.e("KARA", "before ds.follow group groupID: " + groupID);
+        boolean success = ds.followGroup(email, groupID);
+        if (success) {
+            showFollowSuccessToast();
+        } else {
+            showFollowFailureToast();
+        }
         Button followButton = findViewById(R.id.followbtn);
         followButton.setVisibility(View.GONE);
         TextView followingStatus = findViewById(R.id.following_status);

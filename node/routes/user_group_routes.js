@@ -298,32 +298,86 @@ var followGroup = function (req, res) {
     console.log("******************queryEmail: " + queryEmail)
 
     User.findOne({ email: queryEmail }, (err, user) => {
+        console.log("******************userID: " + userID)
         if (err) {
             res.json({ "status": err })
         } else if (!user) {
             res.json({ 'status': 'user not found' })
         } else {
-            var userID = user.id;
-            console.log("******************userID: " + userID)
-            Group.update(
-                {_id : groupID},
-                {
-                    $push: {followers: userID}
-                }
-            )
+            user = user.toJSON();
+            var userID = user._id;
+            var following = user.following ? user.following : [];
+            following.push(groupID);
+            User.findOneAndUpdate({_id: userID}, {following: following}, (err, _) => {
+                Group.findById(groupID, (err, group) => {
+                    if (!group || err) {
+                        res.json({ "status": err })
+                    } else {
+                        group = group.toJSON();
+                        var followers = group.followers ? group.followers : []
+                        followers.push(userID)
+                        Group.findByIdAndUpdate(groupID, {followers: followers}, (err, _) => {
+                            res.json({ "status": "success" });
+                        })
+                    }
+                })
+            })
 
-            User.update(
-                {_id: userID},
-                {
-                    $push: {following: groupID}
-                }
-            
-            )
-            res.json({ "status": "success" });
+            // console.log("******************userID: " + userID)
+            // Group.update(
+            //     {_id : groupID},
+            //     {
+            //         $push: {followers: userID}
+            //     }, (err, _) => {
+            //         User.update(
+            //             {_id: userID},
+            //             {
+            //                 $push: {following: groupID}
+            //             }
+                    
+            //         ), (err, _) => {
+            //             res.json({ "status": "success" });
+            //         }
+            //     }
+            // )
         }
     })
 
 }
+
+// var addNotification = function(userID, content, callback) {
+//     var newNotification = new Notification({
+//         content: content
+//     })
+//     newNotification.save((err, notification) => {
+//         if (err || !notification) {
+//             callback("error", null);
+//         } else {
+//             User.findById(userID, (err, user) => {
+//                 if (err || !user) {
+//                     callback("error", null);
+//                 } else {
+//                     user = user.toJSON();
+//                     notification = notification.toJSON();
+//                     // get notifications if exist
+//                     var notifications = user.notifications ? user.notifications : [];
+//                     // add notification to list
+//                     notifications.push(notification._id);
+//                     User.findByIdAndUpdate(userID, {"notifications":notifications}, (err, user) => {
+//                         if (!err && user) {
+//                             // send back notification
+//                             callback(null, notification);
+//                         } else {
+//                             callback("error", null);
+//                         }
+//                     })
+
+//                 }
+//             });
+//         }
+//     });
+
+// }
 
 module.exports = {
     get_group: getGroup,

@@ -534,7 +534,7 @@ var getSearchResultEvents = function (req, res) {
 
 var getSearchResultEventsByTag = function (req, res) {
     var query = req.query.searchQuery;
-    console.log("**************" + query);
+   //console.log("**************" + query);
 
     //TODO: COME BACK AND CHANGE "group" to "group_name" once that is updated in event creation
     Event.find({ tags: { $in: [query] } }, (err, allEvents) => {
@@ -551,7 +551,7 @@ var getSearchResultEventsByTag = function (req, res) {
                     async.forEach(event.shows, (showID, done2) => {
                         Show.findById(showID, (err, show) => {
                             if (!err && show) {
-                                console.log(show.toJSON());
+                                //console.log(show.toJSON());
                                 shows.push(show.toJSON());
                             } else {
                                 console.log(err);
@@ -564,7 +564,7 @@ var getSearchResultEventsByTag = function (req, res) {
                         done1();
                     });
                 }, () => {
-                    console.log("**************events.length: " + events.length)
+                    //console.log("**************events.length: " + events.length)
                     res.json({
                         'status': 'success',
                         'events': events
