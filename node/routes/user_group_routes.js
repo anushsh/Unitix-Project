@@ -8,48 +8,21 @@ var async = require('async')
 
 var getGroup = function (req, res) {
     //req.session.user has the email of the group, so we query for the full object
-    Group.findOne({ email: req.session.user }, (err, group) => {
-        !err && group ? res.send({ 'status': 'success', 'group': group }) : res.send({ 'status': err })
+    Group.findOne({email:req.session.user}, (err, group) => {
+        !err && group ? res.send({'status': 'success', 'group': group}) : res.send({'status':err})
     })
 }
 
 var getGroupByID = function (req, res) {
     Group.findById(req.query.groupID, (err, group) => {
-        !err && group ? res.json({ "group": group }) : res.json({ "err": err })
-    })
-}
-
-var getFollowedGroups = function (req, res) {
-    User.findOne({email: req.query.email}, (err, user) => {
-        if (err) {
-            console.log("Error getting user by email." + err)
-            res.json([])
-        }
-        else {
-            groups = []
-            async.forEach(user.following, (groupID, done) => {
-                Group.findById(groupID, (err, group) => {
-                    if (err) console.log("error getting group by id." + err)
-                    else {
-                        groups.push(group)
-                    }
-                    done()
-                })
-            }, () => {
-                console.log("COLLECTED FOLLOWING GROUPS:")
-                console.log(groups)
-                res.json({
-                    "status":"success","following":groups
-                })
-            })
-        }
+        !err && group ? res.json({"group":group}) : res.json({"err":err})
     })
 }
 
 
 // TODO: make into helper
 var getGroupWithEvents = function (req, res) {
-    Group.findOne({ email: req.session.user }, (err, group) => {
+    Group.findOne({email:req.session.user}, (err, group) => {
         if (!err && group) {
             group = group.toJSON();
             var currentEvents = [];
@@ -62,16 +35,16 @@ var getGroupWithEvents = function (req, res) {
                 })
             }, () => {
                 group.currentEvents = currentEvents;
-                res.json({ 'status': 'success', "group": group });
+                res.json({'status':'success',"group":group});
             });
         } else {
-            res.json({ 'status': err });
+            res.json({'status':err});
         }
     });
 }
 
 // helper to find event pre-populated with shows
-var getEventWithShows = function (eventID, callback) {
+var getEventWithShows= function(eventID, callback) {
     Event.findById(eventID, (err, event) => {
         if (!err && event) {
             event = event.toJSON();
@@ -98,17 +71,17 @@ var getEventWithShows = function (eventID, callback) {
 
 
 
-var getUserTickets = function (req, res) {
+var getUserTickets = function(req, res) {
     var email = req.query.email;
-    User.findOne({ "email": email }, (err, user) => {
+    User.findOne({"email":email}, (err, user) => {
         user = user.toJSON();
         if (!err && user) {
             var ticketIDs = user.curr_tickets ? user.curr_tickets : [];
             getAllTickets(ticketIDs, (tickets) => {
-                res.json({ "status": "success", "tickets": tickets })
+                res.json({"status":"success","tickets":tickets})
             });
         } else {
-            res.json({ "status": "error" })
+            res.json({"status":"error"})
         }
     })
 }
@@ -129,15 +102,15 @@ function getAllTickets(ticketIDs, callback) {
     });
 }
 
-function getAllGroups(_, res) {
+function getAllGroups (_, res) {
     var groups = [];
     Group.find((err, allGroups) => {
         if (err) {
-            res.json({ "status": err })
+            res.json({"status" : err })
         } else {
             res.json({
-                'status': 'success',
-                'groups': allGroups
+                'status' : 'success',
+                'groups' : allGroups
             })
         }
         console.log("GROUPS ARRAY");
@@ -160,9 +133,9 @@ function getAllGroups(_, res) {
 // })
 
 // TODO: is this gonna change to be different from one above?
-var getUserShowInfo = function (req, res) {
+var getUserShowInfo = function(req, res) {
     var email = req.query.email;
-    User.findOne({ "email": email }, (err, user) => {
+    User.findOne({"email":email}, (err, user) => {
         user = user.toJSON();
         if (!err && user) {
             var tickets = [];
@@ -175,10 +148,10 @@ var getUserShowInfo = function (req, res) {
                     done();
                 })
             }, () => {
-                res.json({ "status": "success", "tickets": tickets })
+                res.json({"status":"success","tickets":tickets})
             });
         } else {
-            res.json({ "status": "error" })
+            res.json({"status":"error"})
         }
     })
 }
@@ -188,12 +161,10 @@ var updateGroup = (req, res) => {
     // console.log("REQ");
     // console.log(req.body);
     // console.log(req.session.user);
-    Group.findOneAndUpdate({ email: req.session.user }, {
-        password: req.body.password,
-        displayName: req.body.groupName, groupType: req.body.groupType, bio: req.body.bio, stripe: (req.body.stripe)
-    }, { new: true }, (err, user) => {
+    Group.findOneAndUpdate({email: req.session.user}, {password: req.body.password,
+    displayName: req.body.groupName, groupType: req.body.groupType, bio: req.body.bio, stripe: req.body.stripe}, {new: true}, (err, user) => {
         if (err) {
-            res.json({ 'status': err })
+            res.json({'status': err})
         } else {
             res.redirect('/profile');
         }
@@ -213,23 +184,23 @@ var createGroup = (req, res) => {
         bio: req.body.groupBio,
         followers: []
     })
-    Group.findOne({ email: req.body.email }, (err, user) => {
+    Group.findOne({email: req.body.email}, (err, user) => {
         if (err) {
             console.log(err);
-            res.json({ 'status': err })
+            res.json({'status': err})
         } else {
-            if (!user) {
+            if (!user){
                 console.log("No user exists!");
                 newUser.save((err) => {
                     if (err) {
-                        res.json({ 'status': err })
+                        res.json({'status': err})
                     } else {
                         res.redirect('/home');
                     }
                 })
             } else {
                 console.log('Group already exists!');
-                res.render('register.ejs', { message: 'Group already exists!' });
+                res.render('register.ejs', {message: 'Group already exists!'});
             }
         }
     })
@@ -283,113 +254,20 @@ var findUser = function (req, res) {
 
 var updateUser = function (req, res) {
 
-    User.findOneAndUpdate({ email: req.body.email }, {
-        $set: {
-            password: req.body.password,
-            first_name: req.body.first_name, last_name: req.body.last_name, phone: req.body.phone
-        }
-    }, (err, user) => {
+    User.findOneAndUpdate({email: req.body.email}, {$set: {password: req.body.password,
+         first_name: req.body.first_name, last_name: req.body.last_name, phone: req.body.phone}}, (err, user) => {
         if (err) {
-            res.json({ 'status': err })
+            res.json({'status': err})
         } else {
             res.json({ 'status': 'success' })
         }
     })
 }
 
-var followGroup = function (req, res) {
-    var groupID = req.body.groupID
-    var queryEmail = req.body.email;
-    console.log("***********groupID: " + groupID)
-    console.log("******************queryEmail: " + queryEmail)
-
-    User.findOne({ email: queryEmail }, (err, user) => {
-        console.log("******************userID: " + userID)
-        if (err) {
-            res.json({ "status": err })
-        } else if (!user) {
-            res.json({ 'status': 'user not found' })
-        } else {
-            user = user.toJSON();
-            var userID = user._id;
-            var following = user.following ? user.following : [];
-            following.push(groupID);
-            User.findOneAndUpdate({_id: userID}, {following: following}, (err, _) => {
-                Group.findById(groupID, (err, group) => {
-                    if (!group || err) {
-                        res.json({ "status": err })
-                    } else {
-                        group = group.toJSON();
-                        var followers = group.followers ? group.followers : []
-                        followers.push(userID)
-                        Group.findByIdAndUpdate(groupID, {followers: followers}, (err, _) => {
-                            res.json({ "status": "success" });
-                        })
-                    }
-                })
-            })
-
-            // console.log("******************userID: " + userID)
-            // Group.update(
-            //     {_id : groupID},
-            //     {
-            //         $push: {followers: userID}
-            //     }, (err, _) => {
-            //         User.update(
-            //             {_id: userID},
-            //             {
-            //                 $push: {following: groupID}
-            //             }
-                    
-            //         ), (err, _) => {
-            //             res.json({ "status": "success" });
-            //         }
-            //     }
-            // )
-        }
-    })
-
-}
-
-// var addNotification = function(userID, content, callback) {
-//     var newNotification = new Notification({
-//         content: content
-//     })
-//     newNotification.save((err, notification) => {
-//         if (err || !notification) {
-//             callback("error", null);
-//         } else {
-//             User.findById(userID, (err, user) => {
-//                 if (err || !user) {
-//                     callback("error", null);
-//                 } else {
-//                     user = user.toJSON();
-//                     notification = notification.toJSON();
-//                     // get notifications if exist
-//                     var notifications = user.notifications ? user.notifications : [];
-//                     // add notification to list
-//                     notifications.push(notification._id);
-//                     User.findByIdAndUpdate(userID, {"notifications":notifications}, (err, user) => {
-//                         if (!err && user) {
-//                             // send back notification
-//                             callback(null, notification);
-//                         } else {
-//                             callback("error", null);
-//                         }
-//                     })
-
-//                 }
-//             });
-//         }
-//     });
-
-// }
-
 module.exports = {
     get_group: getGroup,
     get_group_by_id: getGroupByID,
     get_group_with_events: getGroupWithEvents,
-    get_followed_groups: getFollowedGroups,
     get_user_tickets: getUserTickets,
     get_user_show_info: getUserShowInfo,
     update_group: updateGroup,
@@ -397,6 +275,5 @@ module.exports = {
     create_user: createUser,
     find_user: findUser,
     update_user: updateUser,
-    get_all_groups: getAllGroups,
-    follow_group: followGroup
+    get_all_groups: getAllGroups
 }

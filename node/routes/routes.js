@@ -20,7 +20,7 @@ var getHome = function (req, res) {
             msg = req.query.msg
         }
         res.render('home.ejs');
-
+        
     }
 }
 
@@ -29,22 +29,22 @@ var getLogin = (req, res) => {
     if (req.session.user) {
         res.redirect("/home");
     }
-    res.render('login.ejs', { message: "" });
+    res.render('login.ejs', {message: ""});
 }
 
 var getRegister = (req, res) => {
-    res.render('register.ejs', { message: "" });
+    res.render('register.ejs', {message: ""});
 }
 
 //Checking login details
 var checkLogin = (req, res) => {
-    Group.findOne({ email: req.body.email, password: req.body.password }, (err, user) => {
+    Group.findOne({email: req.body.email, password: req.body.password}, (err, user) => {
         if (err) {
             console.log(err);
-            res.json({ 'status': err })
+            res.json({'status': err})
         } else {
             if (!user) {
-                res.render('login.ejs', { message: "Invalid email credentials! Try again!" });
+                res.render('login.ejs', {message: "Invalid email credentials! Try again!"});
             } else {
                 req.session.user = req.body.email;
                 res.redirect('/home');
@@ -54,18 +54,15 @@ var checkLogin = (req, res) => {
 
 }
 
-
 var getProfile = (req, res) => {
     if (req.session.user) {
-        Group.findOne({ email: req.session.user }, (err, user) => {
+        Group.findOne({email: req.session.user}, (err, user) => {
             if (err) {
-                res.json({ success: false, error: err })
+                res.json({success: false, error: err})
             } else {
-                res.render('profile.ejs', {
-                    email: user.email, password: user.password,
-                    displayName: user.displayName, groupType: user.groupType,
-                    bio: user.bio, followers: user.followers, stripe: (user.stripe)
-                })
+                res.render('profile.ejs', {email: user.email, password: user.password, 
+                    displayName: user.displayName, groupType: user.groupType, 
+                    bio: user.bio, followers: user.followers, stripe: user.stripe})
             }
         })
     } else {
@@ -77,14 +74,14 @@ var getCreateEvent = function (req, res) {
     if (req.session.user == null) {
         res.redirect('/login');
     }
-    res.render('create_event.ejs', { "group_email": req.session.user })
+    res.render('create_event.ejs', {"group_email": req.session.user})
 }
 
 var getEditEvent = function (req, res) {
     if (req.session.user == null) {
         res.redirect('/login')
     }
-    res.render('edit_event.ejs', { "name": req.params.event })
+    res.render('edit_event.ejs', {"name":req.params.event})
     // Event.findOne({name:req.params.event}, (err, event) => {
     //     !err && event ? res.render('edit_event.ejs', {"event":event}) : res.json({"err":err})
     // })
@@ -97,26 +94,26 @@ var addEventTag = function (req, res) {
     res.render('create_event.ejs')
 }
 
-var getLogout = function (req, res) {
-    if (req.session.user) {
+var getLogout = function(req, res) {
+    if (req.session.user){
         req.session.destroy();
     }
     msg = ""
     res.redirect('/');
 };
 
-var getFollowerNames = function (req, res) {
-    Group.findOne({ email: req.session.user }, (err, group) => {
+var getFollowerNames = function(req, res) {
+    Group.findOne({email: req.session.user}, (err, group) => {
         if (err) {
-            res.json({ success: false, error: err })
+            res.json({success: false, error: err})
         } else {
             var followerObjects = [];
-
+            
             async.forEach(group.followers, (followerID, done) => {
                 User.findById(followerID, (err, follower) => {
                     if (!err && follower) {
                         //follower = follower.toJSON();
-                        followerObjects.push({ firstName: follower.first_name, lastName: follower.last_name });
+                        followerObjects.push({firstName: follower.first_name, lastName: follower.last_name});
                         done();
                     } else {
                         followerObjects = [] // something went wrong, just return empty array
@@ -130,7 +127,7 @@ var getFollowerNames = function (req, res) {
     })
 }
 
-var getFollowers = function (req, res) {
+var getFollowers = function(req, res) {
     if (req.session.user) {
         res.render('group_followers.ejs')
     } else {
@@ -146,16 +143,16 @@ var getPayment = async (req, res) => {
         currency: 'usd',
         description: 'Demo charge',
         source: stripeToken,
-    }, async function (err, charge) {
-        if (err) {
-            res.json({
-                success: false,
-                message: "Error"
-            });
-        } else {
-            res.json(charge);
-        }
-    });
+      }, async function (err, charge) {
+          if (err) {
+              res.json({
+                  success: false,
+                  message: "Error"
+              });
+          } else {
+              res.json(charge);
+          }
+      });
 }
 
 module.exports = {
