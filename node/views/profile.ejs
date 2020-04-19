@@ -16,7 +16,14 @@
         })
 
         function displayFollowerCount() {
-            document.getElementById("followerCount").innerHTML = "Followers: <%= followers.length%>";
+            // document.getElementById("followerCount").innerHTML = "Followers: <%= followers.length%>";
+            $.get("/get_follower_names", (followers) => {
+                console.log(followers)
+                if (followers == []) {
+                    $("#followerCount").val(0)
+                }
+                $("#followerCount").append(followers.length)
+            })
         }
 
     </script>
@@ -76,7 +83,7 @@
 
         <div class="column">
             <p class="subtitle is-3" id="followerCount">Followers:</p>
-            <button class="button is-link" type="submit" onclick="location.href = '/followers';">View Follwers</button>
+            <button class="button is-link" type="submit" onclick="location.href = '/followers';">View Followers</button>
             <br><br>
             <p class="subtitle is-3">Current Events</p>
             <button class="button is-link" type="submit" onclick="location.href = '/create_event';">Create New Event</button>
