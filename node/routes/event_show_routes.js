@@ -534,6 +534,52 @@ var getSearchResultEvents = function (req, res) {
         
 }
 
+var getSearchResultEventsByTag = function (req, res) {
+    var query = req.query.searchQuery;
+    console.log("**************" + query);
+
+    //TODO: COME BACK AND CHANGE "group" to "group_name" once that is updated in event creation
+    Event.find({ tags: { $in: [query] } }, (err, allEvents) => {
+        if (err) {
+            res.json({ 'status': err })
+        } else if (allEvents.length == 0) {
+            res.json({ 'status': 'no events' })
+        } else {
+            events = [];
+            async.forEach(allEvents,
+                (event, done1) => {
+                    event = event.toJSON();
+                    var shows = []; // will contain actual shows
+                    async.forEach(event.shows, (showID, done2) => {
+                        Show.findById(showID, (err, show) => {
+                            if (!err && show) {
+                                console.log(show.toJSON());
+                                shows.push(show.toJSON());
+                            } else {
+                                console.log(err);
+                            }
+                            done2();
+                        });
+                    }, () => {
+                        event.shows = shows; // replace ID's with actual shows
+                        events.push(event);
+                        done1();
+                    });
+                }, () => {
+                    console.log("**************events.length: " + events.length)
+                    res.json({
+                        'status': 'success',
+                        'events': events
+                    })
+                })
+        }
+
+    });
+    // Event.find({ $or: [ { "name":{$regex:".*" + query + ".*"} }, 
+    // { "group_name":{$regex:".*" + query + ".*"} } ] }, (err, allEvents) => {
+        
+}
+
 
 module.exports = {
     create_shows: createShows,
@@ -552,5 +598,6 @@ module.exports = {
     update_event_overview: updateEventOverview,
     delete_event: deleteEvent,
     get_search_result_events: getSearchResultEvents,
-    get_change: getChange
+    get_change: getChange,
+    get_search_result_by_tag: getSearchResultEventsByTag
 }

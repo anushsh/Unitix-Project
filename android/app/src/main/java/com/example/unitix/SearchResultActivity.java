@@ -3,6 +3,7 @@ package com.example.unitix;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -49,8 +50,25 @@ public class SearchResultActivity extends AppCompatActivity {
     public void onSearchButtonClick(View view) {
         EditText searchQuery = (EditText) findViewById(R.id.search_query_input);
         query = searchQuery.getText().toString();
-        // execute in background to keep main thread smooth
-        AsyncTask<Integer,Integer, Event[]> task = new SearchResultActivity.HandleSearch();
+
+        Spinner searchSpinner = (Spinner) findViewById(R.id.search_spinner);
+        String selectedSearchSetting = searchSpinner.getSelectedItem().toString();
+
+        AsyncTask<Integer,Integer, Event[]> task = new AsyncTask<Integer, Integer, Event[]>() {
+            @Override
+            protected Event[] doInBackground(Integer... integers) {
+                return new Event[0];
+            }
+        };
+
+        if (selectedSearchSetting.equals("Title, Group, Descrip.")) {
+            task = new SearchResultActivity.HandleSearch();
+        } else if (selectedSearchSetting.equals("Tag")) {
+            task = new SearchResultActivity.HandleTagSearch();
+        }
+
+//        // execute in background to keep main thread smooth
+//        AsyncTask<Integer,Integer, Event[]> task = new SearchResultActivity.HandleTagSearch();
         // allow for parallel execution
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
@@ -66,14 +84,27 @@ public class SearchResultActivity extends AppCompatActivity {
         }
     }
 
-    void addSearchResultsToPage(Event[] events) {
-        feed = findViewById(R.id.event_feed);
+    private class HandleTagSearch extends AsyncTask<Integer, Integer, Event[]> {
+        protected Event[] doInBackground(Integer... ints) {
+            return ds.getEventSearchResultsByTag(query);
+        }
+        protected void onPostExecute(Event[] events) {
+            Log.e("Kara","dashboard received events(search by tag), got " + events.length);
+            addSearchResultsToPage(events);
+        }
+    }
 
+    void addSearchResultsToPage(Event[] events) {
+        Log.e("KARA", "in addSearchResultsToPage events.length: " + events.length);
+        feed = findViewById(R.id.event_feed);
+        feed.removeAllViews();
         for (Event event : events) {
             List<Show> shows = event.getShows();
             if (shows.size() == 0) {
+                Log.e("KARA", "EVENTS WITH 0 SHOWS");
                 continue;
             }
+            Log.e("KARA", "event with more than 0 shows");
             LinearLayout eventView = new LinearLayout(getApplicationContext());
             eventView.setOrientation(LinearLayout.VERTICAL);
 
@@ -116,7 +147,7 @@ public class SearchResultActivity extends AppCompatActivity {
                 }
             });
 
-            feed.removeAllViews();
+
             feed.addView(eventView);
         }
     }

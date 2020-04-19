@@ -150,6 +150,25 @@ public class DataSource {
         return events;
     }
 
+    public Event[] getEventSearchResultsByTag(String searchQuery) {
+        Event[] events = new Event[0];
+        try {
+            URL url = new URL(host + ":" + port + "/get_search_result_events_by_tag?searchQuery="+searchQuery);
+            AsyncTask<URL, String, JSONObject> task =
+                    new AccessWebJSONTask();
+            task.execute(url);
+            JSONObject jo = task.get();
+
+            events = Event.createEventList(jo.getJSONArray("events"));
+            Log.e("KARA", "length of events array searched by tag: " + events.length);
+        } catch (Exception e) {
+            Log.e("KARA","exception: " + e);
+            // pass
+        }
+        Log.e("KARA","about to return search event results, got" + events.length);
+        return events;
+    }
+
     public Group getGroupByID(String groupID) {
         try {
             URL url = new URL(host + ":" + port + "/get_group_by_id?groupID=" + groupID);

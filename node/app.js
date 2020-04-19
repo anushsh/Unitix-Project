@@ -73,6 +73,7 @@ app.get('/get_show_with_tickets', event_show_routes.get_show_with_tickets);
 app.post('/update_event_overview', event_show_routes.update_event_overview)
 app.get('/delete_event', event_show_routes.delete_event)
 app.get('/get_search_result_events', event_show_routes.get_search_result_events);
+app.get('/get_search_result_events_by_tag', event_show_routes.get_search_result_by_tag);
 app.get('/get_change', event_show_routes.get_change)
 app.get('/get_shows_for_event', event_show_routes.get_shows_for_event)
 
