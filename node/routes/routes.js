@@ -110,7 +110,6 @@ var getFollowerNames = function(req, res) {
             var followerObjects = [];
             
             async.forEach(group.followers, (followerID, done) => {
-                console.log("IN GROUP FOLLOWERS LOOP")
                 User.findById(followerID, (err, follower) => {
                     if (!err && follower) {
                         //follower = follower.toJSON();

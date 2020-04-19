@@ -16,14 +16,7 @@
         })
 
         function displayFollowerCount() {
-            // document.getElementById("followerCount").innerHTML = "Followers: <%= followers.length%>";
-            $.get("/get_follower_names", (followers) => {
-                console.log(followers)
-                if (followers == []) {
-                    $("#followerCount").val(0)
-                }
-                $("#followerCount").append(followers.length)
-            })
+            $.get("/get_follower_names", (followers) => $("#followerCount").append(followers.length))
         }
 
     </script>
