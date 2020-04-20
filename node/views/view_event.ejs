@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include head_imports.html %>
+    <!-- import processing library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/p5.js"></script>
+    <script type="text/javascript">
+
+        var group // populated by getGroup() which is in helper.js
+        var event // populated with getEvent() (includes all show information)
+
+        // for graphing
+        var graphPoints = [];
+        var earliest;
+        var latest;
+        var lowY;
+        var highY;
+
+        // on document start
+        $(document).ready(function () {
+            getGroup()
+            getEvent()
+        })
+
+        function getEvent() {
+            $.get("/get_event_by_name", {
+                eventName: $("#eventName").html()
+            }, (data) => {
+                event = data.event
+                console.log("event below")
+                $.get("/find_event_with_shows",{"eventID":event._id}, (data) => {
+                    console.log("here");
+                    event = data.event;
+                    loadStats();
+                })
+                
+            })
+            
+        }
+
+        function getDate(dateString) {
+            var parts = dateString.split('-').map(part => {return parseInt(part, 10)});
+            return new Date(parts[2], parts[0] - 1 /* (0 index) */, parts[1])
+        }
+
+        function createCanvas(id) {
+            return '<canvas id="'+id+'" width="200" height="100"style="border:1px solid #c3c3c3;">'
+        }
+
+        function scale(val, lower, upper, scale) {
+            return (val - lower) / upper * scale;
+        }
+
+        function processPoints(data) {
+            // -- format and sort data
+            sorted = data.map((x) => {return [getDate(x[0]), x[1]]}).sort((a,b) => {return a[0] - b[0]});
+            // -- find date ranges
+            earliest = sorted[0][0];
+            latest = sorted[sorted.length - 1][0];
+            console.log(earliest);
+            console.log(latest);
+
+            // -- points should be (int, int)
+            const toDay = 86400000; // number of ms in a day
+            var points = sorted.map(x => {return [Math.round((x[0] - earliest) / toDay), x[1]]})
+            var minWidth = -Math.max(...points.map(x => {return -x[0]}));
+            var minHeight = 0;
+            //-Math.max(...points.map(x => {return -x[1]}));
+            var maxWidth = Math.max(...points.map(x => {return x[0]}));
+            var maxHeight = Math.max(...points.map(x => {return x[1]}));
+            lowY = 0;
+            highY = maxHeight;
+            
+            var fraction = 0.9;
+            
+            graphPoints = points.map(x => {return [scale(x[0], minWidth, maxWidth, width * fraction),
+                scale(x[1], minHeight, maxHeight, height * fraction)]});
+
+            // TODO: fill in zeros
+
+            graphPoints = graphPoints.map(x => {return [x[0], height - x[1]]}); // since graph is flipped
+            console.log(graphPoints);
+        }
+
+
+        function addId(id, content) {
+            return '<li id="' + id + '">' + content + '</li>'
+        }
+
+        function loadStats() {
+            // TODO: get data based on current view
+            const data = [
+                ['03-05-2020',3],
+                ['03-06-2020',2],
+                ['03-08-2020',1],
+                ['03-09-2020',3]
+            ]
+            // send data to be formatted and graphed
+            processPoints(data);
+
+        }
+
+        function formatDate(d) {
+            const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d)
+            const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d)
+            const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d)
+            return `${mo}, ${da} ${ye}`;
+        }
+
+        const width = 500;
+        const height = 300;
+
+        // this code handles the graphing
+        let sketch = function(p) {
+            // runs at start 
+            p.setup = function() {
+                p.createCanvas(width, height);
+            }
+            // draws once per frame
+            p.draw = function() {
+                // background is white
+                p.background(255);
+                // zoom out
+                p.translate(p.width/2, p.height/2);
+                p.scale(.8);
+                p.translate(-p.width/2,-p.height/2);
+                p.fill(100);
+                // draw graph points
+                for (point of graphPoints) {
+                    p.ellipse(point[0], point[1], 10);
+                }
+                // draw connecting lines
+                for (var i = 0; i < graphPoints.length - 1; i++) {
+                    var p1 = graphPoints[i];
+                    var p2 = graphPoints[i+1];
+                    p.line(p1[0], p1[1], p2[0], p2[1]);
+                }
+                // borders
+                p.line(0, 0, width, 0);
+                p.line(0, height, width, height);
+                p.line(0, 0, 0, height);
+                p.line(width, 0, width, height);
+                // axes
+                p.textAlign(p.CENTER, p.CENTER);
+                // x-axis
+                p.text("Time", width/2, height + 10);
+                p.text(formatDate(earliest), 10, height + 10);
+                p.text(formatDate(latest), width - 10, height + 10);
+                // y-axis
+                p.textAlign(p.RIGHT, p.CENTER);
+                p.text("Sales", -5, height/2);
+                p.text(highY, -3, 0);
+                p.text(lowY, -3, height);
+            }
+  };
+  new p5(sketch, 'eventInfo');
+
+
+
+    </script>
+</head>
+
+<body>
+    <% include header.html %>
+
+    <div class="container has-text-centered">
+        <h2 class="subtitle" id="greeting">View your event, </h2>
+    </div>
+
+    <div class="container">
+        <div class="box">
+            <h3 id="eventName" ><%= name%> (NOTE: this data is made up!)</h3>
+            <div id="eventInfo"></div>
+
+        
+
+
+    </div>
+
+        
+
+        
+    </div>
+</body>
+
+</html>

@@ -47,10 +47,15 @@
     return [parts[1], parts[2] + ",", parts[0]].join(" ");
  }
 
+ const EVENT_NOTIFY_TEXT = "Notify everyone";
+ const SHOW_NOTIFY_TEXT = "Notify this show";
+ const TOGGLE_ATTENDEES_TEXT = "View/Check in Attendees"
+
+ // dynamically creates html for groups to interact with events
  function displayEvent(event) {
     var display = '<div class="box">';
     display += "<p class=\"subtitle is-5\">" + event.name + "</p>";
-    display += createButton("Notify all ticket holders", "showNotifyEvent", event._id, "button is-small",
+    display += createButton(EVENT_NOTIFY_TEXT, "showNotifyEvent", event._id, "button is-small",
         "event_notification_button"+event._id);
     display += '<div id="eventNotifyText' + event._id + '"></div>'
     display += "<br>"
@@ -60,16 +65,18 @@
         var list = "<ul id=\"" + show._id + "\"></ul>";
         var name = "Show #" + showNumber + " on " + prettyDate(show.start_date) + " at " + prettyTime(show.start_time);
         var tickets = "<br>Tickets sold: " + show.tickets_sold;
-        var btn1 = createButton("View Attendees", "viewShow", show._id, "button is-small","show_button"+show._id);
-        var btn2 = createButton("Notify Ticket Holders (this show only)", "showNotifyShow", show._id, "button is-small",
+        var btn1 = createButton(TOGGLE_ATTENDEES_TEXT, "viewShow", show._id, "button is-small","show_button"+show._id);
+        var btn2 = createButton(SHOW_NOTIFY_TEXT, "showNotifyShow", show._id, "button is-small",
         "show_notification_button" + show._id);
         var notificationBox = '<div id="showNotifyText' + show._id + '"></div>';
         display +=  name + tickets + "<br>" + 
             btn1 + btn2 + notificationBox + list + "<br>";
         showNumber += 1;
     });            
-    var footer =   '<footer class="card-footer">'+
-    '<a href="/edit_event/'+encodeURI(event.name)+'" class="card-footer-item">Edit Event</a></footer>';
+    var footer =   '<footer class="card-footer">';
+    footer += '<a href="/edit_event/'+encodeURI(event.name)+'" class="card-footer-item">Edit Event</a>'
+    footer += '<a href="/view_stats/'+encodeURI(event.name)+'" class="card-footer-item">Statistics</a>'
+    footer += '</footer>';
     display += footer;
     display += ' </div>'
     return display;
@@ -98,8 +105,7 @@ function showNotify(id, isShow) {
     // if notification form is already open...
     if (btn.val() == "on") {
         // close it and restore button text
-        var msg = "Notify all ticket holders";
-        msg = isShow ? 'Notify Ticket Holders (this show only)' : msg;
+        var msg = isShow ? SHOW_NOTIFY_TEXT : EVENT_NOTIFY_TEXT;
         btn.html(msg); 
         btn.prop("value","off");
         $("#" + type + "NotifyText" + id).html(""); 
@@ -177,7 +183,7 @@ function requestTicket(ticketID) {
 function viewShow(showID) {
     var btn = $("#show_button" + showID);
     if (btn.val() == "on") {
-        btn.html("View attendees");
+        btn.html(TOGGLE_ATTENDEES_TEXT);
         btn.prop("value","off");
         $("#" + showID).html("");
     } else {

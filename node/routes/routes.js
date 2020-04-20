@@ -87,6 +87,16 @@ var getEditEvent = function (req, res) {
     // })
 }
 
+var getViewStats = function (req, res) {
+    if (req.session.user == null) {
+        res.redirect('/login')
+    }
+    res.render('view_event.ejs', {"name":req.params.event})
+    // Event.findOne({name:req.params.event}, (err, event) => {
+    //     !err && event ? res.render('edit_event.ejs', {"event":event}) : res.json({"err":err})
+    // })
+}
+
 
 // TODO: need to talk to Michael about how adding tags will work
 var addEventTag = function (req, res) {
@@ -166,6 +176,7 @@ module.exports = {
     get_logout: getLogout,
     get_profile: getProfile,
     get_edit_event: getEditEvent,
+    get_view_stats: getViewStats,
     get_follower_names: getFollowerNames,
     get_followers: getFollowers,
     payment: getPayment

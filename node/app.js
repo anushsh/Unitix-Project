@@ -39,6 +39,7 @@ app.get('/logout', routes.get_logout);
 app.get('/create_event', routes.get_create_event)
 app.get('/get_message', routes.get_message)
 app.get('/edit_event/:event', routes.get_edit_event)
+app.get('/view_stats/:event', routes.get_view_stats)
 app.get('/followers', routes.get_followers)
 app.get('/get_follower_names', routes.get_follower_names)
 
