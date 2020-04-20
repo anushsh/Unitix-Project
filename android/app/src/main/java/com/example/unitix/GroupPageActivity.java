@@ -27,8 +27,6 @@ import org.w3c.dom.Text;
 public class GroupPageActivity extends AppCompatActivity {
 
     DataSource ds = new DataSource();
-    Event event;
-    Group group;
     User user;
     private String email;
     String groupID;
@@ -66,7 +64,6 @@ public class GroupPageActivity extends AppCompatActivity {
     }
 
     public void onFollowButtonClick(View v) {
-        //TODO: THIS PART COMMENTED OUT DOENS'T WORK AND THROWS FILENOTFOUND EXCEPTION?!?!?!
         Log.e("KARA", "before ds.follow group groupID: " + groupID);
         boolean success = ds.followGroup(email, groupID);
         if (success) {

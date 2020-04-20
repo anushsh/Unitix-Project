@@ -3,7 +3,6 @@ package com.example.unitix;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -40,8 +39,6 @@ public class MainActivity extends AppCompatActivity {
             Log.e("NOAH","user is logged in");
             Intent i = new Intent(this, DashboardActivity.class);
 
-            // pass along current user email
-            i.putExtra("EMAIL", manager.getUser().getId());
             startActivityForResult(i, 1);
         }
 
@@ -61,9 +58,6 @@ public class MainActivity extends AppCompatActivity {
                 if (currPassword.equals(passwordText)) {
                     manager.logIn(emailText);
                     Intent i = new Intent(this, DashboardActivity.class);
-
-                    // pass along current user email
-//                    i.putExtra("EMAIL", emailText);
                     startActivityForResult(i, 1);
                 } else {
                     Toast.makeText(getApplicationContext(), "Password is incorrect", Toast.LENGTH_LONG).show();
@@ -76,9 +70,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Please enter a username and a password", Toast.LENGTH_LONG).show();
 
         }
-
-        //show toast that info is incorrect is user exists
-        //if user doesn't exist, ask them to register
 
     }
 

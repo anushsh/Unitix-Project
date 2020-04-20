@@ -1,6 +1,5 @@
 package com.example.unitix;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +22,7 @@ public class EditProfileActivity extends AppCompatActivity {
     DataSource ds;
     String emailString;
     User user;
+    UserManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +37,10 @@ public class EditProfileActivity extends AppCompatActivity {
         save = (Button) findViewById(R.id.savebtn);
         cancel = (Button) findViewById(R.id.cancelbtn);
         ds = new DataSource();
+        manager = UserManager.getManager(getApplicationContext());
 
-        Intent intent = getIntent();
-        emailString = intent.getStringExtra("EMAIL");
-        this.user = this.ds.getUser(emailString);
+        this.user = manager.getUser();
+        emailString = user.getId();
 
         initializeFields();
 

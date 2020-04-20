@@ -42,7 +42,7 @@ public class EventActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String name = intent.getStringExtra("eventName");
         this.eventID = intent.getStringExtra("eventID");
-        this.user = this.ds.getUser(getIntent().getStringExtra("EMAIL"));
+        this.user = UserManager.getManager(getApplicationContext()).getUser();
         TextView eventName = findViewById(R.id.event_name);
         eventName.setText(name);
 
