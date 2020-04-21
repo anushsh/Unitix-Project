@@ -3,7 +3,7 @@
 
 <head>
     <% include head_imports.html %>
-    <!-- import processing library -->
+    <!-- import processing library (this is what i use to graph) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/p5.js"></script>
     <script type="text/javascript">
 
@@ -16,6 +16,11 @@
         var latest;
         var lowY;
         var highY;
+        var xLabel = "Time";
+        var yLabel = "Sales";
+        var graphTitle = "Ticket Sales Over Time"
+        var viewScale = .8;
+        var fraction = 0.9;
 
         // on document start
         $(document).ready(function () {
@@ -72,7 +77,7 @@
             lowY = 0;
             highY = maxHeight;
             
-            var fraction = 0.9;
+            
             
             graphPoints = points.map(x => {return [scale(x[0], minWidth, maxWidth, width * fraction),
                 scale(x[1], minHeight, maxHeight, height * fraction)]});
@@ -83,9 +88,29 @@
             console.log(graphPoints);
         }
 
+        function getData(graphPoint) {
+            var best = 1000000000;
+            var data = sorted[0];
+            for (var i = 0; i < graphPoints.length; i++) {
+                var point = graphPoints[i];
+                var err = squareDist(graphPoint[0], graphPoint[1], point[0], point[1]);
+                if (err < best) {
+                    best = err;
+                    data = sorted[i];
+                }
+            }
+            return data;
+
+
+        }
+
 
         function addId(id, content) {
             return '<li id="' + id + '">' + content + '</li>'
+        }
+
+        function iferror(x, backup) {
+            return x ? x : backup;
         }
 
         function loadStats() {
@@ -99,13 +124,47 @@
             // send data to be formatted and graphed
             processPoints(data);
 
+            var totalRevenue = 0;
+            var totalSold = 0;
+            for (show of event.shows) {
+                var price = parseFloat(show.price["$numberDecimal"]);
+                console.log(price);
+                console.log(show.tickets_sold);
+                totalRevenue += iferror(show.tickets_sold, 0) * price;
+                totalSold += iferror(show.tickets_sold, 0);
+            }
+            $("#totalRevenue").html("Total Revenue: $" + totalRevenue);
+            $("#totalSold").html("Total Number of Tickets: " + totalSold);
+
+
         }
 
         function formatDate(d) {
             const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d)
             const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d)
             const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d)
-            return `${mo}, ${da} ${ye}`;
+            return `${mo} ${da}`;
+        }
+
+        // square distance so can above using sqrt (which is very slow)
+        function squareDist(x1, y1, x2, y2) {
+            return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+        }
+
+        function getMouseX(p) {
+            return (p.mouseX - p.width/2) /  viewScale + p.width/2;
+        }
+
+        function getMouseY(p) {
+            return (p.mouseY - p.height/2) /  viewScale + p.height/2;
+        }
+
+        function getMouse(p) {
+            return [getMouseX(p), getMouseY(p)];
+        }
+
+        function withinRange(p1, p2, range) {
+            return squareDist(p1[0], p1[1], p2[0], p2[1]) < range * range;
         }
 
         const width = 500;
@@ -113,22 +172,33 @@
 
         // this code handles the graphing
         let sketch = function(p) {
+
             // runs at start 
             p.setup = function() {
                 p.createCanvas(width, height);
             }
+
             // draws once per frame
             p.draw = function() {
                 // background is white
                 p.background(255);
                 // zoom out
                 p.translate(p.width/2, p.height/2);
-                p.scale(.8);
+                p.scale(viewScale);
                 p.translate(-p.width/2,-p.height/2);
                 p.fill(100);
+                p.textSize(20);
                 // draw graph points
                 for (point of graphPoints) {
-                    p.ellipse(point[0], point[1], 10);
+                    var size = 10;
+                    // p.line(getMouseX(p), getMouseY(p), point[0], point[1]);
+                    if (withinRange(getMouse(p), point, 10)) {
+                        size = 20;
+                        p.textAlign(p.CENTER, p.CENTER);
+                        var pointData = getData(point);
+                        p.text(pointData[1],point[0], point[1] - 30);
+                    }
+                    p.ellipse(point[0], point[1], size);
                 }
                 // draw connecting lines
                 for (var i = 0; i < graphPoints.length - 1; i++) {
@@ -144,25 +214,41 @@
                 // axes
                 p.textAlign(p.CENTER, p.CENTER);
                 // x-axis
-                p.text("Time", width/2, height + 10);
-                p.text(formatDate(earliest), 10, height + 10);
-                p.text(formatDate(latest), width - 10, height + 10);
+                const belowOffset = 15;
+                p.text(xLabel, width/2, height + belowOffset);
+                p.text(formatDate(earliest), 10, height + belowOffset);
+                p.text(formatDate(latest), fraction * width - 10, height + belowOffset);
                 // y-axis
+                const leftOffset = -9;
                 p.textAlign(p.RIGHT, p.CENTER);
-                p.text("Sales", -5, height/2);
-                p.text(highY, -3, 0);
-                p.text(lowY, -3, height);
+                p.text(yLabel, -5, height/2);
+                p.text(highY ? highY : "", leftOffset, height - fraction * height);
+                p.text(lowY ? lowY : "", leftOffset, height - 10);
+                // console.log(lowY);
+                // title
+                const aboveOffset = -9;
+                p.textAlign(p.CENTER, p.CENTER);
+                p.text(graphTitle, width/2, aboveOffset);
             }
   };
-  new p5(sketch, 'eventInfo');
+  new p5(sketch, 'graph');
 
+
+  function btnClick(id) {
+      alert(id);
+  }
 
 
     </script>
 </head>
 
+
 <body>
     <% include header.html %>
+
+    <style type="text/css">
+        #dataButtons li { display:inline; }
+       </style>
 
     <div class="container has-text-centered">
         <h2 class="subtitle" id="greeting">View your event, </h2>
@@ -170,8 +256,46 @@
 
     <div class="container">
         <div class="box">
-            <h3 id="eventName" ><%= name%></h3>
-            <div id="eventInfo"></div>
+            <h2 id="eventName" ><%= name%></h2>
+                <div class="columns">
+                    <div class="column is-4">
+                        <div id="graph">
+                            <!-- graph goes here -->
+                        </div> 
+                        <h3 id="totalRevenue">total rev</h3>
+                        <h3 id="totalSold">total rev</h3>
+                    </div>
+                    <!-- <div class="column is-narrow"></div> -->
+                    <div class="column is-1"></div>
+                    <div class="column is-4">
+                        <div class="row is-narrow"></div>
+                        <div class="row is-narrow"></div>
+                        <div class="row is-narrow"></div>
+                        Change Show<br>
+                        
+                        
+                        <ul id="dataButtons">
+                            <li id="eventButton">
+                                <button id="overallButton" onClick="btnClick(this.id)"class="button is-small is-link">All Shows</button>
+                            </li>
+                            <li id="show0li">
+                                <button id= "show0Button" onClick="btnClick(this.id)" class="button is-small">Show #1</button>
+                            </li>
+
+                        </ul>
+                        <br>
+                        Change Timeframe<br>
+                        <button id ="1monthButton" class="button is-small">1 Month</button>
+                        <button id ="1weekButton" class="button is-small">1 Week</button>
+                        <button id ="allTimeButton" class="button is-small is-link">All</button>
+                        <br><br>
+                        Change Data<br>
+                        <button id ="ticketsSoldButton" class="button is-small is-link">Tickets sold</button>
+                        <button id = "revenueButton" class="button is-small">Revenue</button>                        
+                    </div>
+            </div>
+            
+            
 
         
 
