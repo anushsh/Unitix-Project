@@ -5,6 +5,7 @@ import android.util.Log;
 import com.example.unitix.server.DataSource;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class Event extends Model {
     List<Show> shows;
     String group;
 
+    JSONArray changesLazy;
     List<Change> changes;
 
 
@@ -35,7 +37,6 @@ public class Event extends Model {
 
     public Event(JSONObject jo) {
         this.shows = new ArrayList<>();
-        this.changes = new ArrayList<>();
         try {
             this.name = jo.getString("name");
             this.id = jo.getString("_id");
@@ -50,12 +51,9 @@ public class Event extends Model {
             Collections.sort(this.shows);
 
             // this is really ugly, sorry in advance
-            JSONArray changes = jo.getJSONArray("changes");
-            DataSource ds = new DataSource();
-            for (int i = 0; i < changes.length(); i++) {
-                Change change = ds.getChangeByID("" + changes.get(i));
-                if (change.isValid()) this.changes.add(change);
-            }
+
+            this.changesLazy = jo.getJSONArray("changes");
+
 
             isValid = true;
         } catch (Exception e) {
@@ -103,6 +101,19 @@ public class Event extends Model {
     }
 
     public List<Change> getChanges() {
+        Log.e("MICHAEL", "Getting changes for event");
+        if (this.changes == null) {
+            this.changes = new ArrayList<>();
+            DataSource ds = new DataSource();
+            try {
+                for (int i = 0; i < changesLazy.length(); i++) {
+                    Change change = ds.getChangeByID("" + changesLazy.get(i));
+                    if (change.isValid()) this.changes.add(change);
+                }
+            } catch (JSONException e) {
+                Log.e("MICHAEL", "Error lazily making changes for event");
+            }
+        }
         return this.changes;
     }
 }
