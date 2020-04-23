@@ -50,7 +50,6 @@ public class DashboardActivity extends AppCompatActivity {
             finish();
         }
         this.email = user.getId();
-        this.following = Arrays.asList(ds.getFollowedGroups(email));
 
         // execute in background to keep main thread smooth
         AsyncTask<Integer,Integer, Event[]> task = new HandleEventsTask();
@@ -60,6 +59,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     private class HandleEventsTask extends AsyncTask<Integer, Integer, Event[]> {
         protected Event[] doInBackground(Integer... ints) {
+            DashboardActivity.this.following = Arrays.asList(ds.getFollowedGroups(email));
             return ds.getAllEvents();
         }
         protected void onPostExecute(Event[] events) {
