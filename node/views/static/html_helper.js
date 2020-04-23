@@ -70,19 +70,51 @@
     $("#showHeaderInfo").html("Details for show " + currShowNum++)
 }
 
+
 // currently doesn't check for non-empty values.
-function storeShowInfo() {
-    shows.push({
-        name: $("#showName").val(),
-        capacity: $("#showCapacity").val(),
-        price: $("#ticketPrice").val(),
-        location: $("#showLocation").val(),
-        description: $("#description").val(),
-        date: $("#startDate").val(),
-        startTime: $("#startTime").val(),
-        endTime: $("#endTime").val()
+function storeShowInfo(callback) {
+    
+    geocoder = new google.maps.Geocoder()
+    geocoder.geocode({ 'address': $("#showLocation").val() }, (results, status) => {
+        if (status != 'OK') alert("Issue!")
+
+        //lat and lng set up
+        lat = results[0].geometry.location.lat()
+        lng = results[0].geometry.location.lng()
+        var pos = {
+            lat: lat,
+            lng: lng
+        }
+
+        // make marker
+        marker = new google.maps.Marker({
+            position: pos,
+            map: map
+        })
+
+        map.setZoom(11)
+        infoWindow = new google.maps.InfoWindow
+        infoWindow.setContent(results[0].formatted_address)
+        infoWindow.open(map, marker)
+        
+        // store info
+        shows.push({
+            name: $("#showName").val(),
+            capacity: $("#showCapacity").val(),
+            price: $("#ticketPrice").val(),
+            location: $("#showLocation").val(),
+            lat: lat,
+            lng: lng,
+            description: $("#description").val(),
+            date: $("#startDate").val(),
+            startTime: $("#startTime").val(),
+            endTime: $("#endTime").val()
+        })
+        console.log(shows)
+        addShowHTML()
+        if (callback) callback()
     })
-    addShowHTML()
+    
 }
 // --------------
 

@@ -9,14 +9,18 @@ var async = require('async')
 var createShows = function (req, res) {
     showSchemaIDs = []
 
+    console.log(req.body.shows)
     // create and save each show asynchronously. once mongo finishes saving the show, move on to the next one. won't send back id list until all are processed.
     async.forEach(req.body.shows, function (show, done) {
+        console.log(show)
         var newShow = new Show({
             name: show.name,
             capacity: show.capacity,
             tickets_sold: 0, // shows start with zero tickets sold
             price: show.price,
             location: show.location,
+            lat: show.lat,
+            lng: show.lng,
             description: show.description,
             start_date: show.date,
             end_date: show.date, // right now i'm assuming only one date, if add end date later we need to reconfigure how we store times (prob just array)
@@ -26,6 +30,7 @@ var createShows = function (req, res) {
 
         newShow.save((err, showSaved) => {
             if (err) {
+                console.log("Error saving show: " + err)
                 res.json({ 'status': err })
             } else {
                 console.log("show id: " + showSaved._id)
