@@ -19,7 +19,11 @@ import com.example.unitix.models.User;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public class DashboardActivity extends AppCompatActivity {
@@ -31,7 +35,7 @@ public class DashboardActivity extends AppCompatActivity {
     private String email;
     UserManager manager;
 
-    List<Group> following;
+    Set<Group> following;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +63,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     private class HandleEventsTask extends AsyncTask<Integer, Integer, Event[]> {
         protected Event[] doInBackground(Integer... ints) {
-            DashboardActivity.this.following = Arrays.asList(ds.getFollowedGroups(email));
+            DashboardActivity.this.following = new HashSet<>(Arrays.asList(ds.getFollowedGroups(email)));
             return ds.getAllEvents();
         }
         protected void onPostExecute(Event[] events) {
@@ -69,11 +73,15 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private Event[] sortEvents(Event[] events) {
+        final Map<Event, Group> eventGroupMap = new HashMap<>();
+        for (Event event : events) {
+            eventGroupMap.putIfAbsent(event, ds.getGroupByID(event.getGroup()));
+        }
         Arrays.sort(events, new Comparator<Event>() {
             @Override
             public int compare(Event one, Event two) {
-                boolean followingOne = following.contains(ds.getGroupByID(one.getGroup()));
-                boolean followingTwo = following.contains(ds.getGroupByID(two.getGroup()));
+                boolean followingOne = following.contains(eventGroupMap.get(one));
+                boolean followingTwo = following.contains(eventGroupMap.get(two));
                 
                 if (followingOne && !followingTwo) {
                     return -1;
