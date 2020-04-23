@@ -67,6 +67,7 @@ app.get('/list_shows', event_show_routes.list_shows)
 app.get('/list_events_with_shows', event_show_routes.list_events_with_shows)
 app.get('/find_event_with_shows', event_show_routes.find_event_with_shows)
 app.get('/get_event', event_show_routes.get_event)
+app.get('/get_show', event_show_routes.get_show)
 app.get('/get_event_by_name', event_show_routes.get_event_by_name)
 app.post('/add_event_id_to_show', event_show_routes.add_event_id_to_show);
 app.post('/add_event_id_to_group', event_show_routes.add_event_id_to_group);

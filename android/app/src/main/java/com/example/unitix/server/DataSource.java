@@ -195,6 +195,19 @@ public class DataSource {
         }
     }
 
+    public Show getShowByID(String showID) {
+        try {
+            URL url = new URL(host + ":" + port + "/get_show?showID=" + showID);
+            AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
+            task.execute(url);
+            JSONObject jo = task.get();
+            Log.e("MICHAEL", "Received json object: " + jo.getJSONObject("show"));
+            return new Show(jo.getJSONObject("show"));
+        } catch (Exception e) {
+            Log.e("MICHAEL", "Error getting show by id: " + e);
+            return null;
+        }
+    }
 
     public Event getEventByID(String eventID) {
         try {

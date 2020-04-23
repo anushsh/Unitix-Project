@@ -2,6 +2,7 @@ package com.example.unitix.models;
 
 import android.util.Log;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -21,11 +22,12 @@ public class Show extends Model implements Comparable<Show>  {
     String endDate;
     String description;
     String location;
+    double lat;
+    double lng;
 
-    public Show(Event event, JSONObject jo) {
+    public Show(JSONObject jo) {
         try {
             // TODO: fix parsing
-            this.event = event;
             this.name = (String) jo.get("name");
             this.capacity = (Integer) jo.get("capacity");
             this.ticketsSold = jo.optInt("ticketsSold", 0);
@@ -38,13 +40,23 @@ public class Show extends Model implements Comparable<Show>  {
             this.endTime = jo.optString("end_time");
             this.startDate = jo.optString("start_date");
             this.endDate =  jo.optString("end_date");
-
-
+            try {
+                this.lat = Double.parseDouble((String) jo.getJSONObject("lat").get("$numberDecimal"));
+                this.lng = Double.parseDouble((String) jo.getJSONObject("lng").get("$numberDecimal"));
+            } catch (JSONException e) {
+                // this occurs when geolocations not set up for event
+                Log.e("MICHAEL", e.toString());
+            }
         } catch (Exception e) {
             Log.e("NOAH","exception in show" + e);
             Log.e("NOAH",jo.toString());
             this.isValid = false;
         }
+    }
+
+    public Show(Event event, JSONObject jo) {
+        this(jo);
+        this.event = event;
     }
 
     public String getPrettyPrice() {
@@ -166,6 +178,13 @@ public class Show extends Model implements Comparable<Show>  {
         return this.description;
     }
 
+    public double getLat() {
+        return this.lat;
+    }
+
+    public double getLng() {
+        return this.lng;
+    }
 
 
 

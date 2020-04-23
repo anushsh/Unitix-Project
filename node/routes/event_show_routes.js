@@ -187,6 +187,12 @@ var getEvent = function (req, res) {
     })
 }
 
+var getShow = function (req, res) {
+    Show.findById(req.query.showID, (err, show) => {
+        err ? res.json({"error": err}) : res.json({"status": "success", "show": show})
+    })
+}
+
 var getEventByName = function(req, res) {
     var eventName = req.query.eventName
     Event.findOne({name:eventName}, (err, event) => {
@@ -593,6 +599,7 @@ module.exports = {
     get_event_by_name: getEventByName,
     add_event_id_to_show: addEventIdToShow,
     add_event_id_to_group: addEventIdToGroup,
+    get_show: getShow,
     get_show_with_tickets: getShowWithTickets,
     get_shows_for_event: getShowsForEvent,
     update_event_overview: updateEventOverview,
