@@ -18,7 +18,7 @@ import com.example.unitix.models.User;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    DataSource ds = new DataSource();
+    DataSource ds = DataSource.getInstance();
     User user;
     private String email;
     UserManager manager;

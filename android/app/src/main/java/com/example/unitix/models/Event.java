@@ -104,7 +104,7 @@ public class Event extends Model {
         Log.e("MICHAEL", "Getting changes for event");
         if (this.changes == null) {
             this.changes = new ArrayList<>();
-            DataSource ds = new DataSource();
+            DataSource ds = DataSource.getInstance();
             try {
                 for (int i = 0; i < changesLazy.length(); i++) {
                     Change change = ds.getChangeByID("" + changesLazy.get(i));

@@ -26,7 +26,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e("MICHAEL", "Reached onCreate for map");
-        this.ds = new DataSource();
+        this.ds = DataSource.getInstance();
         Intent intent = getIntent();
 
         String showID = intent.getStringExtra("showID");

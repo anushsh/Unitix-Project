@@ -30,7 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
         last_name = (EditText) findViewById(R.id.last_name);
         phone = (EditText) findViewById(R.id.phone);
         create_account = (Button) findViewById(R.id.create_account_btn);
-        ds = new DataSource();
+        ds = DataSource.getInstance();
 
     }
 

@@ -88,6 +88,6 @@ public class User extends Model {
 
     // used for testing
     public static User getNoah() {
-        return new DataSource().getUser("noahsylv@gmail.com");
+        return DataSource.getInstance().getUser("noahsylv@gmail.com");
     }
 }

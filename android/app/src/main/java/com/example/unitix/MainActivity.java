@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         password = (EditText)findViewById(R.id.password);
         login = (Button)findViewById(R.id.loginbtn);
         register = (Button)findViewById(R.id.registerbtn);
-        ds = new DataSource();
+        ds = DataSource.getInstance();
 
         manager = UserManager.getManager(getApplicationContext());
         Log.e("NOAH","is manager null: " + (manager == null));

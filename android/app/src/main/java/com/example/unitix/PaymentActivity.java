@@ -43,7 +43,7 @@ public class PaymentActivity extends AppCompatActivity {
 
 //        pricePrelim = (Integer.parseInt(pricePrelim) * 100) + "";
         final String price = pricePrelim;
-        ds = new DataSource();
+        ds = DataSource.getInstance();
         email = intent.getStringExtra("EMAIL");
         showID = intent.getStringExtra("showID");
 

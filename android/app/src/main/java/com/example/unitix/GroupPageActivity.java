@@ -26,7 +26,7 @@ import org.w3c.dom.Text;
 
 public class GroupPageActivity extends AppCompatActivity {
 
-    DataSource ds = new DataSource();
+    DataSource ds = DataSource.getInstance();
     User user;
     private String email;
     String groupID;

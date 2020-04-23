@@ -26,251 +26,176 @@ public class DataSource {
 
     private String host;
     private int port;
+    private static DataSource instance;
 
-    public DataSource() {
+    // Singleton Pattern
+    private DataSource() {
         // use Node Express defaults
         host = "http://10.0.2.2";
         port = 3000;
     }
 
-    public User getUser(String email) {
+    public static DataSource getInstance() {
+        if (instance == null) {
+            instance = new DataSource();
+        }
+        return instance;
+    }
 
+    private JSONObject getRoute(String route, String[] params, String[] vals) {
         try {
-            String urlString = host + ":" + port + "/find_user?email=" + email;
-            URL url = new URL(urlString);
-            AsyncTask<URL, String, JSONObject> task =
-                    new AccessWebJSONTask();
-            task.execute(url);
-            JSONObject jo = task.get();
-            return new User(jo.getJSONObject("user"));
+            StringBuilder urlBuilder = new StringBuilder();
+            urlBuilder.append(host).append(":").append(port).append("/").append(route);
 
+            if (params != null && vals != null) {
+                for (int i = 0; i < params.length; i++) {
+                    urlBuilder.append("?").append(params[i]).append("=").append(vals[i]);
+                }
+            }
+
+            URL url = new URL(urlBuilder.toString());
+            AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
+            task.execute(url);
+            return task.get();
         } catch (Exception e) {
-            Log.e("Yash","getUser exception " + e);
+            Log.e("MICHAEL", "Exception using generalized get route");
             return null;
         }
     }
 
-    public Group[] getFollowedGroups(String email) {
-        Group[] groups = new Group[0];
+    private JSONObject getRoute(String route, String param, String val) {
+        String[] params = {param};
+        String[] vals = {val};
+        return getRoute(route, params, vals);
+    }
+
+    private JSONObject getRoute(String route) {
+        return getRoute(route, new String[0], new String[0]);
+    }
+
+    private JSONArray getJSONArray(JSONObject jo, String field) {
         try {
-            URL url = new URL(host + ":" + port + "/get_followed_groups?email=" + email);
-            AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
-            task.execute(url);
-            JSONObject jo = task.get();
-            Log.e("MICHAEL", "received groups: " + jo);
-            groups = Group.createGroupList(jo.getJSONArray("following"));
+            return jo.getJSONArray(field);
         } catch (Exception e) {
-            Log.e("MICHAEL", "exception getting followed groups");
+            Log.e("MICHAEL", "Exception getting json array from json object in generalized method");
+            return new JSONArray(); // empty if issue
         }
+    }
+
+    private JSONObject getJSONObject(JSONObject jo, String field) {
+        try {
+            return jo.getJSONObject(field);
+        } catch (Exception e) {
+            Log.e("MICHAEL", "Exception getting json object from a json object in generalized method");
+            return new JSONObject(); // empty if issue
+        }
+    }
+
+    private JSONObject getJSONObject(JSONArray ja, int index) {
+        try {
+            return ja.getJSONObject(index);
+        } catch (Exception e) {
+            Log.e("MICHAEL", "Exception getting json object from a json array in generalized method");
+            return new JSONObject();
+        }
+    }
+
+    public User getUser(String email) {
+        JSONObject jo = getRoute("find_user", "email", email);
+        return new User(getJSONObject(jo, "user"));
+    }
+
+    public Group[] getFollowedGroups(String email) {
+        JSONObject jo = getRoute("get_followed_groups", "email", email);
+        Group[] groups = Group.createGroupList(getJSONArray(jo, "following"));
         return groups;
     }
 
     public Notification[] getAllNotifications(String email) {
-        Notification[] notifications = new Notification[0];
-        try {
-            URL url = new URL(host + ":" + port + "/get_user_notifications?email=" + email);
-            AsyncTask<URL, String, JSONObject> task =
-                    new AccessWebJSONTask();
-            task.execute(url);
-            JSONObject jo = task.get();
-
-            notifications = Notification.createNotificationList(jo.getJSONArray("notifications"));
-        } catch (Exception e) {
-            Log.e("NOAH","exception: " + e);
-        }
-        return notifications;
+        JSONObject jo = getRoute("get_user_notifications", "email", email);
+        return Notification.createNotificationList(getJSONArray(jo, "notifications"));
     }
 
 
     public Notification[] getAllReadNotifications(String email) {
-        Notification[] readNotifications = new Notification[0];
-        try {
-            URL url = new URL(host + ":" + port + "/get_user_read_notifications?email=" + email);
-            AsyncTask<URL, String, JSONObject> task =
-                    new AccessWebJSONTask();
-            task.execute(url);
-            JSONObject jo = task.get();
-
-            readNotifications = Notification.createNotificationList(jo.getJSONArray("read_notifications"));
-        } catch (Exception e) {
-            Log.e("Yash","exception: " + e);
-        }
-        return readNotifications;
+        JSONObject jo = getRoute("get_user_read_notifications", "email", email);
+        return Notification.createNotificationList(getJSONArray(jo, "read_notifications"));
     }
 
     public Event[] getAllEvents() {
-        Event[] events = new Event[0];
-        try {
-            URL url = new URL(host + ":" + port + "/list_events_with_shows");
-            AsyncTask<URL, String, JSONObject> task =
-                    new AccessWebJSONTask();
-            task.execute(url);
-            JSONObject jo = task.get();
-
-            events = Event.createEventList(jo.getJSONArray("events"));
-        } catch (Exception e) {
-            Log.e("NOAH","exception: " + e);
-            // pass
-        }
-        Log.e("NOAH","about to return events, got" + events.length);
-        return events;
+        JSONObject jo = getRoute("list_events_with_shows");
+        return Event.createEventList(getJSONArray(jo, "events"));
     }
 
     public Group[] getAllGroups() {
-        Group[] groups = new Group[0];
-        try {
-            URL url = new URL(host + ":" + port + "/get_all_groups");
-            AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
-            task.execute(url);
-            JSONObject jo = task.get();
-            Log.i("ANUSH", jo.toString());
-            groups = Group.createGroupList(jo.getJSONArray("groups"));
-        } catch (Exception e) {
-            Log.e("ANUSH", "exception: " + e);
-        }
-        Log.e("ANUSH", "Returning events with " + groups.length);
-        return groups;
+        JSONObject jo = getRoute("get_all_groups");
+        return Group.createGroupList(getJSONArray(jo, "groups"));
     }
 
     public Event[] getEventSearchResults(String searchQuery) {
-        Event[] events = new Event[0];
-        try {
-            URL url = new URL(host + ":" + port + "/get_search_result_events?searchQuery="+searchQuery);
-            AsyncTask<URL, String, JSONObject> task =
-                    new AccessWebJSONTask();
-            task.execute(url);
-            JSONObject jo = task.get();
-
-            events = Event.createEventList(jo.getJSONArray("events"));
-        } catch (Exception e) {
-            Log.e("KARA","exception: " + e);
-            // pass
-        }
-        Log.e("KARA","about to return search event results, got" + events.length);
-        return events;
+        JSONObject jo = getRoute("get_search_result_events", "searchQuery", searchQuery);
+        return Event.createEventList(getJSONArray(jo, "events"));
     }
 
     public Event[] getEventSearchResultsByTag(String searchQuery) {
-        Event[] events = new Event[0];
-        try {
-            URL url = new URL(host + ":" + port + "/get_search_result_events_by_tag?searchQuery="+searchQuery);
-            AsyncTask<URL, String, JSONObject> task =
-                    new AccessWebJSONTask();
-            task.execute(url);
-            JSONObject jo = task.get();
-
-            events = Event.createEventList(jo.getJSONArray("events"));
-            Log.e("KARA", "length of events array searched by tag: " + events.length);
-        } catch (Exception e) {
-            Log.e("KARA","exception: " + e);
-            // pass
-        }
-        Log.e("KARA","about to return search event results, got" + events.length);
-        return events;
+        JSONObject jo = getRoute("get_search_result_events_by_tag", "searchQuery", searchQuery);
+        return Event.createEventList(getJSONArray(jo, "events"));
     }
 
     public Group getGroupByID(String groupID) {
-        try {
-            URL url = new URL(host + ":" + port + "/get_group_by_id?groupID=" + groupID);
-            AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
-            task.execute(url);
-            JSONObject jo = task.get();
-            return new Group(jo.getJSONObject("group"));
-        } catch (Exception e) {
-            Log.e("MICHAEL", "Error getting group by id: " + e);
-            return null;
-        }
+        JSONObject jo = getRoute("get_group_by_id", "groupID", groupID);
+        return new Group(getJSONObject(jo, "group"));
     }
 
     public Change getChangeByID(String changeID) {
-        try {
-            URL url = new URL(host + ":" + port + "/get_change?change=" + changeID);
-            AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
-            task.execute(url);
-            JSONObject jo = task.get();
-            return new Change(jo);
-        } catch (Exception e) {
-            Log.e("MICAHEL", "Error getting change by id: " + e);
-            return null;
-        }
+        JSONObject jo = getRoute("get_change", "change", changeID);
+        return new Change(jo);
     }
 
     public Show getShowByID(String showID) {
-        try {
-            URL url = new URL(host + ":" + port + "/get_show?showID=" + showID);
-            AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
-            task.execute(url);
-            JSONObject jo = task.get();
-            Log.e("MICHAEL", "Received json object: " + jo.getJSONObject("show"));
-            return new Show(jo.getJSONObject("show"));
-        } catch (Exception e) {
-            Log.e("MICHAEL", "Error getting show by id: " + e);
-            return null;
-        }
+        JSONObject jo = getRoute("get_show", "showID", showID);
+        return new Show(getJSONObject(jo, "show"));
     }
 
     public Event getEventByID(String eventID) {
-        try {
-            // TODO: make url based on variables !
-            String urlString = host + ":" + port + "/find_event_with_shows?eventID=" + eventID;
-
-            URL url = new URL(urlString);
-            AsyncTask<URL, String, JSONObject> task =
-                    new AccessWebJSONTask();
-            task.execute(url);
-            JSONObject jo = task.get();
-            Log.e("NOAH","json object is " + jo.toString());
-            return new Event(jo.getJSONObject("event"));
-
-        } catch (Exception e) {
-            Log.e("NOAH","getEventByID exception " + e);
-            return null;
-        }
+        JSONObject jo = getRoute("find_event_with_shows", "eventID", eventID);
+        return new Event(getJSONObject(jo, "event"));
     }
 
     public Show[] getUserShowInfo(String email) {
-        try {
-            AccessWebJSONTask task = new AccessWebJSONTask();
-            String urlString = host + ":" + port + "/get_user_show_info?email=" + email;
-            URL url = new URL(urlString);
-            task.execute(url);
-            JSONObject jo = task.get();
-            JSONArray showInfoArray = jo.getJSONArray("shows");
-            List<ShowInfo> showInfo = new LinkedList();
-            for (int i = 0; i < showInfoArray.length(); i++) {
-                ShowInfo show = new ShowInfo(showInfoArray.getJSONObject(i));
-                if (show.isValid()) {
-                    showInfo.add(show);
-                }
+        JSONObject jo = getRoute("get_user_show_info", "email", email);
+        JSONArray showInfoArray = getJSONArray(jo, "shows");
+        List<ShowInfo> showInfo = new LinkedList();
+        for (int i = 0; i < showInfoArray.length(); i++) {
+            ShowInfo show = new ShowInfo(getJSONObject(showInfoArray, i));
+            if (show.isValid()) {
+                showInfo.add(show);
             }
-            //TODO figure this out
-            return showInfo.toArray(new Show[0]);
-
-        } catch (Exception e) {
-            return new Show[0];
         }
+        //TODO figure this out
+        return showInfo.toArray(new Show[0]);
     }
 
     public Ticket[] getUserTickets(String email) {
-        try {
-            AccessWebJSONTask task = new AccessWebJSONTask();
-            String urlString = host + ":" + port + "/get_user_tickets?email=" + email;
-            URL url = new URL(urlString);
-            task.execute(url);
-            JSONObject jo = task.get();
-            JSONArray ticketsArray = jo.getJSONArray("tickets");
-            List<Ticket> tickets = new LinkedList();
-            for (int i = 0; i < ticketsArray.length(); i++) {
-                Ticket ticket = new Ticket(ticketsArray.getJSONObject(i));
-                if (ticket.isValid()) {
-                    tickets.add(ticket);
-                }
+        JSONObject jo = getRoute("get_user_tickets", "email", email);
+        JSONArray ticketsArray = getJSONArray(jo, "tickets");
+        List<Ticket> tickets = new LinkedList<>();
+        for (int i = 0; i < ticketsArray.length(); i++) {
+            Ticket ticket = new Ticket(getJSONObject(ticketsArray, i));
+            if (ticket.isValid()) {
+                tickets.add(ticket);
             }
-            return tickets.toArray(new Ticket[0]);
-
-        } catch (Exception e) {
-            return new Ticket[0];
         }
+        return tickets.toArray(new Ticket[0]);
+    }
+
+    public List<Ticket> getTickets(String[] ticketIDs) {
+        List<Ticket> tickets = new ArrayList<>();
+        for (String ticketID: ticketIDs) {
+            JSONObject jo = getRoute("get_ticket", "ticketID", ticketID);
+            tickets.add(new Ticket(getJSONObject(jo, "ticket")));
+        }
+        return tickets;
     }
 
     public void readNotifications(String email) {
@@ -308,23 +233,7 @@ public class DataSource {
         return false;
     }
 
-    public List<Ticket> getTickets(String[] ticketIDs) {
-        List<Ticket> tickets = new ArrayList<>();
-        for (String ticketID : ticketIDs) {
-            try {
-                URL url = new URL(host + ":" + port + "/get_ticket?ticketID=" + ticketID);
-                AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
-                task.execute(url);
-                JSONObject jo = task.get();
-                System.out.println("TICKET JSON OBJECT IS:\n" + jo.toString());
-                tickets.add(new Ticket(jo.getJSONObject("ticket")));
-            } catch (Exception e) {
-                // skip this ticket
-                Log.e("MICHAEL", "ERROR - COULD NOT RETRIEVE TICKET:" + e);
-            }
-        }
-        return tickets;
-    }
+
 
     public void redeemTicket(String ticketID) {
         try {

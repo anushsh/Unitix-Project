@@ -32,7 +32,7 @@ public class GroupListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_groupslist);
         Intent intent = getIntent();
         email = intent.getStringExtra("EMAIL");
-        this.ds = new DataSource();
+        this.ds = DataSource.getInstance();
         Log.e("ANUSH", "Wassup*********************************");
         // execute in background to keep main thread smooth
         AsyncTask<String,Integer,Group[]> task = new HandleGroupsTask();

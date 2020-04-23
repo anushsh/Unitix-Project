@@ -47,7 +47,7 @@ public class DashboardActivity extends AppCompatActivity {
         manager = UserManager.getManager(getApplicationContext());
 //        email = intent.getStringExtra("EMAIL");
 
-        this.ds = new DataSource();
+        this.ds = DataSource.getInstance();
 
 //        this.user = ds.getUser(email);
         this.user = manager.getUser();

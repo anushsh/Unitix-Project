@@ -36,7 +36,7 @@ public class EditProfileActivity extends AppCompatActivity {
         phone = (EditText) findViewById(R.id.phone);
         save = (Button) findViewById(R.id.savebtn);
         cancel = (Button) findViewById(R.id.cancelbtn);
-        ds = new DataSource();
+        ds = DataSource.getInstance();
         manager = UserManager.getManager(getApplicationContext());
 
         this.user = manager.getUser();

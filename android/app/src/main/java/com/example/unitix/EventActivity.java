@@ -37,7 +37,7 @@ public class EventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
-        this.ds = new DataSource();
+        this.ds = DataSource.getInstance();
 
         Intent intent = getIntent();
         String name = intent.getStringExtra("eventName");

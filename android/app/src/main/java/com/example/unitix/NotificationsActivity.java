@@ -28,7 +28,7 @@ public class NotificationsActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifications);
         Intent intent = getIntent();
-        ds = new DataSource();
+        ds = DataSource.getInstance();
         email = intent.getStringExtra("EMAIL");
         this.user = this.ds.getUser(email);
 

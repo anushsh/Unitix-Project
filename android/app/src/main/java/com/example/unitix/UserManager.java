@@ -26,7 +26,7 @@ public class UserManager {
 
     // private constructor
     private UserManager() {
-        ds = new DataSource();
+        ds = DataSource.getInstance();
     }
 
     public static UserManager getManager(Context context) {

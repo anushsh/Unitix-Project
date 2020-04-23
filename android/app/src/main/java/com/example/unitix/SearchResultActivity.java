@@ -22,7 +22,7 @@ import com.example.unitix.models.Show;
 import java.util.List;
 
 public class SearchResultActivity extends AppCompatActivity {
-    DataSource ds = new DataSource();
+    DataSource ds = DataSource.getInstance();
     //User user;
     //private String email;
     //TextView mTextViewSearchResult;
