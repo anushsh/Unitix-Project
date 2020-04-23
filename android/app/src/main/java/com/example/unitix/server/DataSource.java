@@ -107,8 +107,7 @@ public class DataSource {
 
     public Group[] getFollowedGroups(String email) {
         JSONObject jo = getRoute("get_followed_groups", "email", email);
-        Group[] groups = Group.createGroupList(getJSONArray(jo, "following"));
-        return groups;
+        return Group.createGroupList(getJSONArray(jo, "following"));
     }
 
     public Notification[] getAllNotifications(String email) {
@@ -172,7 +171,6 @@ public class DataSource {
                 showInfo.add(show);
             }
         }
-        //TODO figure this out
         return showInfo.toArray(new Show[0]);
     }
 
