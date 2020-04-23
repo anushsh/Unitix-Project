@@ -94,6 +94,7 @@ app.get('/get_ticket', ticket_routes.get_ticket);
 app.post('/purchase_ticket', ticket_routes.purchase_ticket);
 app.post('/request_ticket', ticket_routes.request_ticket);
 app.post('/redeem_ticket', ticket_routes.redeem_ticket);
+app.get('/get_ticket_stats', ticket_routes.get_ticket_stats);
 
 //payments
 app.post('/api/stripe', routes.payment);

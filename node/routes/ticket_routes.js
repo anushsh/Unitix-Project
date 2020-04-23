@@ -91,6 +91,95 @@ var getTicket = function (req, res) {
 }
 
 
+var getTicketStats = function (req, res) {
+    var shows = req.query.showID;
+    var isRevenue = parseInt(req.query.isRevenue, 10);
+    console.log(isRevenue);
+    console.log(typeof isRevenue);
+    var finalData = [];
+    if (!Array.isArray(shows)) {
+        shows = [shows];
+    }
+    async.forEach(shows, (showID, done) => {
+        getShowTicketStatsHelper(showID, isRevenue, (err, data) => {
+            console.log(data);
+            if (!err && data) {
+                data.forEach(item => {finalData.push(item)});
+            }
+            done();
+        })
+    }, () => {
+        res.json({"status":"success","data":reduceData(finalData)});
+    });
+    
+}
+
+function reduceData(data) {
+    dates = {}
+    for (var d of data) {
+        dates[d[0]] = 1;
+    }
+    var finalData = [];
+    for (var d of Object.keys(dates)) {
+        finalData.push([d, sum(data.map((x) => {return (x[0] == d) ? x[1] : 0}))])
+    }
+    return finalData;
+}
+
+function sum(arr) {
+    var c = 0;
+    arr.forEach(x => {c += x});
+    return c;
+
+}
+
+function mapFormat(map) {
+    obj = []
+    map.forEach((v, k) => {
+        obj.push([k,v]);
+    })
+    return obj;
+}
+
+function formatTime(time) {
+    var m = time.getMonth() + 1;
+    var d = time.getDay() + 1;
+    var y = time.getYear() + 1900;
+    var key = m + "-" + d + "-" + y;
+    return key;
+}
+
+var getShowTicketStatsHelper = function(showID, isRevenue, callback) {
+    var dateMap = new Map();
+    Show.findById(showID, (err, show) => {
+        if (!err && show) {
+            console.log("found show");
+            show = show.toJSON();
+            var scale = isRevenue ? parseFloat(show.price.toString()) : 1;
+            console.log("scale" + scale);
+            console.log(show.price);
+            console.log(typeof show.price);
+            
+            var ticketIDs = show.tickets;
+            async.forEach(ticketIDs, (ticketID, done) => {
+                Ticket.findById(ticketID, (err, ticket) => {
+                    if (!err && ticket) {
+                        ticket = ticket.toJSON();
+                        var key = formatTime(ticket._id.getTimestamp());
+                        dateMap.set(key, dateMap.has(key) ? dateMap.get(key) + scale : scale);  
+                    }
+                    done();
+                });
+            }, () => {
+                callback(null, mapFormat(dateMap));
+            })
+        } else {
+            callback(err ? err : "no show", null);
+        }
+    })
+}
+
+
 var redeemTicket = function(req, res) {
     var ticketID = req.body.ticketID;  
     Ticket.findByIdAndUpdate(ticketID, {redeemed: true}, (err) => {
@@ -134,5 +223,6 @@ module.exports = {
     purchase_ticket: purchaseTicket,
     request_ticket: requestTicket,
     get_ticket: getTicket,
-    redeem_ticket: redeemTicket
+    redeem_ticket: redeemTicket,
+    get_ticket_stats: getTicketStats
 }

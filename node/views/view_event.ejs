@@ -9,6 +9,8 @@
 
         var group // populated by getGroup() which is in helper.js
         var event // populated with getEvent() (includes all show information)
+        var selectedShow = null;
+        var isRevenue = 0;
 
         // for graphing
         var graphPoints = [];
@@ -37,7 +39,12 @@
                 $.get("/find_event_with_shows",{"eventID":event._id}, (data) => {
                     console.log("here");
                     event = data.event;
-                    loadStats();
+                    for (var i = 1; i < event.shows.length; i++) {
+                        btn = createButton("Show #" + (i+1),"showBtn",i,"button is-small","show" + i + "Button");
+                        $('#dataButtons').append('<li id="show'+ i + 'li">' +btn + '</li>');
+                    }
+                    allShows();
+                    sales(1);
                 })
                 
             })
@@ -65,6 +72,9 @@
             latest = sorted[sorted.length - 1][0];
             console.log(earliest);
             console.log(latest);
+
+            // scale unit
+            // TODO: revenue
 
             // -- points should be (int, int)
             const toDay = 86400000; // number of ms in a day
@@ -104,6 +114,19 @@
 
         }
 
+        function addOneMonthBack(data) {
+            date = data[0][0];
+            parts = date.split("-").map(x => {return parseInt(x,10)});
+            parts[0] -= 1;
+            if (parts[0] == 0) {
+                parts[0] = 12;
+                parts[2] -= 1;
+            }
+            newDate = parts.join("-");
+            data.push([newDate,0]);
+            return data;
+        }
+
 
         function addId(id, content) {
             return '<li id="' + id + '">' + content + '</li>'
@@ -114,13 +137,27 @@
         }
 
         function loadStats() {
-            // TODO: get data based on current view
-            const data = [
-                ['03-05-2020',3],
-                ['03-06-2020',2],
-                ['03-08-2020',1],
-                ['03-09-2020',3]
-            ]
+            var query = '?showID=';
+
+            if (!selectedShow) {
+                for (var i = 0; i < event.shows.length; i++) {
+                    query += event.shows[i]._id;
+                    if (i != event.shows.length - 1) {
+                        query += "&showID=";
+                    }
+                }
+            } else {
+                query += selectedShow;
+            }
+            query += "&isRevenue=" + (isRevenue ? 1 : 0);
+            var url = '/get_ticket_stats' + query
+            
+            $.get(url,(res) => {
+                var data = res["data"];
+                if (data.length == 1) {
+                    data = addOneMonthBack(data);
+                }
+            
             // send data to be formatted and graphed
             processPoints(data);
 
@@ -136,7 +173,7 @@
             $("#totalRevenue").html("Total Revenue: $" + totalRevenue);
             $("#totalSold").html("Total Number of Tickets: " + totalSold);
 
-
+        });
         }
 
         function formatDate(d) {
@@ -223,7 +260,7 @@
                 p.textAlign(p.RIGHT, p.CENTER);
                 p.text(yLabel, -5, height/2);
                 p.text(highY ? highY : "", leftOffset, height - fraction * height);
-                p.text(lowY ? lowY : "", leftOffset, height - 10);
+                p.text(lowY || lowY == 0 ? lowY : "", leftOffset, height - 10);
                 // console.log(lowY);
                 // title
                 const aboveOffset = -9;
@@ -234,15 +271,62 @@
   new p5(sketch, 'graph');
 
 
-  function allShows() {
-      $("#show0Button").css('background', 'white');
-      $("#overallButton").css('background', 'blue');
-      
+
+  function turnOffButton(id) {
+    $(id).css('background', 'white');
+    $(id).css('color', 'black');
   }
 
-  function show(num) {
-    $("#overallButton").css('background', 'white');
-      $("#show0Button").css('background', 'blue');
+  function turnOnButton(id) {
+    $(id).css('background', 'blue');
+    $(id).css('color', 'white');
+  }
+
+  // -- first setting (which show(s))
+
+  function allShows() { // default
+    for (var i = 0; i < event.shows.length; i++) {
+        turnOffButton("#show" + i + "Button");
+    }
+      turnOnButton('#overallButton');
+      selectedShow = null;
+      loadStats();
+  }
+
+  function showBtn(num) {
+    for (var i = 0; i < event.shows.length; i++) {
+        var id = "#show" + i + "Button";
+        if (i == num) {
+            turnOnButton(id);
+        } else {
+            turnOffButton(id);
+        }
+    }
+    turnOffButton('#overallButton');
+    selectedShow = event.shows[num]._id;
+    loadStats();
+  }
+
+  // --- second setting (data type)
+
+  function revenue() {
+    turnOffButton("#ticketsSoldButton");
+    turnOnButton("#revenueButton");
+    isRevenue = 1;
+    yLabel = "$";
+    graphTitle = "Ticket Revenue Over Time";
+    loadStats();
+  }
+
+  function sales(skip) {
+    turnOffButton("#revenueButton");
+    turnOnButton("#ticketsSoldButton");
+    graphTitle = "Ticket Sales Over Time";
+    isRevenue = 0;
+    yLabel = "Sales";
+    if (!skip) {
+        loadStats();
+    }
   }
 
 
@@ -283,22 +367,23 @@
                         
                         <ul id="dataButtons">
                             <li id="eventButton">
-                                <button id="overallButton" onClick="allShows()"class="button is-small is-link">All Shows</button>
+                                <button id="overallButton" onClick="allShows()"class="button is-small">All Shows</button>
                             </li>
                             <li id="show0li">
-                                <button id= "show0Button" onClick="show(0)" class="button is-small">Show #1</button>
+                                <button id= "show0Button" onClick='showBtn("0")' class="button is-small">Show #1</button>
                             </li>
 
                         </ul>
-                        <br>
+                        <br><br>
+                        <!-- <br>
                         Change Timeframe<br>
                         <button id ="1monthButton" class="button is-small">1 Month</button>
                         <button id ="1weekButton" class="button is-small">1 Week</button>
                         <button id ="allTimeButton" class="button is-small is-link">All</button>
-                        <br><br>
+                        <br><br> -->
                         Change Data<br>
-                        <button id ="ticketsSoldButton" class="button is-small is-link">Tickets sold</button>
-                        <button id = "revenueButton" class="button is-small">Revenue</button>                        
+                        <button id ="ticketsSoldButton" class="button is-small" onClick='sales()'>Tickets sold</button>
+                        <button id = "revenueButton" class="button is-small" onclick='revenue()'>Revenue</button>                        
                     </div>
             </div>
             
