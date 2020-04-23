@@ -586,6 +586,17 @@ var getSearchResultEventsByTag = function (req, res) {
         
 }
 
+// var favoriteEvent = (req, res) => {
+//     Event.findById(req.body.eventID, (err, event) => {
+//         if (err) {
+//             return res.json({"error": err});
+//         } else {
+//             event.favorite = true;
+//             res.json({"status": 'success', 'events': event});
+//         }
+//     })
+// }
+
 
 module.exports = {
     create_shows: createShows,
@@ -606,5 +617,6 @@ module.exports = {
     delete_event: deleteEvent,
     get_search_result_events: getSearchResultEvents,
     get_change: getChange,
-    get_search_result_by_tag: getSearchResultEventsByTag
+    get_search_result_by_tag: getSearchResultEventsByTag,
+    // favorite_event: favoriteEvent
 }

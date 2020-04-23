@@ -215,27 +215,13 @@ var getUserShowInfo = function (req, res) {
     })
 }
 
-const crypto = require('crypto');
-const algorithm = 'aes-256-cbc';
-// const key = crypto.randomBytes(32); 
-// const iv = crypto.randomBytes(16); 
-
-function encrypt(text) {
-    if (text !== undefined) {
-        let cipher = crypto.createCipher(algorithm, 'randomkey');
-        let encrypted = cipher.update(text, 'utf8', 'hex');
-        encrypted += cipher.final('hex');
-        return encrypted;
-    }
-}
-
 var updateGroup = (req, res) => {
     // console.log("REQ");
     // console.log(req.body);
     // console.log(req.session.user);
     Group.findOneAndUpdate({ email: req.session.user }, {
         password: req.body.password,
-        displayName: req.body.groupName, groupType: req.body.groupType, bio: req.body.bio, stripe: encrypt(req.body.stripe)
+        displayName: req.body.groupName, groupType: req.body.groupType, bio: req.body.bio, stripe: req.body.stripe
     }, { new: true }, (err, user) => {
         if (err) {
             res.json({ 'status': err })
@@ -342,6 +328,7 @@ var updateUser = function (req, res) {
     })
 }
 
+<<<<<<< HEAD
 var getFavoritedEvents = (req, res) => {
     User.findOne({ email: req.body.email}, (err, user) => {
         if (err) {
@@ -351,6 +338,25 @@ var getFavoritedEvents = (req, res) => {
             async.forEach(user.favorite_events, (eventID, done) => {
                 
             })
+=======
+var addFavoriteEvent = (req, res) => {
+    console.log(req.body);
+    console.log("***************************");
+    User.findOne({email: req.body.email}, (err, user) => {
+        if (err) {
+            console.log(err);
+            return res.json({'status' : err});
+        } else {
+            user.favorite_events.push(req.body.eventID);
+            console.log(user);
+            user.save((err) => {
+                if (err) {
+                    res.json({ 'status': err})
+                } else {
+                    res.json({'status': 'success', 'user': user});
+                }
+            });
+>>>>>>> Favorite Events
         }
     })
 }
@@ -367,6 +373,10 @@ module.exports = {
     find_user: findUser,
     update_user: updateUser,
     get_all_groups: getAllGroups,
+<<<<<<< HEAD
     get_followed_groups: getFollowedGroups,
     follow_group: followGroup
+=======
+    add_favorite_event: addFavoriteEvent
+>>>>>>> Favorite Events
 }

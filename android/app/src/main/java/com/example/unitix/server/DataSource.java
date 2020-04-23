@@ -233,6 +233,42 @@ public class DataSource {
     }
 
 
+    public boolean favoriteEvent(String email, String eventID) {
+        try {
+            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
+            JSONObject jo = new JSONObject();
+            jo.put("email", email);
+            jo.put("eventID", eventID);
+            String url = host + ":" + port + "/favorite_event";
+            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(url, jo);
+            task.execute(req);
+            JSONObject res = task.get();
+            if (res.getString("status").equals("success")) {
+                return true;
+            }
+        } catch (Exception e) {
+            Log.e("ANUSH", "failed to favorite");
+        }
+        return false;
+    }
+
+    public List<Ticket> getTickets(String[] ticketIDs) {
+        List<Ticket> tickets = new ArrayList<>();
+        for (String ticketID : ticketIDs) {
+            try {
+                URL url = new URL(host + ":" + port + "/get_ticket?ticketID=" + ticketID);
+                AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
+                task.execute(url);
+                JSONObject jo = task.get();
+                System.out.println("TICKET JSON OBJECT IS:\n" + jo.toString());
+                tickets.add(new Ticket(jo.getJSONObject("ticket")));
+            } catch (Exception e) {
+                // skip this ticket
+                Log.e("MICHAEL", "ERROR - COULD NOT RETRIEVE TICKET:" + e);
+            }
+        }
+        return tickets;
+    }
 
     public void redeemTicket(String ticketID) {
         try {

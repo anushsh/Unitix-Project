@@ -22,7 +22,8 @@ var userSchema = new Schema({
     curr_tickets: [String],  // string of ids
     saved_tickets: [String], // string of ids
     notifications: [String], // string of ids
-    read_notifications: [String]
+    read_notifications: [String],
+    favorite_events: [String]
 });
 
 module.exports = mongoose.model('User', userSchema);

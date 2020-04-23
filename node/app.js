@@ -2,7 +2,6 @@
 var express = require('express')
 var session = require('express-session')
 
-
 // routes
 var routes = require('./routes/routes.js')
 var ticket_routes = require('./routes/ticket_routes.js')
@@ -14,6 +13,8 @@ var user_group_routes = require('./routes/user_group_routes.js')
 var app = express()
 var http = require('http').createServer(app)
 var port = 3000
+
+app.use(express.static('./public'));
 
 app.use(express.bodyParser());
 app.use(express.logger("default"))
@@ -42,6 +43,8 @@ app.get('/edit_event/:event', routes.get_edit_event)
 app.get('/view_stats/:event', routes.get_view_stats)
 app.get('/followers', routes.get_followers)
 app.get('/get_follower_names', routes.get_follower_names)
+app.get('/pictures', routes.get_picture);
+app.post('/upload', routes.upload_picture);
 
 // user and group routes
 app.get('/get_group', user_group_routes.get_group)
@@ -55,8 +58,15 @@ app.get('/find_user', user_group_routes.find_user);
 app.post('/update_user', user_group_routes.update_user);
 app.post('/creategroup', user_group_routes.create_group);
 app.get('/get_all_groups',user_group_routes.get_all_groups);
+<<<<<<< HEAD
 app.get('/get_followed_groups', user_group_routes.get_followed_groups)
 app.post('/follow_group', user_group_routes.follow_group)
+=======
+app.post('/favorite_event', user_group_routes.add_favorite_event);
+
+// app.get('/get_followed_groups', user_group_routes.get_followed_groups)
+// app.post('/follow_group', user_group_routes.follow_group)
+>>>>>>> Favorite Events
 
 // event and show routes
 app.post('/create_shows', event_show_routes.create_shows)
@@ -78,7 +88,6 @@ app.get('/get_search_result_events', event_show_routes.get_search_result_events)
 app.get('/get_search_result_events_by_tag', event_show_routes.get_search_result_by_tag);
 app.get('/get_change', event_show_routes.get_change)
 app.get('/get_shows_for_event', event_show_routes.get_shows_for_event)
-
 //notifications
 app.post('/create_notification', notification_routes.create_notification);
 app.post('/notify_event', notification_routes.notify_event);

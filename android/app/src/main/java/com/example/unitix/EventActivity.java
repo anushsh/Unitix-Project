@@ -31,6 +31,7 @@ public class EventActivity extends AppCompatActivity {
     User user;
     String eventID;
     List<Ticket> userTickets;
+    String emailString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +43,10 @@ public class EventActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String name = intent.getStringExtra("eventName");
         this.eventID = intent.getStringExtra("eventID");
-        this.user = UserManager.getManager(getApplicationContext()).getUser();
+        emailString = intent.getStringExtra("EMAIL");
+        this.user = this.ds.getUser(getIntent().getStringExtra("EMAIL"));
         TextView eventName = findViewById(R.id.event_name);
         eventName.setText(name);
-
         // execute in background to keep main thread smooth and allow for parallel execution
         AsyncTask<String, Integer, List<Ticket>> ticketTask = new LoadTicketTask();
         ticketTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this.user.currTickets);
@@ -92,6 +93,8 @@ public class EventActivity extends AppCompatActivity {
                 purchaseButton = addPurchaseButton("Purchase Another Ticket");
             }
 
+
+
             purchaseButton.setOnClickListener(new View.OnClickListener() {
 
                 @Override
@@ -131,6 +134,7 @@ public class EventActivity extends AppCompatActivity {
 
             showList.addView(showView);
         }
+
 
         // changes
         LinearLayout changeList = findViewById(R.id.change_list);
@@ -174,6 +178,20 @@ public class EventActivity extends AppCompatActivity {
 //            }
 //        });
         return purchaseButton;
+    }
+
+    public void onFavoriteButtonClick(View v) {
+        String eventID = event.getId();
+        Log.e("ANUSH", eventID);
+        Log.e("ANUSH", emailString);
+        if (ds.favoriteEvent(emailString, eventID)) {
+            Toast.makeText(getApplicationContext(), "Event favorited!",
+                    Toast.LENGTH_LONG).show();
+
+        } else {
+            Toast.makeText(getApplicationContext(), "Unable to favorite event!",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     void showPurchaseSuccessToast() {

@@ -2,8 +2,10 @@ var Group = require('../models/group.js');
 var User = require('../models/user.js');
 var async = require('async')
 const stripe = require('stripe')('sk_test_pncnbwipRx15OxjiYD92tQgM');
+const multer = require('multer');
+const path = require('path');
+// const upload = multer({dest: 'uploads/'});
 var msg // to send notifications at top of screen when getting to a page
-
 var getMessage = function (req, res) {
     res.send(msg)
 }
@@ -21,6 +23,37 @@ var getHome = function (req, res) {
         }
         res.render('home.ejs');
 
+    }
+}
+
+//Set Storage engine for photos
+const storage = multer.diskStorage({
+    destination:'./public/uploads/',
+    filename: function(req, file, callback) {
+        callback(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+//Init upload
+
+const upload = multer({
+    storage: storage,
+    fileFilter: function (req, file, callback) {
+        checkFileType(file, callback);
+    }
+}).single('myImage');
+
+function checkFileType(file, callback) {
+    //Allowed filetypes
+    const fileTypes = /jpeg|jpg|png|gif/;
+    //Check extension
+    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    //Check type
+    const type = fileTypes.test(file.type);
+    if (extname && type) {
+        callback(null, true);
+    } else {
+        callback('Error: Images Only!')
     }
 }
 
@@ -54,19 +87,6 @@ var checkLogin = (req, res) => {
 
 }
 
-const crypto = require('crypto');
-const algorithm = 'aes-256-cbc';
-
-
-function decrypt(text) {
-    if (text !== undefined) {
-        let decipher = crypto.createDecipher(algorithm, 'randomkey');
-        let decrypted = decipher.update(text, 'hex', 'utf8');
-        decrypted += decipher.final('hex');
-        return decrypted;
-    }
-}
-
 var getProfile = (req, res) => {
     if (req.session.user) {
         Group.findOne({ email: req.session.user }, (err, user) => {
@@ -76,7 +96,7 @@ var getProfile = (req, res) => {
                 res.render('profile.ejs', {
                     email: user.email, password: user.password,
                     displayName: user.displayName, groupType: user.groupType,
-                    bio: user.bio, followers: user.followers, stripe: decrypt(user.stripe)
+                    bio: user.bio, followers: user.followers, stripe: user.stripe
                 })
             }
         })
@@ -180,6 +200,22 @@ var getPayment = async (req, res) => {
     });
 }
 
+var getPictures = (req, res) => {
+    res.render('pictures.ejs');
+}
+
+var uploadPicture = (req, res) => {
+    upload(req, res, (err) => {
+        if (err) {
+            res.render('picture.ejs', {msg: err});
+        } else {
+            console.log(req.files.myImage);
+            res.send('test');
+        }
+    })
+
+}
+
 module.exports = {
     get_splash: getSplash,
     get_message: getMessage,
@@ -194,5 +230,7 @@ module.exports = {
     get_view_stats: getViewStats,
     get_follower_names: getFollowerNames,
     get_followers: getFollowers,
-    payment: getPayment
+    payment: getPayment,
+    get_picture: getPictures,
+    upload_picture: uploadPicture
 }

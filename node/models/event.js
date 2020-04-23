@@ -20,7 +20,11 @@ var eventSchema = new Schema({
   shows: [String], // these are uuids of Show objs
   tags: [String],
   changes: [String],
+<<<<<<< HEAD
   favoritedBy: [String] //list of user IDs
+=======
+  // favorite: Boolean
+>>>>>>> Favorite Events
 })
 
 module.exports = mongoose.model('Event', eventSchema)
