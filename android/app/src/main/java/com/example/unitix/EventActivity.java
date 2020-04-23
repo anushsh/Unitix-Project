@@ -46,9 +46,24 @@ public class EventActivity extends AppCompatActivity {
         TextView eventName = findViewById(R.id.event_name);
         eventName.setText(name);
 
+        linkToMap();
+
         // execute in background to keep main thread smooth and allow for parallel execution
         AsyncTask<String, Integer, List<Ticket>> ticketTask = new LoadTicketTask();
         ticketTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this.user.currTickets);
+    }
+
+    void linkToMap() {
+        Button viewMap = findViewById(R.id.map_button);
+        viewMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(EventActivity.this, MapsActivity.class);
+                i.putExtra("eventID", eventID);
+                startActivityForResult(i, 1);
+            }
+        });
+
     }
 
     void findShow() {
