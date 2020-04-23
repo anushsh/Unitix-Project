@@ -19,6 +19,7 @@ var showSchema = new Schema({
   capacity: Number,
   tickets_sold: Number,
   location: String,
+  latlng: String, // added for google maps geocoding
   description: String,
   tickets: [String],
   event: String, // uses UUID of Event obj

@@ -6,7 +6,6 @@ var Change = require('../models/change.js')
 
 var async = require('async')
 
-
 var createShows = function (req, res) {
     showSchemaIDs = []
 

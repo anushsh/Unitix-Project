@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@googlemaps/google-maps-services-js": "^2.5.5",
     "async": "*",
     "body-parser": "^1.19.0",
     "bulma": "^0.8.1",
