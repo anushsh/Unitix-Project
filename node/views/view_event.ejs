@@ -234,8 +234,15 @@
   new p5(sketch, 'graph');
 
 
-  function btnClick(id) {
-      alert(id);
+  function allShows() {
+      $("#show0Button").css('background', 'white');
+      $("#overallButton").css('background', 'blue');
+      
+  }
+
+  function show(num) {
+    $("#overallButton").css('background', 'white');
+      $("#show0Button").css('background', 'blue');
   }
 
 
@@ -276,10 +283,10 @@
                         
                         <ul id="dataButtons">
                             <li id="eventButton">
-                                <button id="overallButton" onClick="btnClick(this.id)"class="button is-small is-link">All Shows</button>
+                                <button id="overallButton" onClick="allShows()"class="button is-small is-link">All Shows</button>
                             </li>
                             <li id="show0li">
-                                <button id= "show0Button" onClick="btnClick(this.id)" class="button is-small">Show #1</button>
+                                <button id= "show0Button" onClick="show(0)" class="button is-small">Show #1</button>
                             </li>
 
                         </ul>
