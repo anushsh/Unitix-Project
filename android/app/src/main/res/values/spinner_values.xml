@@ -4,4 +4,13 @@
         <item>Title, Group, Descrip.</item>
         <item>Tag</item>
     </string-array>
+
+    <string-array name="search_sort_spinner_array">
+        <item>Sort by Group Name A to Z</item>
+        <item>Sort by Group Name Z to A</item>
+        <item>Sort by Price Ascen</item>
+        <item>Sort by Price Desc</item>
+        <item>Sort by Date Ascen</item>
+        <item>Sort by Date Desc</item>
+    </string-array>
 </resources>

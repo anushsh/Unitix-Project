@@ -34,16 +34,23 @@ public class SearchResultActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_result);
 
-        Spinner spinner = (Spinner) findViewById(R.id.search_spinner);
+        Spinner searchSpinner = (Spinner) findViewById(R.id.search_spinner);
         //Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.search_spinner_array, android.R.layout.simple_spinner_dropdown_item);
 
+        Spinner sortSpinner = (Spinner) findViewById(R.id.sort_spinner);
+        //Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> sortAdapter = ArrayAdapter.createFromResource(this,
+                R.array.search_sort_spinner_array, android.R.layout.simple_spinner_dropdown_item);
+
         //Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         //Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
+        searchSpinner.setAdapter(adapter);
+        sortSpinner.setAdapter(sortAdapter);
     }
 
 
