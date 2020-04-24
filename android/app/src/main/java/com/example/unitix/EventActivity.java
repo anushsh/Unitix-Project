@@ -70,6 +70,13 @@ public class EventActivity extends AppCompatActivity {
         String descriptionText = (this.group != null ? this.group.getDisplayName() + " presents: " : "") +
                 this.show.getDescription() + "\n\n";
 
+        /*Button favoriteButton = null;
+        if (!isFavorited()) {
+            favoriteButton = addFavoriteButton("Favorite");
+        } else {
+            favoriteButton = addFavoriteButton("Un-favorite");
+        }*/
+
         LinearLayout showList = findViewById(R.id.show_list);
         for (int i = 0; i < event.getShows().size(); i++) {
             final Show show = event.getShows().get(i);
@@ -162,6 +169,18 @@ public class EventActivity extends AppCompatActivity {
         return false;
     }
 
+    //returns if user has already favorited this event.
+    /*boolean isFavorited() {
+        for (String id: user.getFavoriteEvents()) {
+            Log.e("ANUSH", id);
+            if (id.equals(event.getId())) {
+                Log.e("ANUSH", "EVENT MATCHES FAVORITE");
+                return true;
+            }
+        }
+        return false;
+    }*/
+
     Button addPurchaseButton(String text) {
         Button purchaseButton = new Button(getApplicationContext());
         purchaseButton.setText(text);
@@ -179,6 +198,28 @@ public class EventActivity extends AppCompatActivity {
 //        });
         return purchaseButton;
     }
+
+    /*Button addFavoriteButton(String text) {
+        Button favoriteButton = new Button(getApplicationContext());
+        favoriteButton.setText(text);
+        favoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String eventID = event.getId();
+                Log.e("ANUSH", eventID);
+                Log.e("ANUSH", emailString);
+                if (ds.favoriteEvent(emailString, eventID)) {
+                    Toast.makeText(getApplicationContext(), "Event favorited!",
+                            Toast.LENGTH_LONG).show();
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "Unable to favorite event!",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        return favoriteButton;
+    }*/
 
     public void onFavoriteButtonClick(View v) {
         String eventID = event.getId();

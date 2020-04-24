@@ -71,6 +71,10 @@ public class User extends Model {
         return out;
     }
 
+    public String[] getFavoriteEvents() {
+        return this.favoriteEvents;
+    }
+
     // this is for testing...
     public static User getNoahEmpty() {
         try {

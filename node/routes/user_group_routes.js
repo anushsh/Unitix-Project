@@ -347,7 +347,16 @@ var addFavoriteEvent = (req, res) => {
             console.log(err);
             return res.json({'status' : err});
         } else {
-            user.favorite_events.push(req.body.eventID);
+            var exists = false;
+            async.forEach(user.favorite_events, (event, done) => {
+                if (event === req.body.eventID) {
+                    exists = true;
+                }
+            })
+            console.log(exists);
+            if (!exists) {
+                user.favorite_events.push(req.body.eventID);
+            }
             console.log(user);
             user.save((err) => {
                 if (err) {
