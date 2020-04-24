@@ -328,17 +328,38 @@ var updateUser = function (req, res) {
     })
 }
 
-<<<<<<< HEAD
 var getFavoritedEvents = (req, res) => {
-    User.findOne({ email: req.body.email}, (err, user) => {
-        if (err) {
+    console.log("REQ QUERY");
+    console.log(req.query);
+    User.findOne({ email: req.query.email}, (err, user) => {
+        if (err || user === null || user === undefined) {
             res.json({'status': err});
         } else {
+            user = user.toJSON();
             var favorites = [];
             async.forEach(user.favorite_events, (eventID, done) => {
-                
+                Event.findById(eventID, (err, event) => {
+                    if (!err && event) {
+                        event = event.toJSON();
+                        favorites.push(event);
+                        done();
+                    } else {
+                        done();
+                    }
+                })
+            }, () => {
+                console.log("FAVORITES");
+                console.log(favorites);
+                res.json({
+                    'status': 'success',
+                    'favorites': favorites
+                })
             })
-=======
+        }
+    });
+}
+
+
 var addFavoriteEvent = (req, res) => {
     console.log(req.body);
     console.log("***************************");
@@ -365,7 +386,6 @@ var addFavoriteEvent = (req, res) => {
                     res.json({'status': 'success', 'user': user});
                 }
             });
->>>>>>> Favorite Events
         }
     })
 }
@@ -382,10 +402,8 @@ module.exports = {
     find_user: findUser,
     update_user: updateUser,
     get_all_groups: getAllGroups,
-<<<<<<< HEAD
     get_followed_groups: getFollowedGroups,
-    follow_group: followGroup
-=======
-    add_favorite_event: addFavoriteEvent
->>>>>>> Favorite Events
+    follow_group: followGroup,
+    add_favorite_event: addFavoriteEvent,
+    get_favorited_events: getFavoritedEvents
 }

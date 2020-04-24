@@ -67,13 +67,15 @@ public class FavoriteEventsActivity extends AppCompatActivity {
 //            DashboardActivity.this.following = new HashSet<>(Arrays.asList(ds.getFollowedGroups(email)));
             Set<Group> tempGroups = new HashSet<>(Arrays.asList(ds.getFollowedGroups(email)));
             FavoriteEventsActivity.this.followingGroupIds = new HashSet<>();
+            Log.e("ANUSH", "HERE");
             for (Group group : tempGroups) {
                 FavoriteEventsActivity.this.followingGroupIds.add(group.getID());
             }
-            return ds.getAllEvents();
+            Log.e("ANUSH", email);
+            return ds.getFavoritedEvents(email);
         }
         protected void onPostExecute(Event[] events) {
-            Log.e("NOAH","dashboard received events, got" + events.length);
+            Log.e("ANUSH","dashboard received events, got" + events.length);
             addEventsToPage(events);
         }
     }
@@ -105,13 +107,13 @@ public class FavoriteEventsActivity extends AppCompatActivity {
     }
 
     void addEventsToPage(Event[] events) {
-        LinearLayout feed = findViewById(R.id.event_feed);
+        LinearLayout feed = findViewById(R.id.favorite_feed);
 
         events = sortEvents(events);
 
 
         for (Event event : events) {
-            Log.e("MICHAEL", event.toString());
+            Log.e("ANUSH", event.toString());
             List<Show> shows = event.getShows();
             if (shows.size() == 0) {
                 continue;

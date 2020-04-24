@@ -58,15 +58,10 @@ app.get('/find_user', user_group_routes.find_user);
 app.post('/update_user', user_group_routes.update_user);
 app.post('/creategroup', user_group_routes.create_group);
 app.get('/get_all_groups',user_group_routes.get_all_groups);
-<<<<<<< HEAD
 app.get('/get_followed_groups', user_group_routes.get_followed_groups)
 app.post('/follow_group', user_group_routes.follow_group)
-=======
 app.post('/favorite_event', user_group_routes.add_favorite_event);
-
-// app.get('/get_followed_groups', user_group_routes.get_followed_groups)
-// app.post('/follow_group', user_group_routes.follow_group)
->>>>>>> Favorite Events
+app.get('/get_favorites', user_group_routes.get_favorited_events);
 
 // event and show routes
 app.post('/create_shows', event_show_routes.create_shows)

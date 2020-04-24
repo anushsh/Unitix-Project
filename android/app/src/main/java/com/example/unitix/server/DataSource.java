@@ -115,7 +115,6 @@ public class DataSource {
         return Notification.createNotificationList(getJSONArray(jo, "notifications"));
     }
 
-
     public Notification[] getAllReadNotifications(String email) {
         JSONObject jo = getRoute("get_user_read_notifications", "email", email);
         return Notification.createNotificationList(getJSONArray(jo, "read_notifications"));
@@ -124,6 +123,11 @@ public class DataSource {
     public Event[] getAllEvents() {
         JSONObject jo = getRoute("list_events_with_shows");
         return Event.createEventList(getJSONArray(jo, "events"));
+    }
+
+    public Event[] getFavoritedEvents(String email) {
+        JSONObject jo = getRoute("get_favorites", "email", email);
+        return Event.createEventList(getJSONArray(jo, "favorite_events"));
     }
 
 
@@ -252,23 +256,23 @@ public class DataSource {
         return false;
     }
 
-    public List<Ticket> getTickets(String[] ticketIDs) {
-        List<Ticket> tickets = new ArrayList<>();
-        for (String ticketID : ticketIDs) {
-            try {
-                URL url = new URL(host + ":" + port + "/get_ticket?ticketID=" + ticketID);
-                AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
-                task.execute(url);
-                JSONObject jo = task.get();
-                System.out.println("TICKET JSON OBJECT IS:\n" + jo.toString());
-                tickets.add(new Ticket(jo.getJSONObject("ticket")));
-            } catch (Exception e) {
-                // skip this ticket
-                Log.e("MICHAEL", "ERROR - COULD NOT RETRIEVE TICKET:" + e);
-            }
-        }
-        return tickets;
-    }
+//    public List<Ticket> getTickets(String[] ticketIDs) {
+//        List<Ticket> tickets = new ArrayList<>();
+//        for (String ticketID : ticketIDs) {
+//            try {
+//                URL url = new URL(host + ":" + port + "/get_ticket?ticketID=" + ticketID);
+//                AsyncTask<URL, String, JSONObject> task = new AccessWebJSONTask();
+//                task.execute(url);
+//                JSONObject jo = task.get();
+//                System.out.println("TICKET JSON OBJECT IS:\n" + jo.toString());
+//                tickets.add(new Ticket(jo.getJSONObject("ticket")));
+//            } catch (Exception e) {
+//                // skip this ticket
+//                Log.e("MICHAEL", "ERROR - COULD NOT RETRIEVE TICKET:" + e);
+//            }
+//        }
+//        return tickets;
+//    }
 
     public void redeemTicket(String ticketID) {
         try {
