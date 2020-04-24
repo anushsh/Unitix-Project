@@ -492,7 +492,7 @@ var getShowsForEvent = function (req, res) {
                     done()
                 })
             }, () => {
-                res.json(shows)
+                res.json({ "shows" : shows})
             })
         }
     })

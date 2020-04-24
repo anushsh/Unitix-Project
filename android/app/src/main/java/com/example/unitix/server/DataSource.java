@@ -161,6 +161,11 @@ public class DataSource {
         return new Event(getJSONObject(jo, "event"));
     }
 
+    public Show[] getShowsByEventId(String eventID) {
+        JSONObject jo = getRoute("get_shows_for_event", "eventID", eventID);
+        return Show.createShowList(getJSONArray(jo, "shows"));
+    }
+
     public Show[] getUserShowInfo(String email) {
         JSONObject jo = getRoute("get_user_show_info", "email", email);
         JSONArray showInfoArray = getJSONArray(jo, "shows");
@@ -334,5 +339,7 @@ public class DataSource {
         }
         return false;
     }
+
+
 
 }

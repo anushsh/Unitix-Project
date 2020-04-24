@@ -117,6 +117,25 @@ public class SearchResultActivity extends AppCompatActivity {
         return eventToEventNameMap;
     }
 
+    private String getEventFirstDate(Event event) {
+        Show[] showArray = ds.getShowsByEventId(event.getId());
+        Log.e("KARA show length array", "" + showArray.length);
+        return "";
+    }
+
+    //TODO: Fill in
+    private Map<Event, String> createSortMapDate(Event[] events) {
+        Map<Event, String> eventToEventDateMap = new HashMap<>();
+
+        return eventToEventDateMap;
+    }
+
+    private Map<Event, String> createSortMapPrice(Event[] events) {
+        Map<Event, String> eventToEventPriceMap = new HashMap<>();
+
+        return eventToEventPriceMap;
+    }
+
     private Event[] sortEventsAscending(Event[] events, final Map<Event, String> eventToValueMap) {
 
         Arrays.sort(events, new Comparator<Event>() {
@@ -148,6 +167,7 @@ public class SearchResultActivity extends AppCompatActivity {
         feed = findViewById(R.id.event_feed);
         feed.removeAllViews();
 
+        getEventFirstDate(events[0]);
         //TODO : ADD BACK IN LATER WHEN SORT EVENTS IS IMPLEMENTED
 
         Spinner sortSpinner = (Spinner) findViewById(R.id.sort_spinner);
