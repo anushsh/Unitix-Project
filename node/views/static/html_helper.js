@@ -14,8 +14,6 @@
   }
 
   function greet() {
-    console.log(group)
-    console.log(group.displayName)
     $('#greeting').append(group.displayName)
   }
 
@@ -26,7 +24,6 @@
 
   function getMessage() {
       $.get("/get_message", (messageRes) => {
-          console.log(messageRes)
           message = messageRes
           if (message) {
             $('#msgBlock').addClass('is-active')
@@ -65,8 +62,6 @@
     $("#startDate").val('')
     $("#startTime").val('')
     $("#endTime").val('')
-
-    console.log("curr show #" + currShowNum)
     $("#showHeaderInfo").html("Details for show " + currShowNum++)
 }
 
@@ -110,7 +105,6 @@ function storeShowInfo(callback) {
             startTime: $("#startTime").val(),
             endTime: $("#endTime").val()
         })
-        console.log(shows)
         addShowHTML()
         if (callback) callback()
     })

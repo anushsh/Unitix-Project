@@ -52,7 +52,6 @@
         }
 
         function postEvent(name, tags, shows) {
-            console.log("in post event... with shows " + shows)
             $.post("/create_event", {
                 name: name,
                 tags: tags,
@@ -70,14 +69,10 @@
 
         // send event ID to all of its shows as well as the group that created it
         function propogateEventID(eventID) {
-            console.log("input to propogateEventID is " + JSON.stringify(eventID))
-
             $.post("/add_event_id_to_group", {
                 "eventID": eventID,
                 "groupEmail": group.email
             }, (data, success) => {
-                console.log(data)
-                console.log(success)
                 goHome("Successfully added event " + name + "!")
             })
 
@@ -87,8 +82,6 @@
             }, function (data, status) {
                 if (status = "success" && data.showIDs) {
                     data.showIDs.forEach(showID => {
-                        console.log("showID: " + showID)
-                        console.log("eventID: " + eventID)
                         $.post("/add_event_id_to_show", {
                             "eventID": eventID,
                             "showID": showID
