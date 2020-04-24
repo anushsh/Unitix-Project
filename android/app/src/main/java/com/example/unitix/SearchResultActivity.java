@@ -117,7 +117,6 @@ public class SearchResultActivity extends AppCompatActivity {
         return eventToEventNameMap;
     }
 
-    //positive ascendingDescending for ascending, negative for descending order
     private Event[] sortEventsAscending(Event[] events, final Map<Event, String> eventToValueMap) {
 
         Arrays.sort(events, new Comparator<Event>() {
@@ -131,6 +130,19 @@ public class SearchResultActivity extends AppCompatActivity {
         return events;
     }
 
+    private Event[] sortEventsDescending(Event[] events, final Map<Event, String> eventToValueMap) {
+
+        Arrays.sort(events, new Comparator<Event>() {
+            @Override
+            public int compare(Event one, Event two) {
+                String valueOne = eventToValueMap.get(one);
+                String valueTwo = eventToValueMap.get(two);
+                return -1 * valueOne.compareTo(valueTwo);
+            }
+        });
+        return events;
+    }
+
     void addSearchResultsToPage(Event[] events) {
         Log.e("KARA", "in addSearchResultsToPage events.length: " + events.length);
         feed = findViewById(R.id.event_feed);
@@ -138,7 +150,28 @@ public class SearchResultActivity extends AppCompatActivity {
 
         //TODO : ADD BACK IN LATER WHEN SORT EVENTS IS IMPLEMENTED
 
-        events = sortEventsAscending(events, createSortMapEventName(events));
+        Spinner sortSpinner = (Spinner) findViewById(R.id.sort_spinner);
+        String selectedSortSetting = sortSpinner.getSelectedItem().toString();
+
+        if (selectedSortSetting.equals("Sort by Event Name A to Z")) {
+            events = sortEventsAscending(events, createSortMapEventName(events));
+        } else if (selectedSortSetting.equals("Sort by Event Name Z to A")) {
+            events = sortEventsDescending(events, createSortMapEventName(events));
+        } else if (selectedSortSetting.equals("Sort by Group Name A to Z")) {
+            events = sortEventsAscending(events, createSortMapGroupName(events));
+        } else if (selectedSortSetting.equals("Sort by Group Name Z to A")) {
+            events = sortEventsDescending(events, createSortMapGroupName(events));
+        } else if (selectedSortSetting.equals("Sort by Price Asc")) {
+
+        } else if (selectedSortSetting.equals("Sort by Price Desc")) {
+
+        } else if (selectedSortSetting.equals("Sort by Date Asc")) {
+
+        } else if (selectedSortSetting.equals("Sort by Date Desc")) {
+
+        }
+
+
 
         for (Event event : events) {
             List<Show> shows = event.getShows();
