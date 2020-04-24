@@ -545,9 +545,9 @@ var getSearchResultEvents = function (req, res) {
 var getSearchResultEventsByTag = function (req, res) {
     var query = req.query.searchQuery;
    //console.log("**************" + query);
-
+//db.collection.find( { $query: {}, $orderby: { age : -1 } } )
     //TODO: COME BACK AND CHANGE "group" to "group_name" once that is updated in event creation
-    Event.find({ tags: { $in: [query] } }, (err, allEvents) => {
+    Event.find({ $query: { tags: { $in: [query] } } }, (err, allEvents) => {
         if (err) {
             res.json({ 'status': err })
         } else if (allEvents.length == 0) {

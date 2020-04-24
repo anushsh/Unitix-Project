@@ -15,11 +15,16 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.unitix.models.Group;
 import com.example.unitix.server.DataSource;
 import com.example.unitix.models.Event;
 import com.example.unitix.models.Show;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SearchResultActivity extends AppCompatActivity {
     DataSource ds = DataSource.getInstance();
@@ -105,6 +110,10 @@ public class SearchResultActivity extends AppCompatActivity {
         Log.e("KARA", "in addSearchResultsToPage events.length: " + events.length);
         feed = findViewById(R.id.event_feed);
         feed.removeAllViews();
+
+        //TODO : ADD BACK IN LATER WHEN SORT EVENTS IS IMPLEMENTED
+        //events = sortEvents(events);
+
         for (Event event : events) {
             List<Show> shows = event.getShows();
             if (shows.size() == 0) {
