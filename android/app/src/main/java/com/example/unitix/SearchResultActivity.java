@@ -28,9 +28,6 @@ import java.util.Map;
 
 public class SearchResultActivity extends AppCompatActivity {
     DataSource ds = DataSource.getInstance();
-    //User user;
-    //private String email;
-    //TextView mTextViewSearchResult;
     String query;
     ViewGroup feed;
 
@@ -79,8 +76,6 @@ public class SearchResultActivity extends AppCompatActivity {
             task = new SearchResultActivity.HandleTagSearch();
         }
 
-//        // execute in background to keep main thread smooth
-//        AsyncTask<Integer,Integer, Event[]> task = new SearchResultActivity.HandleTagSearch();
         // allow for parallel execution
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
@@ -91,7 +86,6 @@ public class SearchResultActivity extends AppCompatActivity {
             return ds.getEventSearchResults(query);
         }
         protected void onPostExecute(Event[] events) {
-            //Log.e("NOAH","dashboard received events, got" + events.length);
             addSearchResultsToPage(events);
         }
     }
@@ -106,13 +100,45 @@ public class SearchResultActivity extends AppCompatActivity {
         }
     }
 
+    private Map<Event, String> createSortMapGroupName(Event[] events) {
+        Map<Event, String> eventToGroupNameMap = new HashMap<>();
+        for (Event e : events) {
+            eventToGroupNameMap.putIfAbsent(e, e.getGroup());
+        }
+
+        return eventToGroupNameMap;
+    }
+
+    private Map<Event, String> createSortMapEventName(Event[] events) {
+        Map<Event, String> eventToEventNameMap = new HashMap<>();
+        for (Event e : events) {
+            eventToEventNameMap.putIfAbsent(e, e.getName());
+        }
+        return eventToEventNameMap;
+    }
+
+    //positive ascendingDescending for ascending, negative for descending order
+    private Event[] sortEventsAscending(Event[] events, final Map<Event, String> eventToValueMap) {
+
+        Arrays.sort(events, new Comparator<Event>() {
+            @Override
+            public int compare(Event one, Event two) {
+                String valueOne = eventToValueMap.get(one);
+                String valueTwo = eventToValueMap.get(two);
+                return valueOne.compareTo(valueTwo);
+            }
+        });
+        return events;
+    }
+
     void addSearchResultsToPage(Event[] events) {
         Log.e("KARA", "in addSearchResultsToPage events.length: " + events.length);
         feed = findViewById(R.id.event_feed);
         feed.removeAllViews();
 
         //TODO : ADD BACK IN LATER WHEN SORT EVENTS IS IMPLEMENTED
-        //events = sortEvents(events);
+
+        events = sortEventsAscending(events, createSortMapEventName(events));
 
         for (Event event : events) {
             List<Show> shows = event.getShows();
@@ -163,37 +189,8 @@ public class SearchResultActivity extends AppCompatActivity {
                 }
             });
 
-
             feed.addView(eventView);
         }
     }
 
-
-    //used to be in onCreate
-//        mTextViewSearchResult = (TextView) findViewById(R.id.textViewSearchResult);
-//
-//        if (Intent.ACTION_SEARCH.equals(getIntent().getAction())) {
-//            handleSearch(getIntent().getStringExtra(SearchManager.QUERY));
-//        }
-
-//        Intent intent = getIntent();
-//        this.user = this.ds.getUser(intent.getStringExtra("EMAIL"));
-
-
-
-//    public void handleSearch(String searchQuery) {
-//        mTextViewSearchResult.setText(searchQuery);
-//    }
-//
-//
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.options_menu, menu);
-//
-//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-//        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
-//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-//        return true;
-//    }
 }
