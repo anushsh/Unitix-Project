@@ -214,15 +214,6 @@ public class DataSource {
         return tickets.toArray(new Ticket[0]);
     }
 
-    public List<Ticket> getTickets(String[] ticketIDs) {
-        List<Ticket> tickets = new ArrayList<>();
-        for (String ticketID: ticketIDs) {
-            JSONObject jo = getRoute("get_ticket", "ticketID", ticketID);
-            tickets.add(new Ticket(getJSONObject(jo, "ticket")));
-        }
-        return tickets;
-    }
-
     public boolean readNotifications(String email) {
         return postRoute("read_all_notifications", "email", email);
     }
