@@ -65,12 +65,6 @@ public class DashboardActivity extends AppCompatActivity {
 
     private class HandleEventsTask extends AsyncTask<Integer, Integer, Event[]> {
         protected Event[] doInBackground(Integer... ints) {
-//            DashboardActivity.this.following = new HashSet<>(Arrays.asList(ds.getFollowedGroups(email)));
-            Set<Group> tempGroups = new HashSet<>(Arrays.asList(ds.getFollowedGroups(email)));
-            DashboardActivity.this.followingGroupIds = new HashSet<>();
-            for (Group group : tempGroups) {
-                DashboardActivity.this.followingGroupIds.add(group.getID());
-            }
             return ds.getAllEvents();
         }
         protected void onPostExecute(Event[] events) {
@@ -79,17 +73,23 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
+    private void fillFollowingGroupIds() {
+        Set<Group> tempGroups = new HashSet<>(Arrays.asList(ds.getFollowedGroups(email)));
+        DashboardActivity.this.followingGroupIds = new HashSet<>();
+        for (Group group : tempGroups) {
+            DashboardActivity.this.followingGroupIds.add(group.getID());
+        }
+    }
+
     private Event[] sortEvents(Event[] events) {
-//        final Map<Event, Group> eventGroupMap = new HashMap<>();
-//        for (Event event : events) {
-//            eventGroupMap.putIfAbsent(event, ds.getGroupByID(event.getGroup()));
-//        }
+
+        if (this.followingGroupIds == null) {
+            fillFollowingGroupIds();
+        }
+
         Arrays.sort(events, new Comparator<Event>() {
             @Override
             public int compare(Event one, Event two) {
-//                boolean followingOne = following.contains(eventGroupMap.get(one));
-//                boolean followingTwo = following.contains(eventGroupMap.get(two));
-
                 boolean followingOne = followingGroupIds.contains(one.getGroup());
                 boolean followingTwo = followingGroupIds.contains(two.getGroup());
 
