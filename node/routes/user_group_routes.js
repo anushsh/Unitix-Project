@@ -336,7 +336,7 @@ var getFavoritedEvents = (req, res) => {
             res.json({'status': err});
         } else {
             user = user.toJSON();
-            var favorites = [];
+            favorites = [];
             async.forEach(user.favorite_events, (eventID, done) => {
                 Event.findById(eventID, (err, event) => {
                     if (!err && event) {

@@ -127,7 +127,7 @@ public class DataSource {
 
     public Event[] getFavoritedEvents(String email) {
         JSONObject jo = getRoute("get_favorites", "email", email);
-        return Event.createEventList(getJSONArray(jo, "favorite_events"));
+        return Event.createEventList(getJSONArray(jo, "favorites"));
     }
 
 
