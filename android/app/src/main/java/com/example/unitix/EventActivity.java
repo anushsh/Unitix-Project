@@ -20,6 +20,7 @@ import com.example.unitix.models.Show;
 import com.example.unitix.models.Ticket;
 import com.example.unitix.models.User;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class EventActivity extends AppCompatActivity {
@@ -190,7 +191,7 @@ public class EventActivity extends AppCompatActivity {
 
     private class LoadTicketTask extends AsyncTask<String, Integer, List<Ticket>> {
         protected List<Ticket> doInBackground(String... ids) {
-            return ds.getTickets(EventActivity.this.user.currTickets);
+            return Arrays.asList(ds.getUserTickets(EventActivity.this.user.getId()));
         }
 
         protected void onPostExecute(List<Ticket> tickets) {

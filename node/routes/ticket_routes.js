@@ -94,15 +94,12 @@ var getTicket = function (req, res) {
 var getTicketStats = function (req, res) {
     var shows = req.query.showID;
     var isRevenue = parseInt(req.query.isRevenue, 10);
-    console.log(isRevenue);
-    console.log(typeof isRevenue);
     var finalData = [];
     if (!Array.isArray(shows)) {
         shows = [shows];
     }
     async.forEach(shows, (showID, done) => {
         getShowTicketStatsHelper(showID, isRevenue, (err, data) => {
-            console.log(data);
             if (!err && data) {
                 data.forEach(item => {finalData.push(item)});
             }
@@ -153,13 +150,8 @@ var getShowTicketStatsHelper = function(showID, isRevenue, callback) {
     var dateMap = new Map();
     Show.findById(showID, (err, show) => {
         if (!err && show) {
-            console.log("found show");
             show = show.toJSON();
             var scale = isRevenue ? parseFloat(show.price.toString()) : 1;
-            console.log("scale" + scale);
-            console.log(show.price);
-            console.log(typeof show.price);
-            
             var ticketIDs = show.tickets;
             async.forEach(ticketIDs, (ticketID, done) => {
                 Ticket.findById(ticketID, (err, ticket) => {
@@ -197,17 +189,12 @@ var sellOut = function(show) {
         updated_value: 0,
         time: Date.now()
     })
-
-    console.log(show)
-    console.log(JSON.stringify(show))
-
     change.save((err, changeSaved) => {
         if (err) console.log("Error creating change obj. " + err)
         else {
             Event.findById(show.event, (err, event) => {
                 if (err) console.log("Error finding event when selling out")
                 else {
-                    console.log(event)
                     updatedChanges = event.changes
                     updatedChanges.push(changeSaved._id)
                     Event.findByIdAndUpdate(show.event, {changes: updatedChanges}, () => {})

@@ -118,8 +118,6 @@ var getFollowedGroups = function (req, res) {
                     done()
                 })
             }, () => {
-                console.log("COLLECTED FOLLOWING GROUPS:")
-                console.log(groups)
                 res.json({
                     "status":"success","following":groups
                 })
@@ -172,9 +170,6 @@ function getAllGroups (_, res) {
                 'groups' : allGroups
             })
         }
-        console.log("GROUPS ARRAY");
-        console.log(allGroups.length);
-        console.log(allGroups[0]);
     });
 }
 
@@ -217,9 +212,6 @@ var getUserShowInfo = function(req, res) {
 
 
 var updateGroup = (req, res) => {
-    // console.log("REQ");
-    // console.log(req.body);
-    // console.log(req.session.user);
     Group.findOneAndUpdate({email: req.session.user}, {password: req.body.password,
     displayName: req.body.groupName, groupType: req.body.groupType, bio: req.body.bio, stripe: req.body.stripe}, {new: true}, (err, user) => {
         if (err) {

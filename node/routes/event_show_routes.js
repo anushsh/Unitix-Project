@@ -9,10 +9,8 @@ var async = require('async')
 var createShows = function (req, res) {
     showSchemaIDs = []
 
-    console.log(req.body.shows)
     // create and save each show asynchronously. once mongo finishes saving the show, move on to the next one. won't send back id list until all are processed.
     async.forEach(req.body.shows, function (show, done) {
-        console.log(show)
         var newShow = new Show({
             name: show.name,
             capacity: show.capacity,
@@ -33,7 +31,6 @@ var createShows = function (req, res) {
                 console.log("Error saving show: " + err)
                 res.json({ 'status': err })
             } else {
-                console.log("show id: " + showSaved._id)
                 showSchemaIDs.push(showSaved._id)
                 done()
             }
@@ -204,13 +201,10 @@ var getEventByName = function(req, res) {
 var addEventIdToShow = function (req, res) {
     var eventID = req.body.eventID
     var showID = req.body.showID
-    console.log("showID: " + showID)
-    console.log("eventID: " + eventID)
     Show.findById(showID, (err, show) => {
         if (err || !show) {
             res.json({ "status": "failure" })
         } else {
-            console.log(show)
             show.update({ event: eventID }, (err) => {
                 !err ? res.json({ "status": "success" }) : res.json({"status":"failure"})
             });
@@ -221,7 +215,6 @@ var addEventIdToShow = function (req, res) {
 var addEventIdToGroup = function (req, res) {
     var eventID = req.body.eventID
     var groupEmail = req.body.groupEmail
-    console.log("ADDING EVENT ID TO GROUP")
     Group.findOne({email:groupEmail}, (err, group) => {
         if (err || !group) {
             res.json({"status":"failure finding group"})
@@ -237,7 +230,6 @@ var addEventIdToGroup = function (req, res) {
 
 function getShowWithTickets(req, res) {
     var showID = req.query.showID;
-    console.log("SHOW ID " + showID);
     Show.findById(showID, (err, show) => {
         if (!err && show) {
             show = show.toJSON();
@@ -430,7 +422,7 @@ var getChangeHelper = function(changeInput, cb) {
 var deleteEvent = function (req, res) {
     name = req.query.name
     Event.findById(req.query.eventID, (err, event) => {
-        if (!event) {
+        if (err) {
             console.log("ERROR GETTING EVENT. " + err)
         }
         deleteChanges(event.changes)
@@ -467,7 +459,6 @@ var deleteEventFromGroup = function(email, eventID) {
             events = group.currentEvents
             modifiedEvents = []
             async.forEach(events, (event, done) => {
-                console.log("Event: " + event + " and input param " + eventID + " equal with two is " + eventID == event + ", equal with three is " + eventID === event)
                 if (event != eventID) {
                     modifiedEvents.push(event)
                 }
@@ -501,7 +492,6 @@ var getShowsForEvent = function (req, res) {
 
 var getSearchResultEvents = function (req, res) {
     var query = req.query.searchQuery;
-    console.log("**************" + query);
 
     //TODO: COME BACK AND CHANGE "group" to "group_name" once that is updated in event creation
     Event.find({ $or: [ {name:{$regex: ".*" + query + ".*"}}, {group:{$regex: ".*" + query + ".*"}} ] }, (err, allEvents) => {
@@ -518,7 +508,6 @@ var getSearchResultEvents = function (req, res) {
                     async.forEach(event.shows, (showID, done2) => {
                         Show.findById(showID, (err, show) => {
                             if (!err && show) {
-                                console.log(show.toJSON());
                                 shows.push(show.toJSON());
                             } else {
                                 console.log(err);
@@ -544,8 +533,6 @@ var getSearchResultEvents = function (req, res) {
 
 var getSearchResultEventsByTag = function (req, res) {
     var query = req.query.searchQuery;
-   //console.log("**************" + query);
-//db.collection.find( { $query: {}, $orderby: { age : -1 } } )
     //TODO: COME BACK AND CHANGE "group" to "group_name" once that is updated in event creation
     Event.find({ $query: { tags: { $in: [query] } } }, (err, allEvents) => {
         if (err) {
@@ -561,7 +548,6 @@ var getSearchResultEventsByTag = function (req, res) {
                     async.forEach(event.shows, (showID, done2) => {
                         Show.findById(showID, (err, show) => {
                             if (!err && show) {
-                                //console.log(show.toJSON());
                                 shows.push(show.toJSON());
                             } else {
                                 console.log(err);
@@ -574,7 +560,6 @@ var getSearchResultEventsByTag = function (req, res) {
                         done1();
                     });
                 }, () => {
-                    //console.log("**************events.length: " + events.length)
                     res.json({
                         'status': 'success',
                         'events': events
