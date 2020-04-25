@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Enter your rating (between 0 and 5)"
-            android:textSize="15dp" />
+            android:textSize="20dp" />
 
         <EditText
             android:id="@+id/rating"
@@ -39,14 +39,14 @@
             android:layout_marginTop="30px"
             android:selectAllOnFocus="false"
             android:textAlignment="center"
-            android:textSize="10sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Enter your review"
-            android:textSize="15dp" />
+            android:textSize="20dp" />
 
         <EditText
             android:id="@+id/review"
@@ -56,7 +56,7 @@
             android:layout_marginTop="30px"
             android:selectAllOnFocus="false"
             android:textAlignment="center"
-            android:textSize="10sp" />
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/review_btn"

@@ -216,6 +216,9 @@ public class EventActivity extends AppCompatActivity {
         protected void onPostExecute(Event event) {
             EventActivity.this.event = event;
             ratingForEvent = EventActivity.this.event.getRating();
+            if (ratingForEvent.equals("0")) {
+                ratingForEvent = "No one has rated the event till now";
+            }
             TextView rating = findViewById(R.id.rating);
             rating.setText("Rating: " + ratingForEvent);
             Log.e("YASH", "got rating " + ratingForEvent);
