@@ -127,7 +127,6 @@ function getAllReadNotifications(email, callback) {
             async.forEach(notificationIDs, (notificationID, done) => {
                 Notification.findById(notificationID, (err, notification) => {
                     if (!err && notification) {
-                        // notification = notification.toJSON();
                         notifications.push(notification);
                     }
                     done();

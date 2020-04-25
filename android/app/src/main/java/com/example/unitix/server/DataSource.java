@@ -14,6 +14,7 @@ import com.example.unitix.models.Change;
 import com.example.unitix.models.Event;
 import com.example.unitix.models.Group;
 import com.example.unitix.models.Notification;
+import com.example.unitix.models.Review;
 import com.example.unitix.models.Show;
 import com.example.unitix.models.ShowInfo;
 import com.example.unitix.models.Ticket;
@@ -146,6 +147,12 @@ public class DataSource {
     public Notification[] getAllReadNotifications(String email) {
         JSONObject jo = getRoute("get_user_read_notifications", "email", email);
         return Notification.createNotificationList(getJSONArray(jo, "read_notifications"));
+    }
+
+    public Review[] getAllReviews(String eventID) {
+        JSONObject jo = getRoute("get_event_reviews", "eventID", eventID);
+        Review[] toReturn = Review.createReviewsList(getJSONArray(jo, "reviews"));
+        return toReturn;
     }
 
     public Event[] getAllEvents() {

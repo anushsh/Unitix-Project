@@ -86,6 +86,8 @@ public class NotificationsActivity extends AppCompatActivity  {
             notificationText.setText(notification.content);
             notificationText.setTextSize(15);
             feed.addView(notificationText);
+            Log.e("YASH", "got read notification" + notification.content);
+
         }
     }
 

@@ -32,12 +32,14 @@ public class EventActivity extends AppCompatActivity {
     User user;
     String eventID;
     List<Ticket> userTickets;
+    String ratingForEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
+        ratingForEvent = "N/A";
         this.ds = DataSource.getInstance();
 
         Intent intent = getIntent();
@@ -50,6 +52,9 @@ public class EventActivity extends AppCompatActivity {
         // execute in background to keep main thread smooth and allow for parallel execution
         AsyncTask<String, Integer, List<Ticket>> ticketTask = new LoadTicketTask();
         ticketTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this.user.currTickets);
+
+
+
     }
 
     void findShow() {
@@ -210,6 +215,11 @@ public class EventActivity extends AppCompatActivity {
 
         protected void onPostExecute(Event event) {
             EventActivity.this.event = event;
+            ratingForEvent = EventActivity.this.event.getRating();
+            TextView rating = findViewById(R.id.rating);
+            rating.setText("Rating: " + ratingForEvent);
+            Log.e("YASH", "got rating " + ratingForEvent);
+
             EventActivity.this.group = EventActivity.this.ds.getGroupByID(EventActivity.this.event.getGroup()); // TODO - need to move async
             if (event != null) {
                 if (event.getChanges() != null) {
@@ -233,6 +243,15 @@ public class EventActivity extends AppCompatActivity {
     public void onRateReviewButtonClick(View v) {
 
         Intent i = new Intent(this, ReviewEventActivity.class);
+        i.putExtra("EVENTID", eventID);
+        i.putExtra("EMAIL", user.getId());
+        startActivityForResult(i, 1);
+
+    }
+
+    public void onViewReviewsButtonClick(View v) {
+
+        Intent i = new Intent(this, ViewReviewsActivity.class);
         i.putExtra("EVENTID", eventID);
         i.putExtra("EMAIL", user.getId());
         startActivityForResult(i, 1);

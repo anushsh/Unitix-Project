@@ -592,13 +592,6 @@ var reviewEvent = function(req, res) {
             currRating = Number(currRating) + Number(rating);
             num_ratings = num_ratings + 1;
             currRating = currRating / num_ratings;
-
-            // var ratingNumber = parseInt(rating, 10);
-            // var currRatingNumber = parseInt(currRating, 10);
-            // currRatingNumber = ((currRatingNumber * num_ratings) + ratingNumber);
-            // num_ratings = num_ratings + 1;
-            // currRatingNumber = currRatingNumber / num_ratings;
-
             
             var newReview = new Review({
                 review: currReview,
@@ -622,19 +615,57 @@ var reviewEvent = function(req, res) {
                         }
                     })
                 }
-            })
-
-            
-            //currRating = ((currRating * num_ratings++) + rating) / num_ratings; - concise method for above three lines - will test later
-            
-            //for this event, create a review and link review to this event
-            //change rating
-            //increase num_ratings by 1
+            })         
         } else {
             console.log(err);
             res.json({"status":"error"});
         }
     });
+}
+
+
+function getEventReviews(req, res) {
+    var eventID = req.query.eventID;
+    getAllEventReviews(eventID, (err, reviews) => {
+        if (err) {
+            res.json({"status":"error"})
+        } else {
+            res.json({
+                "status":"success","reviews":reviews
+            })
+        }
+    })
+}
+
+function getAllEventReviews(eventID, callback) {
+    console.log("YASH - enters getEventReviews");
+    Event.findById(eventID, (err, event) => {
+        console.log("YASH - Event found - " + eventID);
+        if (err || !event) {
+            console.log("YASH - entered err");
+            callback("error", null);
+        } else {
+            event = event.toJSON();
+            var reviewIDs = event.reviews;
+            if (!reviewIDs) {
+                reviewIDs = [];
+            }
+            var reviews = [];
+            async.forEach(reviewIDs, (reviewID, done) => {
+                console.log("YASH - seeing review - " + reviewID);
+
+                Review.findById(reviewID, (err, review) => {
+                    if (!err && review) {
+                        reviews.push(review);
+                    }
+                    done();
+                })
+            }, () => {
+                callback(null, reviews);
+            });
+
+        }
+    })
 }
 
 
@@ -658,5 +689,7 @@ module.exports = {
     get_search_result_events: getSearchResultEvents,
     get_change: getChange,
     get_search_result_by_tag: getSearchResultEventsByTag,
-    review_event: reviewEvent
+    review_event: reviewEvent,
+    get_event_reviews: getEventReviews
+
 }

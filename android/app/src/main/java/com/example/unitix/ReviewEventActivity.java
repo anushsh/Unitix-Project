@@ -51,6 +51,8 @@ public class ReviewEventActivity extends AppCompatActivity {
 
             if (reviewed) {
                 Toast.makeText(getApplicationContext(), "Event Reviewed", Toast.LENGTH_SHORT).show();
+                Log.e("YASH", "reviewed Event Successfully");
+                finish();
             } else {
                 Toast.makeText(getApplicationContext(), "Please try again", Toast.LENGTH_SHORT).show();
             }

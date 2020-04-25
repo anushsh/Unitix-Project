@@ -38,12 +38,6 @@
             android:textColor="@color/colorPrimary"
             android:textSize="25dp" />
 
-        <Button
-            android:id="@+id/rate_review_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onRateReviewButtonClick"
-            android:text="Rate and Review" />
 
         <LinearLayout
             android:id="@+id/show_list"
@@ -58,6 +52,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Rating"
+            android:textSize="15dp" />
+
+        <Button
+            android:id="@+id/view_reviews_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onViewReviewsButtonClick"
+            android:text="View Reviews" />
+
+        <Button
+            android:id="@+id/rate_review_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onRateReviewButtonClick"
+            android:text="Rate and Review" />
 
     </LinearLayout>
 
