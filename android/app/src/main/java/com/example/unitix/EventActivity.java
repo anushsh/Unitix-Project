@@ -229,4 +229,13 @@ public class EventActivity extends AppCompatActivity {
             }
         }
     }
+
+    public void onRateReviewButtonClick(View v) {
+
+        Intent i = new Intent(this, ReviewEventActivity.class);
+        i.putExtra("EVENTID", eventID);
+        i.putExtra("EMAIL", user.getId());
+        startActivityForResult(i, 1);
+
+    }
 }

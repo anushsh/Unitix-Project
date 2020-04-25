@@ -239,6 +239,12 @@ public class DataSource {
         return postRoute("create_user", params, vals);
     }
 
+    public boolean reviewEvent(String email, String eventID, String rating, String review) {
+        String[] params = {"email", "eventID", "rating", "review"};
+        String[] vals = {email, eventID, rating, review};
+        return postRoute("review_event", params, vals);
+    }
+
     public boolean createCharge(String token) {
         return postRoute("api/stripe", "token", token);
     }

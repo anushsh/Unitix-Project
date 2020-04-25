@@ -3,6 +3,7 @@ var Event = require('../models/event.js')
 var Show = require('../models/show.js')
 var Ticket = require('../models/ticket.js')
 var Change = require('../models/change.js')
+var Review = require('../models/review.js')
 
 var async = require('async')
 
@@ -49,7 +50,9 @@ var createEvent = function (req, res) {
         name: req.body.name,
         group: req.body.group,
         shows: req.body.shows,
-        tags: req.body.tags
+        tags: req.body.tags,
+        num_ratings: 0,
+        rating: 0.0
     })
 
     newEvent.save((err, eventSaved) => {
@@ -571,6 +574,69 @@ var getSearchResultEventsByTag = function (req, res) {
         
 }
 
+var reviewEvent = function(req, res) {
+    console.log("YASH - enters reviewEvent");
+    var email = req.body.email;
+    var eventID = req.body.eventID;
+    var rating = req.body.rating;
+    var currReview = req.body.review;
+    
+    Event.findById(eventID, (err, event) => {
+        if (!err && event) {
+            var reviews = event.reviews ? event.reviews : [];
+            var num_ratings = event.num_ratings ? event.num_ratings : 0;
+            var currRating = event.rating ? event.rating : 0.0;
+
+
+            currRating = Number(currRating * num_ratings);
+            currRating = Number(currRating) + Number(rating);
+            num_ratings = num_ratings + 1;
+            currRating = currRating / num_ratings;
+
+            // var ratingNumber = parseInt(rating, 10);
+            // var currRatingNumber = parseInt(currRating, 10);
+            // currRatingNumber = ((currRatingNumber * num_ratings) + ratingNumber);
+            // num_ratings = num_ratings + 1;
+            // currRatingNumber = currRatingNumber / num_ratings;
+
+            
+            var newReview = new Review({
+                review: currReview,
+                email: email
+            })
+            console.log("YASH - new review created " + newReview.review);
+            newReview.save((err, review) => {
+                if (err || !review) {
+                    res.json({"status":"error did not save"});
+                } else {
+                    console.log("YASH - enters save new review");
+                    review = review.toJSON();
+                    reviews.push(review._id);
+
+                    Event.findByIdAndUpdate(eventID, {"num_ratings": num_ratings, "rating": currRating, "reviews": reviews}, (err, event) => {
+                        if (!err && event) {
+                            console.log("YASH - updated event");
+                            res.json({"status":"success"});
+                        } else {
+                            res.json({"status":"did not update error"});
+                        }
+                    })
+                }
+            })
+
+            
+            //currRating = ((currRating * num_ratings++) + rating) / num_ratings; - concise method for above three lines - will test later
+            
+            //for this event, create a review and link review to this event
+            //change rating
+            //increase num_ratings by 1
+        } else {
+            console.log(err);
+            res.json({"status":"error"});
+        }
+    });
+}
+
 
 module.exports = {
     create_shows: createShows,
@@ -591,5 +657,6 @@ module.exports = {
     delete_event: deleteEvent,
     get_search_result_events: getSearchResultEvents,
     get_change: getChange,
-    get_search_result_by_tag: getSearchResultEventsByTag
+    get_search_result_by_tag: getSearchResultEventsByTag,
+    review_event: reviewEvent
 }

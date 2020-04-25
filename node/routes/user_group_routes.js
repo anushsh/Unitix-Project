@@ -72,7 +72,6 @@ var getEventWithShows= function(eventID, callback) {
 var followGroup = function (req, res) {
     var groupID = req.body.groupID
     var queryEmail = req.body.email;
-
     User.findOne({ email: queryEmail }, (err, user) => {
         if (err) {
             res.json({ "status": err })

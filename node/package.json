@@ -23,7 +23,7 @@
     "express-session": "*",
     "mongoose": "^5.9.6",
     "nodemon": "^2.0.3",
-    "stripe": "^8.44.0"
+    "stripe": "^8.47.0"
   },
   "bugs": {
     "url": "https://github.com/cis350/350S20-11/issues"

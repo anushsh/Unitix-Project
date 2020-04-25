@@ -38,6 +38,13 @@
             android:textColor="@color/colorPrimary"
             android:textSize="25dp" />
 
+        <Button
+            android:id="@+id/rate_review_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onRateReviewButtonClick"
+            android:text="Rate and Review" />
+
         <LinearLayout
             android:id="@+id/show_list"
             android:orientation="vertical"
