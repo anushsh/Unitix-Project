@@ -51,14 +51,21 @@ public class ViewReviewsActivity extends AppCompatActivity {
 
     void addReviewsToPage(Review[] reviews) {
 
-        LinearLayout feed = findViewById(R.id.reviews_list);
-        for (Review review : reviews) {
+        if (reviews.length > 0) {
+            LinearLayout feed = findViewById(R.id.reviews_list);
+            for (Review review : reviews) {
+                TextView reviewText = new TextView(getApplicationContext());
+                reviewText.setText(review.review + " - by : " + review.email);
+                reviewText.setTextSize(15);
+                feed.addView(reviewText);
+                Log.e("YASH", "displaying review " + review.review);
+            }
+        } else {
+            LinearLayout feed = findViewById(R.id.reviews_list);
             TextView reviewText = new TextView(getApplicationContext());
-            reviewText.setText(review.review + " - by : " + review.email);
-            reviewText.setTextSize(15);
+            reviewText.setText("No Reviews have been published for this event till now");
+            reviewText.setTextSize(18);
             feed.addView(reviewText);
-            Log.e("YASH", "displaying review " + review.review);
-
         }
     }
 
