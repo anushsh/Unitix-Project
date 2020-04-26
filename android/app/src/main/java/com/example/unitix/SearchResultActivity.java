@@ -19,6 +19,7 @@ import com.example.unitix.server.DataSource;
 import com.example.unitix.models.Event;
 import com.example.unitix.models.Show;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -137,12 +138,6 @@ public class SearchResultActivity extends AppCompatActivity {
         return eventToEventNameMap;
     }
 
-    private String getEventFirstDate(Event event) {
-        Show[] showArray = ds.getShowsByEventId(event.getId());
-        Log.e("KARA show length array", "" + showArray.length);
-        return "";
-    }
-
     //TODO: Fill in
     private Map<Event, String> createSortMapEarliestDate(Event[] events) {
         Map<Event, String> eventToEventDateMap = new HashMap<>();
@@ -200,17 +195,47 @@ public class SearchResultActivity extends AppCompatActivity {
         return events;
     }
 
+    private Event[] filterByPriceRange(Event[] events, double low, double high) {
+        List<Event> eventList = new ArrayList<>();
+        for (Event e :  events) {
+            Show[] shows = ds.getShowsByEventId(e.getId());
+            for (Show s : shows) {
+                if (s.getPrice() >= low && s.getPrice() <= high) {
+                    eventList.add(e);
+                    Log.e("KARA FILTER PRICE", e.getName() + " " + s.getPrice());
+                    break;
+                }
+            }
+        }
+        return eventList.toArray(new Event[0]);
+    }
+
     void addSearchResultsToPage(Event[] events) {
         Log.e("KARA", "in addSearchResultsToPage events.length: " + events.length);
         feed = findViewById(R.id.event_feed);
         feed.removeAllViews();
 
-        getEventFirstDate(events[0]);
-        //TODO : ADD BACK IN LATER WHEN SORT EVENTS IS IMPLEMENTED
+        Spinner priceFilter = (Spinner) findViewById(R.id.price_filter_spinner);
+        String selectedPriceFilterSetting = priceFilter.getSelectedItem().toString();
+
+        if (!selectedPriceFilterSetting.equals("Filter by Ticket Price")) {
+            if (selectedPriceFilterSetting.equals("$0 to $5")) {
+                events = filterByPriceRange(events, 0, 5);
+            } else if (selectedPriceFilterSetting.equals("$5 to $10")) {
+                events = filterByPriceRange(events, 5, 10);
+            } else if (selectedPriceFilterSetting.equals("$10 to $15")) {
+                events = filterByPriceRange(events, 10, 15);
+            } else if (selectedPriceFilterSetting.equals("$15 to $20")) {
+                events = filterByPriceRange(events, 15, 20);
+            } else if (selectedPriceFilterSetting.equals("$20+")) {
+                events = filterByPriceRange(events, 20, Double.POSITIVE_INFINITY);
+            }
+        }
 
         Spinner sortSpinner = (Spinner) findViewById(R.id.sort_spinner);
         String selectedSortSetting = sortSpinner.getSelectedItem().toString();
 
+        //handle sorting setting
         if (selectedSortSetting.equals("Sort by Event Name A to Z")) {
             events = sortEventsAscending(events, createSortMapEventName(events));
         } else if (selectedSortSetting.equals("Sort by Event Name Z to A")) {
