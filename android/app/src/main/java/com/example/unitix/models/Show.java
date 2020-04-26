@@ -206,6 +206,8 @@ public class Show extends Model implements Comparable<Show>  {
         return this.lng;
     }
 
-
+    public double getPrice() {
+        return this.price;
+    }
 
 }

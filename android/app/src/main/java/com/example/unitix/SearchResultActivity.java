@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.unitix.models.Group;
 import com.example.unitix.server.DataSource;
 import com.example.unitix.models.Event;
 import com.example.unitix.models.Show;
@@ -70,9 +69,9 @@ public class SearchResultActivity extends AppCompatActivity {
             }
         };
 
-        if (selectedSearchSetting.equals("Title, Group, Descrip.")) {
+        if (selectedSearchSetting.equals("Search by Title, Group, Descrip.")) {
             task = new SearchResultActivity.HandleSearch();
-        } else if (selectedSearchSetting.equals("Tag")) {
+        } else if (selectedSearchSetting.equals("Search by Tag")) {
             task = new SearchResultActivity.HandleTagSearch();
         }
 
@@ -124,21 +123,33 @@ public class SearchResultActivity extends AppCompatActivity {
     }
 
     //TODO: Fill in
-    private Map<Event, String> createSortMapDate(Event[] events) {
+    private Map<Event, String> createSortMapEarliestDate(Event[] events) {
         Map<Event, String> eventToEventDateMap = new HashMap<>();
         for (Event e : events) {
             Show[] shows = ds.getShowsByEventId(e.getId());
-            
+            String earliestDate = shows[0].getPrettyStartDate();
             for (Show s : shows) {
-
+                if (s.getPrettyStartDate().compareTo(earliestDate) < 0) {
+                    earliestDate = s.getPrettyStartDate();
+                }
             }
+            eventToEventDateMap.putIfAbsent(e, earliestDate);
         }
         return eventToEventDateMap;
     }
 
-    private Map<Event, String> createSortMapPrice(Event[] events) {
+    private Map<Event, String> createSortMapLowestPrice(Event[] events) {
         Map<Event, String> eventToEventPriceMap = new HashMap<>();
-
+        for (Event e :  events) {
+            Show[] shows = ds.getShowsByEventId(e.getId());
+            double price = shows[0].getPrice();
+            for (Show s : shows) {
+                if (s.getPrice() < price) {
+                    price = s.getPrice();
+                }
+            }
+            eventToEventPriceMap.putIfAbsent(e, price + "");
+        }
         return eventToEventPriceMap;
     }
 
@@ -188,16 +199,14 @@ public class SearchResultActivity extends AppCompatActivity {
         } else if (selectedSortSetting.equals("Sort by Group Name Z to A")) {
             events = sortEventsDescending(events, createSortMapGroupName(events));
         } else if (selectedSortSetting.equals("Sort by Price Asc")) {
-
+            events = sortEventsAscending(events, createSortMapLowestPrice(events));
         } else if (selectedSortSetting.equals("Sort by Price Desc")) {
-
+            events = sortEventsDescending(events, createSortMapLowestPrice(events));
         } else if (selectedSortSetting.equals("Sort by Date Asc")) {
-
+            events = sortEventsAscending(events, createSortMapEarliestDate(events));
         } else if (selectedSortSetting.equals("Sort by Date Desc")) {
-
+            events = sortEventsDescending(events, createSortMapEarliestDate(events));
         }
-
-
 
         for (Event event : events) {
             List<Show> shows = event.getShows();
