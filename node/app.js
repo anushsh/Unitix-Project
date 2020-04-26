@@ -1,6 +1,13 @@
 // imports
 var express = require('express')
 var session = require('express-session')
+const methodOverride = require('method-override');
+const path = require('path');
+const crypto = require('crypto');
+const mongoose = require('mongoose');
+const multer = require('multer');
+const GridFsStorage = require('multer-gridfs-storage');
+const Grid = require('gridfs-stream');
 
 // routes
 var routes = require('./routes/routes.js')
@@ -15,6 +22,8 @@ var http = require('http').createServer(app)
 var port = 3000
 
 app.use(express.static('./public'));
+app.use(methodOverride('_method'));
+app.set('view engine', 'ejs');
 
 app.use(express.bodyParser());
 app.use(express.logger("default"))
@@ -26,6 +35,41 @@ app.use(session({
 	saveUnitialized: false,
 	secret: "don't tell!"
 }))
+
+//mongo connection
+const mongoURI = mongoose.connect('mongodb+srv://UNITIX_GLOBAL:UnitixCis350@cluster0-q0aj1.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true })
+var conn = mongoose.connection
+conn.on('error', console.error.bind(console, 'connection error:'))
+let gfs;
+conn.once('open', function () {
+  // we're connected!
+  gfs = Grid(conn.db, mongoose.mongo);
+  gfs.collection('uploads');
+});
+
+//Create Storage engine
+
+// const storage = new GridFsStorage({
+//     url: mongoURI,
+//     file: (req, file) => {
+// 		console.log("FILE****************************************");
+// 		console.log(file);
+//       return new Promise((resolve, reject) => {
+//         crypto.randomBytes(16, (err, buf) => {
+//           if (err) {
+//             return reject(err);
+//           }
+//           const filename = buf.toString('hex') + path.extname(file.originalname);
+//           const fileInfo = {
+//             filename: filename,
+//             bucketName: 'uploads'
+//           };
+//           resolve(fileInfo);
+//         });
+//       });
+//     }
+//   });
+//   const upload = multer({ storage });
 
 // route definitions
 
@@ -44,7 +88,8 @@ app.get('/view_stats/:event', routes.get_view_stats)
 app.get('/followers', routes.get_followers)
 app.get('/get_follower_names', routes.get_follower_names)
 app.get('/pictures', routes.get_picture);
-app.post('/upload', routes.upload_picture);
+app.post('/upload', routes.upload_image);
+app.get('/read_pics', routes.read_pic);
 
 // user and group routes
 app.get('/get_group', user_group_routes.get_group)

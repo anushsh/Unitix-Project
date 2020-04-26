@@ -2,9 +2,67 @@ var Group = require('../models/group.js');
 var User = require('../models/user.js');
 var async = require('async')
 const stripe = require('stripe')('sk_test_pncnbwipRx15OxjiYD92tQgM');
-const multer = require('multer');
-const path = require('path');
-// const upload = multer({dest: 'uploads/'});
+const fs = require('fs');
+const aws = require( 'aws-sdk' );
+
+/**
+ * PROFILE IMAGE STORING STARTS
+ */
+const s3 = new aws.S3({
+    accessKeyId: 'AKIATT7WZMW3NH5NNOZM',
+    secretAccessKey: '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',
+    Bucket: 'unitixphotos'
+   });
+
+/**
+ * @route POST api/profile/business-img-upload
+ * @desc Upload post image
+ * @access public
+ */
+
+ var storeImage = (req, res) => {
+     console.log("REQ");
+     console.log(req.files.file);
+     console.log(typeof(req.files.file));
+     uploadFile(req.files.file);
+     res.redirect("/pictures");
+    }
+
+    const uploadFile = (file) => {
+        // Read content from the file
+        const fileContent = fs.readFileSync(file.path);
+        console.log("AQUI");
+        console.log(file);
+        // Setting up S3 upload parameters
+        const params = {
+            Bucket: 'unitixphotos',
+            Key: file.originalFilename, // File name you want to save as in S3
+            Body: fileContent,
+        };
+    
+        // Uploading files to the bucket
+        s3.upload(params, function(err, data) {
+            if (err) {
+                throw err;
+            }
+            console.log(`File uploaded successfully. ${data.Location}`);
+            return;
+        });
+    };
+
+var readPic = (req, res) => {
+    var params = {
+        Bucket: "unitixphotos", 
+       }
+
+    s3.listObjects(params, function(err,data) {
+        if (err) {
+            console.log('There was an error viewing your photos: ' + err.message);
+          }
+        res.json({"data" : data});
+    })
+}
+
 var msg // to send notifications at top of screen when getting to a page
 var getMessage = function (req, res) {
     res.send(msg)
@@ -23,37 +81,6 @@ var getHome = function (req, res) {
         }
         res.render('home.ejs');
 
-    }
-}
-
-//Set Storage engine for photos
-const storage = multer.diskStorage({
-    destination:'./public/uploads/',
-    filename: function(req, file, callback) {
-        callback(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-});
-
-//Init upload
-
-const upload = multer({
-    storage: storage,
-    fileFilter: function (req, file, callback) {
-        checkFileType(file, callback);
-    }
-}).single('myImage');
-
-function checkFileType(file, callback) {
-    //Allowed filetypes
-    const fileTypes = /jpeg|jpg|png|gif/;
-    //Check extension
-    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
-    //Check type
-    const type = fileTypes.test(file.type);
-    if (extname && type) {
-        callback(null, true);
-    } else {
-        callback('Error: Images Only!')
     }
 }
 
@@ -201,19 +228,11 @@ var getPayment = async (req, res) => {
 }
 
 var getPictures = (req, res) => {
-    res.render('pictures.ejs');
-}
-
-var uploadPicture = (req, res) => {
-    upload(req, res, (err) => {
-        if (err) {
-            res.render('picture.ejs', {msg: err});
-        } else {
-            console.log(req.files.myImage);
-            res.send('test');
-        }
-    })
-
+    if (req.session.user){
+        res.render('pictures.ejs');
+    } else {
+        res.redirect('/');
+    }
 }
 
 module.exports = {
@@ -232,5 +251,6 @@ module.exports = {
     get_followers: getFollowers,
     payment: getPayment,
     get_picture: getPictures,
-    upload_picture: uploadPicture
+    upload_image: storeImage,
+    read_pic: readPic,
 }

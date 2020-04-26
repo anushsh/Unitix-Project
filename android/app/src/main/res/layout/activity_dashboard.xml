@@ -55,6 +55,13 @@
             android:onClick="onFavoriteButtonClick"
             android:text="View Favorite Events" />
 
+        <Button
+            android:id="@+id/photosbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onPhotosButtonClick"
+            android:text="View Photos" />
+
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

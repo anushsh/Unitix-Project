@@ -338,31 +338,26 @@ var getFavoritedEvents = (req, res) => {
             user = user.toJSON();
             favorites = [];
             async.forEach(user.favorite_events, (eventID, done) => {
-                Event.findById(eventID, (err, event) => {
+                getEventWithShows(eventID, (err, event) => {
+                    console.log(event);
                     if (!err && event) {
-                        event = event.toJSON();
                         favorites.push(event);
-                        done();
-                    } else {
-                        done();
-                    }
+                        }
+                    done();
+                    })
+                }, () => {
+                    res.json({
+                        'status': 'success',
+                        'favorites': favorites
+                    })
                 })
-            }, () => {
-                console.log("FAVORITES");
-                console.log(favorites);
-                res.json({
-                    'status': 'success',
-                    'favorites': favorites
-                })
-            })
-        }
-    });
+            }
+        });
 }
 
 
 var addFavoriteEvent = (req, res) => {
     console.log(req.body);
-    console.log("***************************");
     User.findOne({email: req.body.email}, (err, user) => {
         if (err) {
             console.log(err);

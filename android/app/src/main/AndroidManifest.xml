@@ -57,6 +57,7 @@
         <activity android:name=".GroupPageActivity" />
         <activity android:name=".FavoriteEventsActivity" />
         <activity android:name=".PaymentActivity" />
+        <activity android:name=".PhotosActivity"/>
         <activity android:name=".SearchResultActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />

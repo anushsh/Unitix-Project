@@ -1,31 +1,113 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-        <% include head_imports.html%>
-        <script type="text/javascript" src="/routes/routes.js"></script>
-        <body>
-            <% include header.html%>
-            <div class="container">
-                <h1> File Upload</h1>
-                <%= typeof msg != 'undefined' ? msg : '' %> 
-                <form action="/upload" method="post" enctype="multipart/form-data">
-                    <div class="file-field input-field">
-                      <div class="btn">
-                        <span>File</span>
-                        <input name="myImage" type="file"/>
-                      </div>
-                      <div class="file-path-wrapper">
-                        <input class="file-path validate" type="text"/>
-                      </div>
-                    </div>
-                    <button type="submit" class="btn blue">Upload</button>
-                  </form>
+<html lang="en">
+  <head>
+    <% include head_imports.html %>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Node.js upload images</title>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.663.0.min.js"></script>
+    <!-- <script src="./PhotoViewer.js"></script> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <style>
+      div.preview-images > img {
+        width: 30%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <% include header.html %>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-8 mt-3">
+          <h4>Upload Pictures of your Event Here!</h4>
+
+          <form class="mt-4"
+            action="/upload"
+            method="POST"
+            enctype="multipart/form-data"
+          >
+            <div class="form-group">
+              <input
+                type="file"
+                name="file"
+                id="input-files"
+                class="form-control-file border"
+              />
             </div>
-            <script src="https://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous">
-            </script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js">
-            </script>
-        </body>
-    </head>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="preview-images"></div>
+          <h1>My Photos</h1>
+          <br>
+          <div id='saved-images' class="saved-images"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        let imagesPreview = function(input, placeToInsertImagePreview) {
+          if (input.files) {
+            let filesAmount = input.files.length;
+            for (i = 0; i < filesAmount; i++) {
+              let reader = new FileReader();
+              reader.onload = function(event) {
+                $($.parseHTML("<img>"))
+                  .attr("src", event.target.result)
+                  .appendTo(placeToInsertImagePreview);
+              };
+              reader.readAsDataURL(input.files[i]);
+            }
+          }
+        };
+        $("#input-files").on("change", function() {
+          imagesPreview(this, "div.preview-images");
+        });
+
+        loadImages();
+      });
+
+      function loadImages() {
+        $.get("/read_pics", (data) => {
+          console.log(data);
+          console.log("*********************************");
+          console.log(data.data.Contents[2].Key);
+          let imagesPreview = function(placeToInsertImagePreview) {
+            console.log(data.data.Contents[5]);
+            var count = 0;
+            for (i = 0; i < data.data.Contents.length; i++) {
+              let reader = new FileReader();
+              reader.onload = function(event) {
+                console.log("Value of i is: " + i);
+                console.log(count);
+                $($.parseHTML("<img>"))
+                  .attr("src", `https://unitixphotos.s3.amazonaws.com/${data.data.Contents[count].Key}`)
+                  .attr("width", 500)
+                  .attr("height", 300)
+                  .appendTo(placeToInsertImagePreview);
+                  count = count + 1;
+              };
+              const blob = new Blob([JSON.stringify(data.data.Contents[i], null, 2)], {type : 'application/json'});              
+              console.log(blob);
+              reader.readAsDataURL(blob);
+            }
+        };
+          imagesPreview("div.saved-images");
+        })
+      }
+
+    </script>
+
+<script>
+ </script>
+  </body>
 </html>

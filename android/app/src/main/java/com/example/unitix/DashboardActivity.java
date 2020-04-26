@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -38,6 +40,12 @@ public class DashboardActivity extends AppCompatActivity {
 
 //    Set<Group> following;
     Set<String> followingGroupIds;
+
+    private String[] imageUrls = new String[] {
+            "https://unitixphotos.s3.amazonaws.com/legend.jpg",
+            "https://unitixphotos.s3.amazonaws.com/concorde.jpg"
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,6 +199,14 @@ public class DashboardActivity extends AppCompatActivity {
 
     public void onFavoriteButtonClick(View v) {
         Intent i = new Intent(this, FavoriteEventsActivity.class);
+
+        i.putExtra("EMAIL", email);
+
+        startActivityForResult(i, 1);
+    }
+
+    public void onPhotosButtonClick(View v) {
+        Intent i = new Intent(this, PhotosActivity.class);
 
         i.putExtra("EMAIL", email);
 
