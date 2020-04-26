@@ -126,7 +126,13 @@ public class SearchResultActivity extends AppCompatActivity {
     //TODO: Fill in
     private Map<Event, String> createSortMapDate(Event[] events) {
         Map<Event, String> eventToEventDateMap = new HashMap<>();
+        for (Event e : events) {
+            Show[] shows = ds.getShowsByEventId(e.getId());
+            
+            for (Show s : shows) {
 
+            }
+        }
         return eventToEventDateMap;
     }
 
