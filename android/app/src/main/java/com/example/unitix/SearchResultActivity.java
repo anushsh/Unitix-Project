@@ -215,15 +215,15 @@ public class SearchResultActivity extends AppCompatActivity {
     }
 
     private Date convertMongoToDate(String dateString, String timeString) {
-        Log.e("KARA", "dateString " + dateString);
+        //Log.e("KARA", "dateString " + dateString);
         int year = Integer.parseInt(dateString.substring(0, 4));
-        Log.e("KARA", "year " + year);
+        //Log.e("KARA", "year " + year);
         int month = Integer.parseInt(dateString.substring(5, 7));
-        Log.e("KARA", "month " + month);
+        //Log.e("KARA", "month " + month);
         int day = Integer.parseInt(dateString.substring(8, 10));
-        Log.e("KARA", "day " + day);
+        //Log.e("KARA", "day " + day);
         int hour = Integer.parseInt(timeString.substring(0, 2));
-        Log.e("KARA", "hour " + hour);
+        //Log.e("KARA", "hour " + hour);
         int min = Integer.parseInt(timeString.substring(3, 5));
         return new Date(year - 1900, month - 1, day, hour, min);
     }
@@ -238,14 +238,14 @@ public class SearchResultActivity extends AppCompatActivity {
             Show[] shows = ds.getShowsByEventId(e.getId());
             for (Show s : shows) {
                 Date showDate = convertMongoToDate(s.getPrettyStartDate(), s.getStartTime());
-                Log.e("KARA", "low date " + low);
-                Log.e("KARA", "high date" + high);
-                Log.e("KARA", "show date " + showDate);
-                Log.e("KARA", "compare to low " + showDate.compareTo(low));
-                Log.e("KARA", "compare to high" + showDate.compareTo(high));
+                //Log.e("KARA", "low date " + low);
+                //Log.e("KARA", "high date" + high);
+                //Log.e("KARA", "show date " + showDate);
+                //Log.e("KARA", "compare to low " + showDate.compareTo(low));
+                //Log.e("KARA", "compare to high" + showDate.compareTo(high));
                 if (showDate.compareTo(low) >= 0 && showDate.compareTo(high) <= 0) {
                     eventList.add(e);
-                    Log.e("KARA FILTER DATE", "adding event to date filter list" + e.getName() + " " + s.getPrice());
+                    //Log.e("KARA FILTER DATE", "adding event to date filter list" + e.getName() + " " + s.getPrice());
                     break;
                 }
                 //Log.e("KARA DATE FILTER", e.getName() + " " + s.getPrettyStartDate());
@@ -292,16 +292,7 @@ public class SearchResultActivity extends AppCompatActivity {
 
             if (selectedDateFilterSetting.equals("Today")) {
                 Log.e("KARA", "GOT IN TODAY DATE IF BLOCK");
-
-//                // manipulate date
-//                c.add(Calendar.YEAR, 1);
-//                c.add(Calendar.MONTH, 1);
-//                c.add(Calendar.DATE, 1); //same with c.add(Calendar.DAY_OF_MONTH, 1);
-//                c.add(Calendar.HOUR, 1);
-//                c.add(Calendar.MINUTE, 1);
-//                c.add(Calendar.SECOND, 1);
                 c.add(Calendar.DATE, 1);
-
                 // convert calendar to date
                 Date currentDatePlusDay = c.getTime();
                 Log.e("KARA", "current day plus day " + currentDatePlusDay);
@@ -309,8 +300,18 @@ public class SearchResultActivity extends AppCompatActivity {
                 events = filterByDate(events, new Date(), currentDatePlusDay);
             } else if (selectedDateFilterSetting.equals("This Week")) {
                 Log.e("KARA", "GOT IN THIS WEEK DATE IF BLOCK");
+                c.add(Calendar.WEEK_OF_MONTH, 1);
+                Date currentDatePlusWeek = c.getTime();
+                Log.e("KARA", "current day plus week " + currentDatePlusWeek);
+
+                events = filterByDate(events, new Date(), currentDatePlusWeek);
             } else if (selectedDateFilterSetting.equals("This Month")) {
                 Log.e("KARA", "GOT IN THIS MONTH DATE IF BLOCK");
+                c.add(Calendar.MONTH, 1);
+                Date currentDatePlusMonth = c.getTime();
+                Log.e("KARA", "current day plus month " + currentDatePlusMonth);
+
+                events = filterByDate(events, new Date(), currentDatePlusMonth);
             }
         }
 
