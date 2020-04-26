@@ -19,9 +19,13 @@ import com.example.unitix.server.DataSource;
 import com.example.unitix.models.Event;
 import com.example.unitix.models.Show;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -210,18 +214,46 @@ public class SearchResultActivity extends AppCompatActivity {
         return eventList.toArray(new Event[0]);
     }
 
-    private Event[] filterByDate(Event[] events, String low, String high) {
+    private Date convertMongoToDate(String dateString, String timeString) {
+        Log.e("KARA", "dateString " + dateString);
+        int year = Integer.parseInt(dateString.substring(0, 4));
+        Log.e("KARA", "year " + year);
+        int month = Integer.parseInt(dateString.substring(5, 7));
+        Log.e("KARA", "month " + month);
+        int day = Integer.parseInt(dateString.substring(8, 10));
+        Log.e("KARA", "day " + day);
+        int hour = Integer.parseInt(timeString.substring(0, 2));
+        Log.e("KARA", "hour " + hour);
+        int min = Integer.parseInt(timeString.substring(3, 5));
+        return new Date(year - 1900, month - 1, day, hour, min);
+    }
+
+    private Event[] filterByDate(Event[] events, Date low, Date high) {
+        //Date lowDate = convertMongoToDate(low);
+        //Date highDate = convertMongoToDate(high);
+
         List<Event> eventList = new ArrayList<>();
         for (Event e : events) {
+            Log.e("KARA", "event " + e.getName());
             Show[] shows = ds.getShowsByEventId(e.getId());
             for (Show s : shows) {
-                Log.e("KARA DATE FILTER", e.getName() + " " + s.getPrettyStartDate());
+                Date showDate = convertMongoToDate(s.getPrettyStartDate(), s.getStartTime());
+                Log.e("KARA", "low date " + low);
+                Log.e("KARA", "high date" + high);
+                Log.e("KARA", "show date " + showDate);
+                Log.e("KARA", "compare to low " + showDate.compareTo(low));
+                Log.e("KARA", "compare to high" + showDate.compareTo(high));
+                if (showDate.compareTo(low) >= 0 && showDate.compareTo(high) <= 0) {
+                    eventList.add(e);
+                    Log.e("KARA FILTER DATE", "adding event to date filter list" + e.getName() + " " + s.getPrice());
+                    break;
+                }
+                //Log.e("KARA DATE FILTER", e.getName() + " " + s.getPrettyStartDate());
             }
 
         }
 
-        //TODO change later
-        return events;
+        return eventList.toArray(new Event[0]);
     }
 
     void addSearchResultsToPage(Event[] events) {
@@ -250,13 +282,35 @@ public class SearchResultActivity extends AppCompatActivity {
         String selectedDateFilterSetting = dateFilter.getSelectedItem().toString();
         Log.e("KARA", "GOT RIGHT BEFORE DATE IF BLOCK");
         if (!selectedDateFilterSetting.equals("Filter by Date")) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+            Date currentDate = new Date();
+            Log.e("KARA", "current date " + currentDate);
+            // convert date to calendar
+            Calendar c = Calendar.getInstance();
+            c.setTime(currentDate);
+
             if (selectedDateFilterSetting.equals("Today")) {
-                Log.e("KARA", "GOT IN DATE IF BLOCK");
-                filterByDate(events, "hi", "placeholder");
+                Log.e("KARA", "GOT IN TODAY DATE IF BLOCK");
+
+//                // manipulate date
+//                c.add(Calendar.YEAR, 1);
+//                c.add(Calendar.MONTH, 1);
+//                c.add(Calendar.DATE, 1); //same with c.add(Calendar.DAY_OF_MONTH, 1);
+//                c.add(Calendar.HOUR, 1);
+//                c.add(Calendar.MINUTE, 1);
+//                c.add(Calendar.SECOND, 1);
+                c.add(Calendar.DATE, 1);
+
+                // convert calendar to date
+                Date currentDatePlusDay = c.getTime();
+                Log.e("KARA", "current day plus day " + currentDatePlusDay);
+
+                events = filterByDate(events, new Date(), currentDatePlusDay);
             } else if (selectedDateFilterSetting.equals("This Week")) {
-
+                Log.e("KARA", "GOT IN THIS WEEK DATE IF BLOCK");
             } else if (selectedDateFilterSetting.equals("This Month")) {
-
+                Log.e("KARA", "GOT IN THIS MONTH DATE IF BLOCK");
             }
         }
 
