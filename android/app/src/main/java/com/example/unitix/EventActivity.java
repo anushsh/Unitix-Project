@@ -46,8 +46,9 @@ public class EventActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String name = intent.getStringExtra("eventName");
         this.eventID = intent.getStringExtra("eventID");
-        emailString = intent.getStringExtra("EMAIL");
-        this.user = this.ds.getUser(getIntent().getStringExtra("EMAIL"));
+        this.user = UserManager.getManager(getApplicationContext()).getUser();
+        this.emailString = user.getId();
+//        this.user = this.ds.getUser(getIntent().getStringExtra("EMAIL"));
         TextView eventName = findViewById(R.id.event_name);
         eventName.setText(name);
         // execute in background to keep main thread smooth and allow for parallel execution
@@ -277,6 +278,8 @@ public class EventActivity extends AppCompatActivity {
             ratingForEvent = EventActivity.this.event.getRating();
             if (ratingForEvent.equals("0")) {
                 ratingForEvent = "No one has rated the event till now";
+            } else if (ratingForEvent.length() > 4) {
+                ratingForEvent = ratingForEvent.substring(0,4);
             }
             TextView rating = findViewById(R.id.rating);
             rating.setText("Rating: " + ratingForEvent);

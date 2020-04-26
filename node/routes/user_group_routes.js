@@ -130,8 +130,8 @@ var getFollowedGroups = function (req, res) {
 var getUserTickets = function (req, res) {
     var email = req.query.email;
     User.findOne({ "email": email }, (err, user) => {
-        user = user.toJSON();
         if (!err && user) {
+            user = user.toJSON();
             var ticketIDs = user.curr_tickets ? user.curr_tickets : [];
             getAllTickets(ticketIDs, (tickets) => {
                 res.json({ "status": "success", "tickets": tickets })
