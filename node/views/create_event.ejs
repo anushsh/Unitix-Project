@@ -38,8 +38,6 @@
                 shows: shows
             }, function (showIDs, status) {
                 if (status == "success") {
-                    alert("Shows propagated properly. Here is what shows sent")
-                    alert(JSON.stringify(shows))
                     postEvent($("#eventName").val(), $("#eventTags").val().split(",").sort(), showIDs)
                     notifyGroupFollowers(group._id, group.displayName)
                 }
