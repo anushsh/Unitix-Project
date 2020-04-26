@@ -208,7 +208,6 @@ var getFollowers = function (req, res) {
 }
 
 var getPayment = async (req, res) => {
-    console.log(req.body);
     const stripeToken = req.body.token;
     const charge = await stripe.charges.create({
         amount: 1000,

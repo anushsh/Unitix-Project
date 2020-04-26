@@ -127,7 +127,10 @@ app.get('/delete_event', event_show_routes.delete_event)
 app.get('/get_search_result_events', event_show_routes.get_search_result_events);
 app.get('/get_search_result_events_by_tag', event_show_routes.get_search_result_by_tag);
 app.get('/get_change', event_show_routes.get_change)
-app.get('/get_shows_for_event', event_show_routes.get_shows_for_event)
+app.get('/get_shows_for_event', event_show_routes.get_shows_for_event) //HERE KARA
+app.post('/review_event', event_show_routes.review_event);
+app.get('/get_event_reviews', event_show_routes.get_event_reviews);
+
 //notifications
 app.post('/create_notification', notification_routes.create_notification);
 app.post('/notify_event', notification_routes.notify_event);

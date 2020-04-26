@@ -8,9 +8,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.example.unitix.models.User.makeStringArray;
 
 
 /**
@@ -23,9 +26,14 @@ public class Event extends Model {
     String name;
     List<Show> shows;
     String group;
+    String rating;
+    String[] reviews;
+
 
     JSONArray changesLazy;
     List<Change> changes;
+
+    DataSource ds;
 
 
     public String getDescription() {
@@ -50,6 +58,7 @@ public class Event extends Model {
             }
             Collections.sort(this.shows);
 
+
             // this is really ugly, sorry in advance
 
             this.changesLazy = jo.getJSONArray("changes");
@@ -59,6 +68,14 @@ public class Event extends Model {
         } catch (Exception e) {
             Log.e("MICHAEL, event constructor error", e.toString());
             isValid = false;
+        }
+
+        try {
+            this.reviews = makeStringArray(jo.optJSONArray("reviews"));
+            this.rating = jo.getString("rating");
+        } catch (Exception e) {
+            this.rating = "0";
+            this.reviews = new String[1];
         }
     }
 
@@ -100,8 +117,16 @@ public class Event extends Model {
         return this.group;
     }
 
+    public String[] getReviews() {
+        return this.reviews;
+    }
+
+    public String getRating() {
+        return this.rating;
+    }
+
     public List<Change> getChanges() {
-        Log.e("MICHAEL", "Getting changes for event");
+        //Log.e("MICHAEL", "Getting changes for event");
         if (this.changes == null) {
             this.changes = new ArrayList<>();
             DataSource ds = DataSource.getInstance();
@@ -111,7 +136,7 @@ public class Event extends Model {
                     if (change.isValid()) this.changes.add(change);
                 }
             } catch (JSONException e) {
-                Log.e("MICHAEL", "Error lazily making changes for event");
+                //Log.e("MICHAEL", "Error lazily making changes for event");
             }
         }
         return this.changes;

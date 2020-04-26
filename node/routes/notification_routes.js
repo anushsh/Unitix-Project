@@ -127,7 +127,6 @@ function getAllReadNotifications(email, callback) {
             async.forEach(notificationIDs, (notificationID, done) => {
                 Notification.findById(notificationID, (err, notification) => {
                     if (!err && notification) {
-                        // notification = notification.toJSON();
                         notifications.push(notification);
                     }
                     done();
@@ -174,12 +173,8 @@ var notifyShow = function(req, res) {
 }
 
 var notifyEvent = function(req, res) {
-    console.log("NOTIFY EVENT RUN");
-
     var content = req.body.content;
     var eventID = req.body.eventID;
-    console.log(content);
-    console.log(eventID)
     Event.findById(eventID, (err, event) => {
         if (!err && event) {
             event = event.toJSON();
@@ -220,7 +215,6 @@ function getAllTickets(ticketIDs, callback) {
 function sortNotifications(notifications) {
     // TODO: this does not work!
     notifications = notifications.sort((a, b) => {
-        console.log(typeof new Date(a._id.getTimestamp()))
         return -new Date(a._id.getTimestamp()) + new Date(b._id.getTimestamp());
     })
     return notifications;
@@ -255,13 +249,8 @@ var notifyAllShowTicketHolders = function(showID, content, callback) {
 
 
 var notifyFollowers = function(req, res) {
-    
     var content = req.body.content;
     var groupID = req.body.groupID;
-
-    console.log("ENTERED NOTIFY FOLLOWERS")
-    console.log("GROUPID" + groupID)
-    console.log("CONTENT" + content)
     notifyAllFollowers(groupID, content, (err) => {
         if (err) {
             res.json({"status":"error"});
@@ -273,9 +262,6 @@ var notifyFollowers = function(req, res) {
 
 
 var notifyAllFollowers = function(groupID, content, callback) {
-    console.log("ENTERED NOTIFY ALL FOLLOWERS")
-    console.log("GROUPID" + groupID)
-    console.log("CONTENT" + content)
     Group.findById(groupID, (err, group) => {
         if (!err && group) {
             var followers = group.followers;

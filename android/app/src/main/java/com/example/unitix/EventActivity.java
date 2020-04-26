@@ -20,6 +20,7 @@ import com.example.unitix.models.Show;
 import com.example.unitix.models.Ticket;
 import com.example.unitix.models.User;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class EventActivity extends AppCompatActivity {
@@ -32,12 +33,14 @@ public class EventActivity extends AppCompatActivity {
     String eventID;
     List<Ticket> userTickets;
     String emailString;
+    String ratingForEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
+        ratingForEvent = "N/A";
         this.ds = DataSource.getInstance();
 
         Intent intent = getIntent();
@@ -50,6 +53,9 @@ public class EventActivity extends AppCompatActivity {
         // execute in background to keep main thread smooth and allow for parallel execution
         AsyncTask<String, Integer, List<Ticket>> ticketTask = new LoadTicketTask();
         ticketTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this.user.currTickets);
+
+
+
     }
 
     void findShow() {
@@ -249,7 +255,7 @@ public class EventActivity extends AppCompatActivity {
 
     private class LoadTicketTask extends AsyncTask<String, Integer, List<Ticket>> {
         protected List<Ticket> doInBackground(String... ids) {
-            return ds.getTickets(EventActivity.this.user.currTickets);
+            return Arrays.asList(ds.getUserTickets(EventActivity.this.user.getId()));
         }
 
         protected void onPostExecute(List<Ticket> tickets) {
@@ -268,6 +274,14 @@ public class EventActivity extends AppCompatActivity {
 
         protected void onPostExecute(Event event) {
             EventActivity.this.event = event;
+            ratingForEvent = EventActivity.this.event.getRating();
+            if (ratingForEvent.equals("0")) {
+                ratingForEvent = "No one has rated the event till now";
+            }
+            TextView rating = findViewById(R.id.rating);
+            rating.setText("Rating: " + ratingForEvent);
+            Log.e("YASH", "got rating " + ratingForEvent);
+
             EventActivity.this.group = EventActivity.this.ds.getGroupByID(EventActivity.this.event.getGroup()); // TODO - need to move async
             if (event != null) {
                 if (event.getChanges() != null) {
@@ -286,5 +300,23 @@ public class EventActivity extends AppCompatActivity {
                 handleNullEvent();
             }
         }
+    }
+
+    public void onRateReviewButtonClick(View v) {
+
+        Intent i = new Intent(this, ReviewEventActivity.class);
+        i.putExtra("EVENTID", eventID);
+        i.putExtra("EMAIL", user.getId());
+        startActivityForResult(i, 1);
+
+    }
+
+    public void onViewReviewsButtonClick(View v) {
+
+        Intent i = new Intent(this, ViewReviewsActivity.class);
+        i.putExtra("EVENTID", eventID);
+        i.putExtra("EMAIL", user.getId());
+        startActivityForResult(i, 1);
+
     }
 }

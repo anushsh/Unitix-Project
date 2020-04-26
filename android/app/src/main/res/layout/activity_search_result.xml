@@ -47,6 +47,27 @@
             android:layout_height="wrap_content"
             android:spinnerMode="dropdown"/>
 
+        <Spinner
+            android:id="@+id/sort_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"/>
+        <Spinner
+            android:id="@+id/price_filter_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"/>
+        <Spinner
+            android:id="@+id/date_filter_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"/>
+        <Spinner
+            android:id="@+id/time_filter_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"/>
+
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

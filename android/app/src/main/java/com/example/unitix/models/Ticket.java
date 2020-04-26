@@ -20,7 +20,7 @@ public class Ticket extends Model {
             this.customer = jo.optString("customer", "NAME N/A");
             this.isValid = true;
         } catch (Exception e) {
-            Log.e("MICHAEL", "Error creating ticket - " + e);
+            //Log.e("MICHAEL", "Error creating ticket - " + e);
             this.isValid = false;
         }
     }

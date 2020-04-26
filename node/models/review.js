@@ -13,16 +13,10 @@ db.once('open', function () {
 
 var Schema = mongoose.Schema
 
-var eventSchema = new Schema({
-  name: String,
-  group: String, // this is the actual object ID
-  group_name: String, // this is display name of the group
-  shows: [String], // these are uuids of Show objs
-  tags: [String],
-  changes: [String],
-  rating: Number,
-  num_ratings: Number,
-  reviews: [String]
+// since Review id's are stored and managed in userDB, all we need is Review content
+var reviewSchema = new Schema({
+  review: String,
+  email: String
 })
 
-module.exports = mongoose.model('Event', eventSchema)
+module.exports = mongoose.model('Review', reviewSchema)

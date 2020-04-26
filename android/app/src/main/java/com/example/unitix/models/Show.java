@@ -2,8 +2,12 @@ package com.example.unitix.models;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * java representation of show objects. Each show has an event parent
@@ -45,11 +49,11 @@ public class Show extends Model implements Comparable<Show>  {
                 this.lng = Double.parseDouble((String) jo.getJSONObject("lng").get("$numberDecimal"));
             } catch (JSONException e) {
                 // this occurs when geolocations not set up for event
-                Log.e("MICHAEL", e.toString());
+                // Log.e("MICHAEL", e.toString());
             }
         } catch (Exception e) {
-            Log.e("NOAH","exception in show" + e);
-            Log.e("NOAH",jo.toString());
+            //Log.e("NOAH","exception in show" + e);
+            //Log.e("NOAH",jo.toString());
             this.isValid = false;
         }
     }
@@ -102,6 +106,22 @@ public class Show extends Model implements Comparable<Show>  {
         } catch (Exception e) {
             return -1;
         }
+    }
+
+    public static Show[] createShowList(JSONArray jsonArray) {
+        List<Show> list = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                Show s = new Show(jsonArray.getJSONObject(i));
+                if (s.isValid) {
+                    // only add if no errors
+                    list.add(s);
+                }
+            } catch (Exception e) {
+                // pass
+            }
+        }
+        return list.toArray(new Show[0]); // convert list to array
     }
 
     @Override
@@ -186,6 +206,8 @@ public class Show extends Model implements Comparable<Show>  {
         return this.lng;
     }
 
-
+    public double getPrice() {
+        return this.price;
+    }
 
 }

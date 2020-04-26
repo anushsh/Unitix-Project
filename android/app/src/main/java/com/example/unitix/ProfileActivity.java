@@ -74,7 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(Ticket[] tickets) {
-            Log.e("NOAH","got " + tickets.length + " tickets");
+            //Log.e("NOAH","got " + tickets.length + " tickets");
             LinearLayout ticketList = findViewById(R.id.ticket_list);
             for (final Ticket ticket : tickets) {
                 TextView ticketView = new TextView(getApplicationContext());

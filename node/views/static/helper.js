@@ -132,28 +132,17 @@ function showNotifyShow(showID) {
 
 function notifyEvent(eventID) {
     var content = $("#content" + eventID).val();
-    $.post('/notify_event',{"eventID":eventID,"content":content}, (res) => {
-        console.log(res);
-    })
+    $.post('/notify_event',{"eventID":eventID,"content":content}, (_) => {})
 }
 
 function notifyShow(showID) {
     var content = $("#content" + showID).val();
-    $.post('/notify_show',{"showID":showID,"content":content}, (res) => {
-        console.log(res);
-    })
+    $.post('/notify_show',{"showID":showID,"content":content}, (_) => {})
 }
 
 function notifyGroupFollowers(groupID, groupName) {
-
-    console.log("ENTERED notifyGroupFollowers")
-    console.log("GROUPID" + groupID)
-    console.log("GROUPNAME" + groupName)
-
     var content = groupName + " have created a new event - be sure to check it out!"
-    $.post('/notify_followers',{"groupID":groupID,"content":content}, (res) => {
-        console.log(res);
-    })
+    $.post('/notify_followers',{"groupID":groupID,"content":content}, (_) => {})
 }
 
 
@@ -229,26 +218,17 @@ function clearAttendeeSearch() {
 
 function searchAttendees() {
     var query = $("#searchBar").val().toString().toLowerCase()
-    console.log("query: " + query)
     $("span").show()
     if (!(query == "")) {
         var queryArray = query.split(" ")
         if (!query.includes(" ")) { //one word query
-            console.log("query: " + query)
-            console.log("length 1")
             $("span").filter(function() { 
-                console.log($(this).attr("id").toString())
-                console.log($(this).attr("id").toString().includes(query))
                 return !($(this).attr("id").toString().includes(query))
               }).hide()
         } else if (query.split(" ").length == 2) { //two word query
-            console.log("length 2")
             var first = queryArray[0]
             var second = queryArray[1]
-            console.log("first: " + first)
-            console.log("second: " + second)
             $("span").filter(function() { 
-                //console.log((this).attr("id"))
                 return !$(this).attr("id").includes(first) && !$(this).attr("id").includes(second);
               }).hide()
         } 

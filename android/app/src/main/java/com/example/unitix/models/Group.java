@@ -38,7 +38,7 @@ public class Group extends Model {
             this.followers = list.toArray(new String[0]);
             this.isValid = true;
         } catch (Exception e) {
-            Log.e("MICHAEL", "Exception making Group: " + e);
+            //Log.e("MICHAEL", "Exception making Group: " + e);
             isValid = false;
         }
     }

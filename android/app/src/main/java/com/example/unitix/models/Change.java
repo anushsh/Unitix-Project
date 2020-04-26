@@ -22,7 +22,7 @@ public class Change extends Model {
             this.isValid = true;
         } catch (Exception e){
             this.isValid = false;
-            Log.e("MICHAEL", e.toString());
+            //Log.e("MICHAEL", e.toString());
         }
     }
 

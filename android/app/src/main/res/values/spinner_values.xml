@@ -1,7 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="search_spinner_array">
-        <item>Title, Group, Descrip.</item>
-        <item>Tag</item>
+        <item>Search by Title, Group, Descrip.</item>
+        <item>Search by Tag</item>
     </string-array>
+
+    <string-array name="search_sort_spinner_array">
+        <item>Sort by Event Name A to Z</item>
+        <item>Sort by Event Name Z to A</item>
+        <item>Sort by Group Name A to Z</item>
+        <item>Sort by Group Name Z to A</item>
+        <item>Sort by Price Asc</item>
+        <item>Sort by Price Desc</item>
+        <item>Sort by Date Asc</item>
+        <item>Sort by Date Desc</item>
+    </string-array>
+
+    <string-array name="price_filter_spinner_array">
+        <item>Filter by Ticket Price</item>
+        <item>$0 to $5</item>
+        <item>$5 to $10</item>
+        <item>$10 to $15</item>
+        <item>$15 to $20</item>
+        <item>$20+</item>
+    </string-array>
+
+    <string-array name="date_filter_spinner_array">
+        <item>Filter by Date</item>
+        <item>Today</item>
+        <item>This Week</item>
+        <item>This Month</item>
+    </string-array>
+
+    <string-array name="time_filter_spinner_array">
+        <item>Filter by Start Time</item>
+        <item>4:00 PM - 6:00 PM</item>
+        <item>6:00 PM - 8:00 PM</item>
+        <item>8:00 PM - 10:00 PM</item>
+        <item>10:00 PM - Midnight</item>
+    </string-array>
+
+
 </resources>

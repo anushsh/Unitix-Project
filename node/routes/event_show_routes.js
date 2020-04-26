@@ -3,16 +3,15 @@ var Event = require('../models/event.js')
 var Show = require('../models/show.js')
 var Ticket = require('../models/ticket.js')
 var Change = require('../models/change.js')
+var Review = require('../models/review.js')
 
 var async = require('async')
 
 var createShows = function (req, res) {
     showSchemaIDs = []
 
-    console.log(req.body.shows)
     // create and save each show asynchronously. once mongo finishes saving the show, move on to the next one. won't send back id list until all are processed.
     async.forEach(req.body.shows, function (show, done) {
-        console.log(show)
         var newShow = new Show({
             name: show.name,
             capacity: show.capacity,
@@ -33,7 +32,6 @@ var createShows = function (req, res) {
                 console.log("Error saving show: " + err)
                 res.json({ 'status': err })
             } else {
-                console.log("show id: " + showSaved._id)
                 showSchemaIDs.push(showSaved._id)
                 done()
             }
@@ -52,7 +50,9 @@ var createEvent = function (req, res) {
         name: req.body.name,
         group: req.body.group,
         shows: req.body.shows,
-        tags: req.body.tags
+        tags: req.body.tags,
+        num_ratings: 0,
+        rating: 0.0
     })
 
     newEvent.save((err, eventSaved) => {
@@ -204,13 +204,10 @@ var getEventByName = function(req, res) {
 var addEventIdToShow = function (req, res) {
     var eventID = req.body.eventID
     var showID = req.body.showID
-    console.log("showID: " + showID)
-    console.log("eventID: " + eventID)
     Show.findById(showID, (err, show) => {
         if (err || !show) {
             res.json({ "status": "failure" })
         } else {
-            console.log(show)
             show.update({ event: eventID }, (err) => {
                 !err ? res.json({ "status": "success" }) : res.json({"status":"failure"})
             });
@@ -221,7 +218,6 @@ var addEventIdToShow = function (req, res) {
 var addEventIdToGroup = function (req, res) {
     var eventID = req.body.eventID
     var groupEmail = req.body.groupEmail
-    console.log("ADDING EVENT ID TO GROUP")
     Group.findOne({email:groupEmail}, (err, group) => {
         if (err || !group) {
             res.json({"status":"failure finding group"})
@@ -237,7 +233,6 @@ var addEventIdToGroup = function (req, res) {
 
 function getShowWithTickets(req, res) {
     var showID = req.query.showID;
-    console.log("SHOW ID " + showID);
     Show.findById(showID, (err, show) => {
         if (!err && show) {
             show = show.toJSON();
@@ -430,7 +425,7 @@ var getChangeHelper = function(changeInput, cb) {
 var deleteEvent = function (req, res) {
     name = req.query.name
     Event.findById(req.query.eventID, (err, event) => {
-        if (!event) {
+        if (err) {
             console.log("ERROR GETTING EVENT. " + err)
         }
         deleteChanges(event.changes)
@@ -467,7 +462,6 @@ var deleteEventFromGroup = function(email, eventID) {
             events = group.currentEvents
             modifiedEvents = []
             async.forEach(events, (event, done) => {
-                console.log("Event: " + event + " and input param " + eventID + " equal with two is " + eventID == event + ", equal with three is " + eventID === event)
                 if (event != eventID) {
                     modifiedEvents.push(event)
                 }
@@ -492,7 +486,7 @@ var getShowsForEvent = function (req, res) {
                     done()
                 })
             }, () => {
-                res.json(shows)
+                res.json({ "shows" : shows})
             })
         }
     })
@@ -501,7 +495,6 @@ var getShowsForEvent = function (req, res) {
 
 var getSearchResultEvents = function (req, res) {
     var query = req.query.searchQuery;
-    console.log("**************" + query);
 
     //TODO: COME BACK AND CHANGE "group" to "group_name" once that is updated in event creation
     Event.find({ $or: [ {name:{$regex: ".*" + query + ".*"}}, {group:{$regex: ".*" + query + ".*"}} ] }, (err, allEvents) => {
@@ -518,7 +511,6 @@ var getSearchResultEvents = function (req, res) {
                     async.forEach(event.shows, (showID, done2) => {
                         Show.findById(showID, (err, show) => {
                             if (!err && show) {
-                                console.log(show.toJSON());
                                 shows.push(show.toJSON());
                             } else {
                                 console.log(err);
@@ -544,10 +536,8 @@ var getSearchResultEvents = function (req, res) {
 
 var getSearchResultEventsByTag = function (req, res) {
     var query = req.query.searchQuery;
-   //console.log("**************" + query);
-
     //TODO: COME BACK AND CHANGE "group" to "group_name" once that is updated in event creation
-    Event.find({ tags: { $in: [query] } }, (err, allEvents) => {
+    Event.find({ $query: { tags: { $in: [query] } } }, (err, allEvents) => {
         if (err) {
             res.json({ 'status': err })
         } else if (allEvents.length == 0) {
@@ -561,7 +551,6 @@ var getSearchResultEventsByTag = function (req, res) {
                     async.forEach(event.shows, (showID, done2) => {
                         Show.findById(showID, (err, show) => {
                             if (!err && show) {
-                                //console.log(show.toJSON());
                                 shows.push(show.toJSON());
                             } else {
                                 console.log(err);
@@ -574,7 +563,6 @@ var getSearchResultEventsByTag = function (req, res) {
                         done1();
                     });
                 }, () => {
-                    //console.log("**************events.length: " + events.length)
                     res.json({
                         'status': 'success',
                         'events': events
@@ -586,16 +574,99 @@ var getSearchResultEventsByTag = function (req, res) {
         
 }
 
-// var favoriteEvent = (req, res) => {
-//     Event.findById(req.body.eventID, (err, event) => {
-//         if (err) {
-//             return res.json({"error": err});
-//         } else {
-//             event.favorite = true;
-//             res.json({"status": 'success', 'events': event});
-//         }
-//     })
-// }
+var reviewEvent = function(req, res) {
+    console.log("YASH - enters reviewEvent");
+    var email = req.body.email;
+    var eventID = req.body.eventID;
+    var rating = req.body.rating;
+    var currReview = req.body.review;
+    
+    Event.findById(eventID, (err, event) => {
+        if (!err && event) {
+            var reviews = event.reviews ? event.reviews : [];
+            var num_ratings = event.num_ratings ? event.num_ratings : 0;
+            var currRating = event.rating ? event.rating : 0.0;
+
+
+            currRating = Number(currRating * num_ratings);
+            currRating = Number(currRating) + Number(rating);
+            num_ratings = num_ratings + 1;
+            currRating = currRating / num_ratings;
+            
+            var newReview = new Review({
+                review: currReview,
+                email: email
+            })
+            console.log("YASH - new review created " + newReview.review);
+            newReview.save((err, review) => {
+                if (err || !review) {
+                    res.json({"status":"error did not save"});
+                } else {
+                    console.log("YASH - enters save new review");
+                    review = review.toJSON();
+                    reviews.push(review._id);
+
+                    Event.findByIdAndUpdate(eventID, {"num_ratings": num_ratings, "rating": currRating, "reviews": reviews}, (err, event) => {
+                        if (!err && event) {
+                            console.log("YASH - updated event");
+                            res.json({"status":"success"});
+                        } else {
+                            res.json({"status":"did not update error"});
+                        }
+                    })
+                }
+            })         
+        } else {
+            console.log(err);
+            res.json({"status":"error"});
+        }
+    });
+}
+
+
+function getEventReviews(req, res) {
+    var eventID = req.query.eventID;
+    getAllEventReviews(eventID, (err, reviews) => {
+        if (err) {
+            res.json({"status":"error"})
+        } else {
+            res.json({
+                "status":"success","reviews":reviews
+            })
+        }
+    })
+}
+
+function getAllEventReviews(eventID, callback) {
+    console.log("YASH - enters getEventReviews");
+    Event.findById(eventID, (err, event) => {
+        console.log("YASH - Event found - " + eventID);
+        if (err || !event) {
+            console.log("YASH - entered err");
+            callback("error", null);
+        } else {
+            event = event.toJSON();
+            var reviewIDs = event.reviews;
+            if (!reviewIDs) {
+                reviewIDs = [];
+            }
+            var reviews = [];
+            async.forEach(reviewIDs, (reviewID, done) => {
+                console.log("YASH - seeing review - " + reviewID);
+
+                Review.findById(reviewID, (err, review) => {
+                    if (!err && review) {
+                        reviews.push(review);
+                    }
+                    done();
+                })
+            }, () => {
+                callback(null, reviews);
+            });
+
+        }
+    })
+}
 
 
 module.exports = {
@@ -618,5 +689,7 @@ module.exports = {
     get_search_result_events: getSearchResultEvents,
     get_change: getChange,
     get_search_result_by_tag: getSearchResultEventsByTag,
-    // favorite_event: favoriteEvent
+    review_event: reviewEvent,
+    get_event_reviews: getEventReviews
+
 }

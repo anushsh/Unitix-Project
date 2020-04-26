@@ -14,6 +14,7 @@ import com.example.unitix.models.Change;
 import com.example.unitix.models.Event;
 import com.example.unitix.models.Group;
 import com.example.unitix.models.Notification;
+import com.example.unitix.models.Review;
 import com.example.unitix.models.Show;
 import com.example.unitix.models.ShowInfo;
 import com.example.unitix.models.Ticket;
@@ -26,6 +27,7 @@ public class DataSource {
 
     private String host;
     private int port;
+    private String routePrefix;
     private static DataSource instance;
 
     // Singleton Pattern
@@ -33,6 +35,7 @@ public class DataSource {
         // use Node Express defaults
         host = "http://10.0.2.2";
         port = 3000;
+        routePrefix = host + ":" + port + "/";
     }
 
     public static DataSource getInstance() {
@@ -45,7 +48,7 @@ public class DataSource {
     private JSONObject getRoute(String route, String[] params, String[] vals) {
         try {
             StringBuilder urlBuilder = new StringBuilder();
-            urlBuilder.append(host).append(":").append(port).append("/").append(route);
+            urlBuilder.append(routePrefix).append(route);
 
             if (params != null && vals != null) {
                 for (int i = 0; i < params.length; i++) {
@@ -58,7 +61,7 @@ public class DataSource {
             task.execute(url);
             return task.get();
         } catch (Exception e) {
-            Log.e("MICHAEL", "Exception using generalized get route");
+            //Log.e("MICHAEL", "Exception using generalized get route");
             return null;
         }
     }
@@ -73,12 +76,36 @@ public class DataSource {
         return getRoute(route, new String[0], new String[0]);
     }
 
+    private boolean postRoute(String route, String[] params, String[] vals) {
+        try {
+            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
+            JSONObject jo = new JSONObject();
+            for (int i = 0; i < params.length; i++) {
+                jo.put(params[i], vals[i]);
+            }
+            String url = routePrefix + route;
+            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(url, jo);
+            task.execute(req);
+            JSONObject res = task.get();
+            //Log.e("MICHAEL", "res for " + route + " is " + res);
+            if (res.getString("status").equals("success")) return true;
+        } catch (Exception e) {
+            //Log.e("MICHAEL", "Error in generic post route for " + route);
+        }
+        return false;
+    }
+
+    private boolean postRoute(String route, String param, String val) {
+        String[] params = {param};
+        String[] vals = {val};
+        return postRoute(route, params, vals);
+    }
+
     private JSONArray getJSONArray(JSONObject jo, String field) {
         try {
             return jo.getJSONArray(field);
         } catch (Exception e) {
-            Log.e("MICHAEL", "Exception getting json array from json object in generalized method");
-            Log.e("ANUSH", "" + e);
+            //Log.e("MICHAEL", "Exception getting json array from json object in generalized method");
             return new JSONArray(); // empty if issue
         }
     }
@@ -87,8 +114,7 @@ public class DataSource {
         try {
             return jo.getJSONObject(field);
         } catch (Exception e) {
-            Log.e("MICHAEL", "Exception getting json object from a json object in generalized method");
-            Log.e("ANUSH", "" + e);
+            //Log.e("MICHAEL", "Exception getting json object from a json object in generalized method");
             return new JSONObject(); // empty if issue
         }
     }
@@ -97,7 +123,7 @@ public class DataSource {
         try {
             return ja.getJSONObject(index);
         } catch (Exception e) {
-            Log.e("MICHAEL", "Exception getting json object from a json array in generalized method");
+            //Log.e("MICHAEL", "Exception getting json object from a json array in generalized method");
             return new JSONObject();
         }
     }
@@ -120,6 +146,12 @@ public class DataSource {
     public Notification[] getAllReadNotifications(String email) {
         JSONObject jo = getRoute("get_user_read_notifications", "email", email);
         return Notification.createNotificationList(getJSONArray(jo, "read_notifications"));
+    }
+
+    public Review[] getAllReviews(String eventID) {
+        JSONObject jo = getRoute("get_event_reviews", "eventID", eventID);
+        Review[] toReturn = Review.createReviewsList(getJSONArray(jo, "reviews"));
+        return toReturn;
     }
 
     public Event[] getAllEvents() {
@@ -166,6 +198,11 @@ public class DataSource {
     public Event getEventByID(String eventID) {
         JSONObject jo = getRoute("find_event_with_shows", "eventID", eventID);
         return new Event(getJSONObject(jo, "event"));
+    }
+
+    public Show[] getShowsByEventId(String eventID) {
+        JSONObject jo = getRoute("get_shows_for_event", "eventID", eventID);
+        return Show.createShowList(getJSONArray(jo, "shows"));
     }
 
     public Show[] getUserShowInfo(String email) {
@@ -216,39 +253,14 @@ public class DataSource {
         return null;
     }
 
-    public void readNotifications(String email) {
-        try {
-            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
-            JSONObject jo = new JSONObject();
-            jo.put("email", email);
-            String url = host + ":" + port + "/read_all_notifications";
-            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(url, jo);
-            task.execute(req);
-            JSONObject res = task.get();
-            Log.e("NOAH","res is " + res);
-        } catch (Exception e) {
-            Log.e("NOAH","failed to purchase");
-        }
+    public boolean readNotifications(String email) {
+        return postRoute("read_all_notifications", "email", email);
     }
 
     public boolean purchaseTicket(String email, String showID) {
-        try {
-            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
-            JSONObject jo = new JSONObject();
-            jo.put("email", email);
-            jo.put("showID", showID);
-            String url = host + ":" + port + "/purchase_ticket";
-            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(url, jo);
-            task.execute(req);
-            JSONObject res = task.get();
-            Log.e("NOAH","res is " + res);
-            if (res.getString("status").equals("success")) {
-                return true;
-            }
-        } catch (Exception e) {
-            Log.e("NOAH","failed to purchase");
-        }
-        return false;
+        String[] params = {"email", "showID"};
+        String[] vals = {email, showID};
+        return postRoute("purchase_ticket", params, vals);
     }
 
 
@@ -289,106 +301,35 @@ public class DataSource {
 //        return tickets;
 //    }
 
-    public void redeemTicket(String ticketID) {
-        try {
-            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
-            String urlString = host + ":" + port + "/redeem_ticket";
-            JSONObject jsonParam = new JSONObject();
-            jsonParam.put("ticketID", ticketID);
-            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(urlString, jsonParam);
-            task.execute(req);
-
-            Log.e("NOAH","redeem ticket RESPONSE" + task.get().toString());
-        } catch (Exception e) {
-            Log.e("NOAH","redeem ticket exception " +e);
-        }
+    public boolean redeemTicket(String ticketID) {
+        return postRoute("redeem_ticket", "ticketID", ticketID);
     }
 
-
-
     public boolean createUser(String email, String password, String firstName, String lastName, String phone) {
-        try {
+        String[] params = {"email", "password", "first_name", "last_name", "phone"};
+        String[] vals = {email, password, firstName, lastName, phone};
+        return postRoute("create_user", params, vals);
+    }
 
-            JSONObject jsonParam = new JSONObject();
-            jsonParam.put("email", email);
-            jsonParam.put("password", password);
-            jsonParam.put("first_name", firstName);
-            jsonParam.put("last_name", lastName);
-            jsonParam.put("phone", phone);
-            String urlString = "http://10.0.2.2:3000/create_user";
-
-            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(urlString, jsonParam);
-
-            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
-            task.execute(req);
-
-            return true;
-
-        } catch (Exception e) {
-            Log.e("Yash","createUser exception " + e);
-            return false;
-        }
+    public boolean reviewEvent(String email, String eventID, String rating, String review) {
+        String[] params = {"email", "eventID", "rating", "review"};
+        String[] vals = {email, eventID, rating, review};
+        return postRoute("review_event", params, vals);
     }
 
     public boolean createCharge(String token) {
-        try {
-            JSONObject jsonParam = new JSONObject();
-            jsonParam.put("token", token);
-            String urlString = "http://10.0.2.2:3000/api/stripe";
-
-            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(urlString, jsonParam);
-            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
-            task.execute(req);
-            return true;
-
-        } catch (JSONException e) {
-            Log.e("ANUSH", "Create Charge Exception: " + e);
-            return false;
-        }
+        return postRoute("api/stripe", "token", token);
     }
 
     public boolean updateUser(String email, String password, String firstName, String lastName, String phone) {
-        try {
-
-            JSONObject jsonParam = new JSONObject();
-            jsonParam.put("email", email);
-            jsonParam.put("password", password);
-            jsonParam.put("first_name", firstName);
-            jsonParam.put("last_name", lastName);
-            jsonParam.put("phone", phone);
-            String urlString = "http://10.0.2.2:3000/update_user";
-
-            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(urlString, jsonParam);
-
-            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
-            task.execute(req);
-
-            return true;
-
-        } catch (Exception e) {
-            Log.e("Yash","updateUser exception " + e);
-            return false;
-        }
+        String[] params = {"email", "password", "first_name", "last_name", "phone"};
+        String[] vals = {email, password, firstName, lastName, phone};
+        return postRoute("update_user", params, vals);
     }
 
     public boolean followGroup(String email, String groupID) {
-        try {
-            AccessWebJSONPutTask task = new AccessWebJSONPutTask();
-            JSONObject jo = new JSONObject();
-            jo.put("email", email);
-            jo.put("groupID", groupID);
-            String url = host + ":" + port + "/follow_group";
-            AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(url, jo);
-            task.execute(req);
-            JSONObject res = task.get();
-            Log.e("KARA","res is " + res);
-            if (res.getString("status").equals("success")) {
-                return true;
-            }
-        } catch (Exception e) {
-            Log.e("KARA","failed to follow");
-        }
-        return false;
+        String[] params = {"email", "groupID"};
+        String[] vals = {email, groupID};
+        return postRoute("follow_group", params, vals);
     }
-
 }
