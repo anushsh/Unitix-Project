@@ -26,14 +26,14 @@ public class PhotosActivity extends AppCompatActivity {
         setContentView(R.layout.activity_photos);
         this.ds = DataSource.getInstance();
 
-        JSONArray ja = ds.getPics();
+//        JSONArray ja = ds.getPics();
 
-        try {
-            String check = ja.get(0).toString();
-            Log.e("ANUSH", check);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            String check = ja.get(0).toString();
+//            Log.e("ANUSH", check);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
 
 
