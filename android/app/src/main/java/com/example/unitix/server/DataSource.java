@@ -240,19 +240,6 @@ public class DataSource {
         return tickets;
     }
 
-    public JSONArray getPics () {
-//        try {
-//            JSONObject jo = getRoute("http://10.0.2.2:3000/read_pics");
-//            JSONObject inJO = getJSONObject(jo, "data");
-//            JSONArray jsonArray = getJSONArray(inJO, "Contents");
-//            Log.e("ANUSH", jo.toString());
-//            return jsonArray;
-//        } catch (Exception e) {
-//            Log.e("ANUSH", "Couldn't get photos");
-//        }
-        return null;
-    }
-
     public boolean readNotifications(String email) {
         return postRoute("read_all_notifications", "email", email);
     }
