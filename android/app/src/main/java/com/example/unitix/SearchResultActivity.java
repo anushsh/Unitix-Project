@@ -229,12 +229,10 @@ public class SearchResultActivity extends AppCompatActivity {
     }
 
     private Event[] filterByDate(Event[] events, Date low, Date high) {
-        //Date lowDate = convertMongoToDate(low);
-        //Date highDate = convertMongoToDate(high);
 
         List<Event> eventList = new ArrayList<>();
         for (Event e : events) {
-            Log.e("KARA", "event " + e.getName());
+            //Log.e("KARA", "event " + e.getName());
             Show[] shows = ds.getShowsByEventId(e.getId());
             for (Show s : shows) {
                 Date showDate = convertMongoToDate(s.getPrettyStartDate(), s.getStartTime());
@@ -256,14 +254,38 @@ public class SearchResultActivity extends AppCompatActivity {
         return eventList.toArray(new Event[0]);
     }
 
+    private Event[] filterByTime(Event[] events, int lowHour, int highHour) {
+        List<Event> eventList = new ArrayList<>();
+
+        for (Event e : events) {
+            Log.e("KARA", "event " + e.getName());
+            Show[] shows = ds.getShowsByEventId(e.getId());
+            for (Show s : shows) {
+                String showTime = s.getStartTime();
+                Log.e("KARA", "showtime " + showTime);
+                int hour = Integer.parseInt(showTime.substring(0, 2));
+                int min = Integer.parseInt(showTime.substring(3, 5));
+                if (hour >= lowHour && hour < highHour) {
+                    eventList.add(e);
+                    break;
+                } else if (hour == highHour && min == 0) {
+                    eventList.add(e);
+                    break;
+                }
+            }
+        }
+
+        return eventList.toArray(new Event[0]);
+    }
+
     void addSearchResultsToPage(Event[] events) {
         Log.e("KARA", "in addSearchResultsToPage events.length: " + events.length);
         feed = findViewById(R.id.event_feed);
         feed.removeAllViews();
 
+        //handle price filter setting
         Spinner priceFilter = (Spinner) findViewById(R.id.price_filter_spinner);
         String selectedPriceFilterSetting = priceFilter.getSelectedItem().toString();
-
         if (!selectedPriceFilterSetting.equals("Filter by Ticket Price")) {
             if (selectedPriceFilterSetting.equals("$0 to $5")) {
                 events = filterByPriceRange(events, 0, 5);
@@ -278,6 +300,7 @@ public class SearchResultActivity extends AppCompatActivity {
             }
         }
 
+        //handle date filter setting
         Spinner dateFilter = (Spinner) findViewById(R.id.date_filter_spinner);
         String selectedDateFilterSetting = dateFilter.getSelectedItem().toString();
         Log.e("KARA", "GOT RIGHT BEFORE DATE IF BLOCK");
@@ -296,30 +319,40 @@ public class SearchResultActivity extends AppCompatActivity {
                 // convert calendar to date
                 Date currentDatePlusDay = c.getTime();
                 Log.e("KARA", "current day plus day " + currentDatePlusDay);
-
                 events = filterByDate(events, new Date(), currentDatePlusDay);
             } else if (selectedDateFilterSetting.equals("This Week")) {
                 Log.e("KARA", "GOT IN THIS WEEK DATE IF BLOCK");
                 c.add(Calendar.WEEK_OF_MONTH, 1);
                 Date currentDatePlusWeek = c.getTime();
                 Log.e("KARA", "current day plus week " + currentDatePlusWeek);
-
                 events = filterByDate(events, new Date(), currentDatePlusWeek);
             } else if (selectedDateFilterSetting.equals("This Month")) {
                 Log.e("KARA", "GOT IN THIS MONTH DATE IF BLOCK");
                 c.add(Calendar.MONTH, 1);
                 Date currentDatePlusMonth = c.getTime();
                 Log.e("KARA", "current day plus month " + currentDatePlusMonth);
-
                 events = filterByDate(events, new Date(), currentDatePlusMonth);
             }
         }
 
-
+        //handle time filter setting
+        Spinner timeFilter = (Spinner) findViewById(R.id.time_filter_spinner);
+        String selectedTimeFilterSetting = timeFilter.getSelectedItem().toString();
+        if (!selectedTimeFilterSetting.equals("Filter by Start Time")) {
+            if (selectedTimeFilterSetting.equals("4:00 PM - 6:00 PM")) {
+                events = filterByTime(events, 16, 18);
+            } else if (selectedTimeFilterSetting.equals("6:00 PM - 8:00 PM")) {
+                events = filterByTime(events, 18, 20);
+            } else if (selectedTimeFilterSetting.equals("8:00 PM - 10:00 PM")) {
+                events = filterByTime(events, 20, 22);
+            } else if ((selectedTimeFilterSetting.equals("10:00 PM - Midnight"))) {
+                events = filterByTime(events, 22, 24);
+            }
+        }
+        
+        //handle sorting setting
         Spinner sortSpinner = (Spinner) findViewById(R.id.sort_spinner);
         String selectedSortSetting = sortSpinner.getSelectedItem().toString();
-
-        //handle sorting setting
         if (selectedSortSetting.equals("Sort by Event Name A to Z")) {
             events = sortEventsAscending(events, createSortMapEventName(events));
         } else if (selectedSortSetting.equals("Sort by Event Name Z to A")) {
