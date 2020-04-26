@@ -45,13 +45,34 @@ public class SearchResultActivity extends AppCompatActivity {
         ArrayAdapter<CharSequence> sortAdapter = ArrayAdapter.createFromResource(this,
                 R.array.search_sort_spinner_array, android.R.layout.simple_spinner_dropdown_item);
 
+        Spinner priceFilterSpinner = (Spinner) findViewById(R.id.price_filter_spinner);
+        //Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> priceFilterAdapter = ArrayAdapter.createFromResource(this,
+                R.array.price_filter_spinner_array, android.R.layout.simple_spinner_dropdown_item);
+
+        Spinner dateFilterSpinner = (Spinner) findViewById(R.id.date_filter_spinner);
+        //Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> dateFilterAdapter = ArrayAdapter.createFromResource(this,
+                R.array.date_filter_spinner_array, android.R.layout.simple_spinner_dropdown_item);
+
+        Spinner timeFilterSpinner = (Spinner) findViewById(R.id.time_filter_spinner);
+        //Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> timeFilterAdapter = ArrayAdapter.createFromResource(this,
+                R.array.time_filter_spinner_array, android.R.layout.simple_spinner_dropdown_item);
+
         //Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        priceFilterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dateFilterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        timeFilterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         //Apply the adapter to the spinner
         searchSpinner.setAdapter(adapter);
         sortSpinner.setAdapter(sortAdapter);
+        priceFilterSpinner.setAdapter(priceFilterAdapter);
+        dateFilterSpinner.setAdapter(dateFilterAdapter);
+        timeFilterSpinner.setAdapter(timeFilterAdapter);
     }
 
 
