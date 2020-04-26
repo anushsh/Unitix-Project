@@ -203,7 +203,7 @@ public class DataSource {
         return tickets;
     }
 
-//    public JSONArray getPics () {
+    public JSONArray getPics () {
 //        try {
 //            JSONObject jo = getRoute("http://10.0.2.2:3000/read_pics");
 //            JSONObject inJO = getJSONObject(jo, "data");
@@ -213,8 +213,8 @@ public class DataSource {
 //        } catch (Exception e) {
 //            Log.e("ANUSH", "Couldn't get photos");
 //        }
-//        return null;
-//    }
+        return null;
+    }
 
     public void readNotifications(String email) {
         try {
