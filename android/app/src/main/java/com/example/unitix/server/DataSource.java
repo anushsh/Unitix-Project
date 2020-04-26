@@ -61,7 +61,7 @@ public class DataSource {
             task.execute(url);
             return task.get();
         } catch (Exception e) {
-            Log.e("MICHAEL", "Exception using generalized get route");
+            //Log.e("MICHAEL", "Exception using generalized get route");
             return null;
         }
     }
@@ -87,10 +87,10 @@ public class DataSource {
             AccessWebJSONPutTask.Req req = new AccessWebJSONPutTask.Req(url, jo);
             task.execute(req);
             JSONObject res = task.get();
-            Log.e("MICHAEL", "res for " + route + " is " + res);
+            //Log.e("MICHAEL", "res for " + route + " is " + res);
             if (res.getString("status").equals("success")) return true;
         } catch (Exception e) {
-            Log.e("MICHAEL", "Error in generic post route for " + route);
+            //Log.e("MICHAEL", "Error in generic post route for " + route);
         }
         return false;
     }
@@ -105,7 +105,7 @@ public class DataSource {
         try {
             return jo.getJSONArray(field);
         } catch (Exception e) {
-            Log.e("MICHAEL", "Exception getting json array from json object in generalized method");
+            //Log.e("MICHAEL", "Exception getting json array from json object in generalized method");
             return new JSONArray(); // empty if issue
         }
     }
@@ -114,7 +114,7 @@ public class DataSource {
         try {
             return jo.getJSONObject(field);
         } catch (Exception e) {
-            Log.e("MICHAEL", "Exception getting json object from a json object in generalized method");
+            //Log.e("MICHAEL", "Exception getting json object from a json object in generalized method");
             return new JSONObject(); // empty if issue
         }
     }
@@ -123,7 +123,7 @@ public class DataSource {
         try {
             return ja.getJSONObject(index);
         } catch (Exception e) {
-            Log.e("MICHAEL", "Exception getting json object from a json array in generalized method");
+            //Log.e("MICHAEL", "Exception getting json object from a json array in generalized method");
             return new JSONObject();
         }
     }

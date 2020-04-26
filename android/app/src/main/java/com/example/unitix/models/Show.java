@@ -49,11 +49,11 @@ public class Show extends Model implements Comparable<Show>  {
                 this.lng = Double.parseDouble((String) jo.getJSONObject("lng").get("$numberDecimal"));
             } catch (JSONException e) {
                 // this occurs when geolocations not set up for event
-                Log.e("MICHAEL", e.toString());
+                // Log.e("MICHAEL", e.toString());
             }
         } catch (Exception e) {
-            Log.e("NOAH","exception in show" + e);
-            Log.e("NOAH",jo.toString());
+            //Log.e("NOAH","exception in show" + e);
+            //Log.e("NOAH",jo.toString());
             this.isValid = false;
         }
     }

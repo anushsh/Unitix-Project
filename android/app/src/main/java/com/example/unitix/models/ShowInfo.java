@@ -35,8 +35,8 @@ public class ShowInfo extends Model {
 
 
         } catch (Exception e) {
-            Log.e("NOAH","exception in show" + e);
-            Log.e("NOAH",jo.toString());
+            //Log.e("NOAH","exception in show" + e);
+            //Log.e("NOAH",jo.toString());
             this.isValid = false;
         }
     }

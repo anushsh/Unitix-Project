@@ -126,7 +126,7 @@ public class Event extends Model {
     }
 
     public List<Change> getChanges() {
-        Log.e("MICHAEL", "Getting changes for event");
+        //Log.e("MICHAEL", "Getting changes for event");
         if (this.changes == null) {
             this.changes = new ArrayList<>();
             DataSource ds = DataSource.getInstance();
@@ -136,7 +136,7 @@ public class Event extends Model {
                     if (change.isValid()) this.changes.add(change);
                 }
             } catch (JSONException e) {
-                Log.e("MICHAEL", "Error lazily making changes for event");
+                //Log.e("MICHAEL", "Error lazily making changes for event");
             }
         }
         return this.changes;

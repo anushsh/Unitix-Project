@@ -22,7 +22,7 @@ public class Review extends Model {
     }
 
     public static Review[] createReviewsList(JSONArray jsonArray) {
-        Log.e("YASH", "Entered here to make a list");
+        //Log.e("YASH", "Entered here to make a list");
 
         List<Review> list = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {

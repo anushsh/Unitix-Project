@@ -210,6 +210,20 @@ public class SearchResultActivity extends AppCompatActivity {
         return eventList.toArray(new Event[0]);
     }
 
+    private Event[] filterByDate(Event[] events, String low, String high) {
+        List<Event> eventList = new ArrayList<>();
+        for (Event e : events) {
+            Show[] shows = ds.getShowsByEventId(e.getId());
+            for (Show s : shows) {
+                Log.e("KARA DATE FILTER", e.getName() + " " + s.getPrettyStartDate());
+            }
+
+        }
+
+        //TODO change later
+        return events;
+    }
+
     void addSearchResultsToPage(Event[] events) {
         Log.e("KARA", "in addSearchResultsToPage events.length: " + events.length);
         feed = findViewById(R.id.event_feed);
@@ -231,6 +245,21 @@ public class SearchResultActivity extends AppCompatActivity {
                 events = filterByPriceRange(events, 20, Double.POSITIVE_INFINITY);
             }
         }
+
+        Spinner dateFilter = (Spinner) findViewById(R.id.date_filter_spinner);
+        String selectedDateFilterSetting = dateFilter.getSelectedItem().toString();
+        Log.e("KARA", "GOT RIGHT BEFORE DATE IF BLOCK");
+        if (!selectedDateFilterSetting.equals("Filter by Date")) {
+            if (selectedDateFilterSetting.equals("Today")) {
+                Log.e("KARA", "GOT IN DATE IF BLOCK");
+                filterByDate(events, "hi", "placeholder");
+            } else if (selectedDateFilterSetting.equals("This Week")) {
+
+            } else if (selectedDateFilterSetting.equals("This Month")) {
+
+            }
+        }
+
 
         Spinner sortSpinner = (Spinner) findViewById(R.id.sort_spinner);
         String selectedSortSetting = sortSpinner.getSelectedItem().toString();
