@@ -1,16 +1,16 @@
 var Group = require('../models/group.js');
 var User = require('../models/user.js');
 var async = require('async')
-const stripe = require('stripe')('sk_test_pncnbwipRx15OxjiYD92tQgM');
 const fs = require('fs');
 const aws = require( 'aws-sdk' );
-
+const keys = require('../keys');
+const stripe = require('stripe')(keys.StripeSecretKey);
 /**
  * PROFILE IMAGE STORING STARTS
  */
 const s3 = new aws.S3({
-    accessKeyId: 'AKIATT7WZMW3NH5NNOZM',
-    secretAccessKey: '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',
+    accessKeyId: keys.AWSClientKey,
+    secretAccessKey: keys.AWSSecretKey,
     Bucket: 'unitixphotos'
    });
 
